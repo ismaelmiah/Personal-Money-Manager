@@ -8,11 +8,11 @@ export async function StatsCards() {
   const members = await getMembers()
 
   const totalLoaned = loans
-    .filter((loan) => loan.Status === "loan")
+    .filter((loan) => loan.Status === "Loan")
     .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
 
   const totalReturned = loans
-    .filter((loan) => loan.Status === "return")
+    .filter((loan) => loan.Status === "Return")
     .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
 
   const totalOutstanding = totalLoaned - totalReturned

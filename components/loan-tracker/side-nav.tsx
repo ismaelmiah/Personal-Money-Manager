@@ -34,7 +34,6 @@ export const loanTrackerNavItems = [
 ]
 
 export function LoanTrackerSideNav({ session }: { session: Session }) {
-  console.log("LoanTrackerSideNav")
   const pathname = usePathname()
 
   return (

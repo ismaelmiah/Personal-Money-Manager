@@ -36,8 +36,8 @@ export async function LoansTable() {
                   {loan.MemberName}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={loan.Status === "loan" ? "default" : "secondary"}>
-                    {loan.Status === "loan" ? "Loan" : "Return"}
+                  <Badge variant={loan.Status === "Loan" ? "denger" : "success"}>
+                    {loan.Status === "Loan" ? "Loan" : "Return"}
                   </Badge>
                 </TableCell>
                 <TableCell>{formatCurrency(loan.Amount, loan.Currency)}</TableCell>

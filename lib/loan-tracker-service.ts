@@ -16,7 +16,7 @@ export type Loan = {
   MemberName: string
   Amount: number
   Currency: string
-  Status: "loan" | "return"
+  Status: "Loan" | "Return"
   CreatedAt: string
   Notes: string
 }
@@ -56,7 +56,7 @@ export async function getSpreadsheetData(range: string) {
       dateTimeRenderOption: "FORMATTED_STRING",
     })
 
-    console.log(`Raw response data:`, response.data)
+    //console.log(`Raw response data:`, response.data)
 
     if (!response.data.values) {
       console.log(`No values found in range: ${range}`)
@@ -152,9 +152,9 @@ export async function getLoans(): Promise<Loan[]> {
       Id: String(row[0] || ""),
       MemberId: String(row[1] || ""),
       MemberName: String(row[2] || ""),
-      Amount: typeof row[3] === "number" ? row[3] : Number.parseFloat(row[3]) || 0,
+      Status: row[3] === "Loan" || row[3] === "Return" ? row[3] : "Loan",
       Currency: String(row[4] || "BDT"),
-      Status: row[5] === "loan" || row[5] === "return" ? row[5] : "loan",
+      Amount: typeof row[5] === "number" ? row[5] : Number.parseFloat(row[5]) || 0,
       CreatedAt: String(row[6] || new Date().toISOString()),
       Notes: String(row[7] || ""),
     }))
@@ -235,7 +235,7 @@ export async function getStatistics() {
         }
       }
 
-      if (loan.Status === "loan") {
+      if (loan.Status === "Loan") {
         acc[loan.MemberId].totalLoaned[loan.Currency as Currency] += loan.Amount
       } else {
         acc[loan.MemberId].totalReturned[loan.Currency as Currency] += loan.Amount
@@ -267,7 +267,7 @@ export async function getStatistics() {
         }
       }
 
-      if (loan.Status === "loan") {
+      if (loan.Status === "Loan") {
         acc[Currency].totalLoaned += loan.Amount
       } else {
         acc[Currency].totalReturned += loan.Amount
