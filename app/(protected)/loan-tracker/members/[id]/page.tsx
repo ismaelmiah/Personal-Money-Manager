@@ -22,11 +22,11 @@ export default async function MemberDetailsPage({ params }: { params: { Id: stri
 
   // Calculate totals
   const totalLoaned = memberLoans
-    .filter((loan) => loan.Status === "loan")
+    .filter((loan) => loan.Status === "Loan")
     .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
 
   const totalReturned = memberLoans
-    .filter((loan) => loan.Status === "return")
+    .filter((loan) => loan.Status === "Return")
     .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
 
   const balance = totalLoaned - totalReturned
