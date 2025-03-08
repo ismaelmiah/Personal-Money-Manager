@@ -32,6 +32,30 @@ export default function PlatformSelectionPage() {
             </Button>
           </CardFooter>
         </Card>
+
+        <Card className="flex flex-col h-full">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Wallet className="h-6 w-6" />
+              <span>Money Manager</span>
+            </CardTitle>
+            <CardDescription>Track daily expenses and manage multiple accounts</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-grow">
+            <ul className="list-disc list-inside space-y-2 text-sm">
+              <li>Log daily transactions</li>
+              <li>Categorize expenses</li>
+              <li>View weekly/monthly/yearly reports</li>
+              <li>Manage multiple accounts</li>
+              <li>Filter and search transactions</li>
+            </ul>
+          </CardContent>
+          <CardFooter>
+            <Button asChild className="w-full">
+              <Link href="/money-manager/dashboard">Enter Money Manager</Link>
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   )
