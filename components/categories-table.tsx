@@ -22,20 +22,20 @@ export async function CategoriesTable() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="hidden md:table-cell">Created On</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {categories.map((category) => (
-              <TableRow key={category.id}>
+              <TableRow key={category.Id}>
                 <TableCell className="font-medium">{category.name}</TableCell>
                 <TableCell>
-                  <Badge variant={category.type === "expense" ? "destructive" : "success"}>
-                    {category.type === "expense" ? "Expense" : "Income"}
+                  <Badge variant={category.Status === "expense" ? "destructive" : "secondary"}>
+                    {category.Status === "expense" ? "Expense" : "Income"}
                   </Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">{formatDate(category.createdAt)}</TableCell>
+                <TableCell className="hidden md:table-cell">{formatDate(category.CreatedAt)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

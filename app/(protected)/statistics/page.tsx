@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MemberStats } from "@/components/member-stats"
-import { CurrencyStats } from "@/components/currency-stats"
+import { CurrencyStats } from "@/components/Currency-stats"
 import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function StatisticsPage() {
@@ -25,7 +25,7 @@ export default function StatisticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Currency Statistics</CardTitle>
-            <CardDescription>Loans and returns by currency</CardDescription>
+            <CardDescription>Loans and returns by Currency</CardDescription>
           </CardHeader>
           <CardContent>
             <Suspense fallback={<LoadingSpinner />}>

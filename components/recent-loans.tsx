@@ -5,8 +5,8 @@ import { ArrowUpCircle, ArrowDownCircle } from "lucide-react"
 export async function RecentLoans() {
   const loans = await getLoans()
 
-  // Sort by date (newest first) and take the 5 most recent
-  const recentLoans = [...loans].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5)
+  // Sort by CreatedAt (newest first) and take the 5 most recent
+  const recentLoans = [...loans].sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime()).slice(0, 5)
 
   return (
     <div className="space-y-8">
@@ -14,21 +14,21 @@ export async function RecentLoans() {
         <div className="text-center text-muted-foreground">No recent transactions.</div>
       ) : (
         recentLoans.map((loan) => (
-          <div key={loan.id} className="flex items-center">
-            <div className={`mr-4 rounded-full p-2 ${loan.type === "loan" ? "bg-red-100" : "bg-green-100"}`}>
-              {loan.type === "loan" ? (
+          <div key={loan.Id} className="flex items-center">
+            <div className={`mr-4 rounded-full p-2 ${loan.Status === "loan" ? "bg-red-100" : "bg-green-100"}`}>
+              {loan.Status === "loan" ? (
                 <ArrowUpCircle className="h-4 w-4 text-red-500" />
               ) : (
                 <ArrowDownCircle className="h-4 w-4 text-green-500" />
               )}
             </div>
             <div className="flex-1 space-y-1">
-              <p className="text-sm font-medium leading-none">{loan.memberName}</p>
-              <p className="text-sm text-muted-foreground">{formatDate(loan.date)}</p>
+              <p className="text-sm font-medium leading-none">{loan.MemberName}</p>
+              <p className="text-sm text-muted-foreground">{formatDate(loan.CreatedAt)}</p>
             </div>
-            <div className={`font-medium ${loan.type === "loan" ? "text-red-500" : "text-green-500"}`}>
-              {loan.type === "loan" ? "-" : "+"}
-              {formatCurrency(loan.amount, loan.currency)}
+            <div className={`font-medium ${loan.Status === "loan" ? "text-red-500" : "text-green-500"}`}>
+              {loan.Status === "loan" ? "-" : "+"}
+              {formatCurrency(loan.Amount, loan.Currency)}
             </div>
           </div>
         ))

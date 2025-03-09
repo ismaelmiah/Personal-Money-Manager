@@ -53,7 +53,7 @@ export function MoneyManagerAnalytics() {
   const categoryData = stats.categoryStats.map((cat: any) => ({
     name: cat.categoryName,
     value: cat.total,
-    type: cat.categoryType,
+    Status: cat.categoryType,
   }))
 
   // Prepare data for account chart
@@ -91,7 +91,7 @@ export function MoneyManagerAnalytics() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={categoryData.filter((cat: any) => cat.type === "expense")}
+                    data={categoryData.filter((cat: any) => cat.Status === "expense")}
                     cx="50%"
                     cy="50%"
                     labelLine={true}

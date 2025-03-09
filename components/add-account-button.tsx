@@ -26,8 +26,8 @@ const formSchema = z.object({
   balance: z.string().refine((val) => !isNaN(Number.parseFloat(val)), {
     message: "Balance must be a valid number",
   }),
-  currency: z.enum(["BDT", "USD", "GBP"], {
-    required_error: "Please select a currency",
+  Currency: z.enum(["BDT", "USD", "GBP"], {
+    required_error: "Please select a Currency",
   }),
 })
 
@@ -42,7 +42,7 @@ export function AddAccountButton() {
     defaultValues: {
       name: "",
       balance: "0",
-      currency: "BDT",
+      Currency: "BDT",
     },
   })
 
@@ -52,7 +52,7 @@ export function AddAccountButton() {
       const response = await fetch("/api/money-manager/accounts", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Status": "application/json",
         },
         body: JSON.stringify(values),
       })
@@ -126,14 +126,14 @@ export function AddAccountButton() {
             />
             <FormField
               control={form.control}
-              name="currency"
+              name="Currency"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Currency</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select currency" />
+                        <SelectValue placeholder="Select Currency" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

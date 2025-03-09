@@ -47,7 +47,7 @@ export function AddMemberButton() {
       const response = await fetch("/api/members", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Status": "application/json",
         },
         body: JSON.stringify(values),
       })

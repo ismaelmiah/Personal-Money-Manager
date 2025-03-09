@@ -27,20 +27,20 @@ import { cn, formatDate } from "@/lib/utils"
 import type { Member } from "@/lib/google-sheets"
 
 const formSchema = z.object({
-  memberId: z.string({
+  MemberId: z.string({
     required_error: "Please select a member",
   }),
-  amount: z.string().min(1, "Amount is required"),
-  currency: z.enum(["BDT", "USD", "GBP"], {
-    required_error: "Please select a currency",
+  Amount: z.string().min(1, "Amount is required"),
+  Currency: z.enum(["BDT", "USD", "GBP"], {
+    required_error: "Please select a Currency",
   }),
-  type: z.enum(["loan", "return"], {
-    required_error: "Please select a type",
+  Status: z.enum(["loan", "return"], {
+    required_error: "Please select a Status",
   }),
-  date: z.date({
-    required_error: "Please select a date",
+  CreatedAt: z.date({
+    required_error: "Please select a CreatedAt",
   }),
-  notes: z.string().optional(),
+  Notes: z.string().optional(),
 })
 
 export function AddLoanButton() {
@@ -53,17 +53,17 @@ export function AddLoanButton() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      currency: "BDT",
-      type: "loan",
-      date: new Date(),
-      notes: "",
+      Currency: "BDT",
+      Status: "loan",
+      CreatedAt: new Date(),
+      Notes: "",
     },
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const selectedMember = members.find((m) => m.id === values.memberId)
+      const selectedMember = members.find((m) => m.Id === values.MemberId)
 
       if (!selectedMember) {
         throw new Error("Member not found")
@@ -72,12 +72,12 @@ export function AddLoanButton() {
       const response = await fetch("/api/loans", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Status": "application/json",
         },
         body: JSON.stringify({
           ...values,
-          memberName: selectedMember.name,
-          date: values.date.toISOString(),
+          MemberName: selectedMember.Name,
+          CreatedAt: values.CreatedAt.toISOString(),
         }),
       })
 
@@ -87,7 +87,7 @@ export function AddLoanButton() {
 
       toast({
         title: "Success",
-        description: `${values.type === "loan" ? "Loan" : "Return"} added successfully`,
+        description: `${values.Status === "loan" ? "Loan" : "Return"} added successfully`,
       })
 
       setOpen(false)
@@ -140,7 +140,7 @@ export function AddLoanButton() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="memberId"
+              name="MemberId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Member</FormLabel>
@@ -152,8 +152,8 @@ export function AddLoanButton() {
                     </FormControl>
                     <SelectContent>
                       {members.map((member) => (
-                        <SelectItem key={member.id} value={member.id}>
-                          {member.name}
+                        <SelectItem key={member.Id} value={member.Id}>
+                          {member.Name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -165,7 +165,7 @@ export function AddLoanButton() {
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="amount"
+                name="Amount"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Amount</FormLabel>
@@ -178,14 +178,14 @@ export function AddLoanButton() {
               />
               <FormField
                 control={form.control}
-                name="currency"
+                name="Currency"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Currency</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select currency" />
+                          <SelectValue placeholder="Select Currency" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -201,14 +201,14 @@ export function AddLoanButton() {
             </div>
             <FormField
               control={form.control}
-              name="type"
+              name="Status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Transaction Type</FormLabel>
+                  <FormLabel>Transaction Status</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
+                        <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -222,10 +222,10 @@ export function AddLoanButton() {
             />
             <FormField
               control={form.control}
-              name="date"
+              name="CreatedAt"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Date</FormLabel>
+                  <FormLabel>CreatedAt</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -233,7 +233,7 @@ export function AddLoanButton() {
                           variant={"outline"}
                           className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                         >
-                          {field.value ? formatDate(field.value.toISOString()) : <span>Pick a date</span>}
+                          {field.value ? formatDate(field.value.toISOString()) : <span>Pick a CreatedAt</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
@@ -248,7 +248,7 @@ export function AddLoanButton() {
             />
             <FormField
               control={form.control}
-              name="notes"
+              name="Notes"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Notes</FormLabel>

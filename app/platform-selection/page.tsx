@@ -23,7 +23,7 @@ export default function PlatformSelectionPage() {
               <li>Track member information</li>
               <li>View transaction history</li>
               <li>Analyze loan statistics</li>
-              <li>Multiple currency support</li>
+              <li>Multiple Currency support</li>
             </ul>
           </CardContent>
           <CardFooter>

@@ -8,12 +8,12 @@ export async function StatsCards() {
   const members = await getMembers()
 
   const totalLoaned = loans
-    .filter((loan) => loan.type === "loan")
-    .reduce((sum, loan) => sum + (loan.currency === "BDT" ? loan.amount : 0), 0)
+    .filter((loan) => loan.Status === "loan")
+    .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
 
   const totalReturned = loans
-    .filter((loan) => loan.type === "return")
-    .reduce((sum, loan) => sum + (loan.currency === "BDT" ? loan.amount : 0), 0)
+    .filter((loan) => loan.Status === "return")
+    .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
 
   const totalOutstanding = totalLoaned - totalReturned
 
@@ -28,7 +28,7 @@ export async function StatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(totalOutstanding, "BDT")}</div>
-          <p className="text-xs text-muted-foreground">Total amount yet to be returned</p>
+          <p className="text-xs text-muted-foreground">Total Amount yet to be returned</p>
         </CardContent>
       </Card>
       <Card>
@@ -38,7 +38,7 @@ export async function StatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(totalLoaned, "BDT")}</div>
-          <p className="text-xs text-muted-foreground">Total amount loaned out</p>
+          <p className="text-xs text-muted-foreground">Total Amount loaned out</p>
         </CardContent>
       </Card>
       <Card>
@@ -48,7 +48,7 @@ export async function StatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(totalReturned, "BDT")}</div>
-          <p className="text-xs text-muted-foreground">Total amount returned</p>
+          <p className="text-xs text-muted-foreground">Total Amount returned</p>
         </CardContent>
       </Card>
       <Card>

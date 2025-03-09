@@ -2,31 +2,31 @@ import { getSpreadsheetData, appendToSpreadsheet, updateSpreadsheetData } from "
 
 // Types
 export type Account = {
-  id: string
+  Id: string
   name: string
   balance: number
-  currency: string
-  createdAt: string
+  Currency: string
+  CreatedAt: string
 }
 
 export type Category = {
-  id: string
+  Id: string
   name: string
-  type: "expense" | "income"
-  createdAt: string
+  Status: "expense" | "income"
+  CreatedAt: string
 }
 
 export type Transaction = {
-  id: string
+  Id: string
   accountId: string
   accountName: string
-  amount: number
-  currency: string
-  type: "expense" | "income"
+  Amount: number
+  Currency: string
+  Status: "expense" | "income"
   categoryId: string
   categoryName: string
-  date: string
-  notes: string
+  CreatedAt: string
+  Notes: string
 }
 
 // Get all accounts
@@ -36,11 +36,11 @@ export async function getAccounts(): Promise<Account[]> {
     console.log("Raw accounts data:", data)
 
     return data.map((row: any[]) => ({
-      id: String(row[0] || ""),
+      Id: String(row[0] || ""),
       name: String(row[1] || ""),
       balance: typeof row[2] === "number" ? row[2] : Number.parseFloat(row[2]) || 0,
-      currency: String(row[3] || "BDT"),
-      createdAt: String(row[4] || new Date().toISOString()),
+      Currency: String(row[3] || "BDT"),
+      CreatedAt: String(row[4] || new Date().toISOString()),
     }))
   } catch (error) {
     console.error("Error in getAccounts:", error)
@@ -55,10 +55,10 @@ export async function getCategories(): Promise<Category[]> {
     console.log("Raw categories data:", data)
 
     return data.map((row: any[]) => ({
-      id: String(row[0] || ""),
+      Id: String(row[0] || ""),
       name: String(row[1] || ""),
-      type: row[2] === "expense" || row[2] === "income" ? row[2] : "expense",
-      createdAt: String(row[3] || new Date().toISOString()),
+      Status: row[2] === "expense" || row[2] === "income" ? row[2] : "expense",
+      CreatedAt: String(row[3] || new Date().toISOString()),
     }))
   } catch (error) {
     console.error("Error in getCategories:", error)
@@ -73,16 +73,16 @@ export async function getTransactions(): Promise<Transaction[]> {
     console.log("Raw transactions data:", data)
 
     return data.map((row: any[]) => ({
-      id: String(row[0] || ""),
+      Id: String(row[0] || ""),
       accountId: String(row[1] || ""),
       accountName: String(row[2] || ""),
-      amount: typeof row[3] === "number" ? row[3] : Number.parseFloat(row[3]) || 0,
-      currency: String(row[4] || "BDT"),
-      type: row[5] === "expense" || row[5] === "income" ? row[5] : "expense",
+      Amount: typeof row[3] === "number" ? row[3] : Number.parseFloat(row[3]) || 0,
+      Currency: String(row[4] || "BDT"),
+      Status: row[5] === "expense" || row[5] === "income" ? row[5] : "expense",
       categoryId: String(row[6] || ""),
       categoryName: String(row[7] || ""),
-      date: String(row[8] || new Date().toISOString()),
-      notes: String(row[9] || ""),
+      CreatedAt: String(row[8] || new Date().toISOString()),
+      Notes: String(row[9] || ""),
     }))
   } catch (error) {
     console.error("Error in getTransactions:", error)
@@ -91,20 +91,20 @@ export async function getTransactions(): Promise<Transaction[]> {
 }
 
 // Add new account
-export async function addAccount(account: Omit<Account, "id" | "createdAt">): Promise<Account> {
+export async function addAccount(account: Omit<Account, "Id" | "CreatedAt">): Promise<Account> {
   try {
-    const id = `A${Date.now()}`
-    const createdAt = new Date().toISOString()
+    const Id = `A${Date.now()}`
+    const CreatedAt = new Date().toISOString()
 
-    const values = [[id, account.name, account.balance, account.currency, createdAt]]
+    const values = [[Id, account.name, account.balance, account.Currency, CreatedAt]]
     console.log("Adding account with values:", values)
 
     await appendToSpreadsheet("MoneyManager_Accounts!A2:E", values)
 
     return {
-      id,
+      Id,
       ...account,
-      createdAt,
+      CreatedAt,
     }
   } catch (error) {
     console.error("Error in addAccount:", error)
@@ -113,20 +113,20 @@ export async function addAccount(account: Omit<Account, "id" | "createdAt">): Pr
 }
 
 // Add new category
-export async function addCategory(category: Omit<Category, "id" | "createdAt">): Promise<Category> {
+export async function addCategory(category: Omit<Category, "Id" | "CreatedAt">): Promise<Category> {
   try {
-    const id = `C${Date.now()}`
-    const createdAt = new Date().toISOString()
+    const Id = `C${Date.now()}`
+    const CreatedAt = new Date().toISOString()
 
-    const values = [[id, category.name, category.type, createdAt]]
+    const values = [[Id, category.name, category.Status, CreatedAt]]
     console.log("Adding category with values:", values)
 
     await appendToSpreadsheet("MoneyManager_Categories!A2:D", values)
 
     return {
-      id,
+      Id,
       ...category,
-      createdAt,
+      CreatedAt,
     }
   } catch (error) {
     console.error("Error in addCategory:", error)
@@ -135,22 +135,22 @@ export async function addCategory(category: Omit<Category, "id" | "createdAt">):
 }
 
 // Add new transaction
-export async function addTransaction(transaction: Omit<Transaction, "id">): Promise<Transaction> {
+export async function addTransaction(transaction: Omit<Transaction, "Id">): Promise<Transaction> {
   try {
-    const id = `T${Date.now()}`
+    const Id = `T${Date.now()}`
 
     const values = [
       [
-        id,
+        Id,
         transaction.accountId,
         transaction.accountName,
-        transaction.amount,
-        transaction.currency,
-        transaction.type,
+        transaction.Amount,
+        transaction.Currency,
+        transaction.Status,
         transaction.categoryId,
         transaction.categoryName,
-        transaction.date,
-        transaction.notes || "",
+        transaction.CreatedAt,
+        transaction.Notes || "",
       ],
     ]
     console.log("Adding transaction with values:", values)
@@ -159,15 +159,15 @@ export async function addTransaction(transaction: Omit<Transaction, "id">): Prom
 
     // Update account balance
     const accounts = await getAccounts()
-    const account = accounts.find((a) => a.id === transaction.accountId)
+    const account = accounts.find((a) => a.Id === transaction.accountId)
 
     if (account) {
       const newBalance =
-        transaction.type === "income" ? account.balance + transaction.amount : account.balance - transaction.amount
+        transaction.Status === "income" ? account.balance + transaction.Amount : account.balance - transaction.Amount
 
       // Find the row index of the account
       const accountData = await getSpreadsheetData("MoneyManager_Accounts!A:A")
-      const rowIndex = accountData.findIndex((row: any[]) => row[0] === account.id) + 2 // +2 because of header and 0-indexing
+      const rowIndex = accountData.findIndex((row: any[]) => row[0] === account.Id) + 2 // +2 because of header and 0-indexing
 
       if (rowIndex > 1) {
         await updateSpreadsheetData(`MoneyManager_Accounts!C${rowIndex}`, [[newBalance]])
@@ -175,7 +175,7 @@ export async function addTransaction(transaction: Omit<Transaction, "id">): Prom
     }
 
     return {
-      id,
+      Id,
       ...transaction,
     }
   } catch (error) {
@@ -191,19 +191,19 @@ export async function getMoneyManagerStatistics() {
   const categories = await getCategories()
 
   // Total income and expenses
-  const totalIncome = transactions.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0)
+  const totalIncome = transactions.filter((t) => t.Status === "income").reduce((sum, t) => sum + t.Amount, 0)
 
-  const totalExpense = transactions.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0)
+  const totalExpense = transactions.filter((t) => t.Status === "expense").reduce((sum, t) => sum + t.Amount, 0)
 
   // Transactions by category
   const categoryStats = categories.map((category) => {
-    const categoryTransactions = transactions.filter((t) => t.categoryId === category.id)
-    const total = categoryTransactions.reduce((sum, t) => sum + t.amount, 0)
+    const categoryTransactions = transactions.filter((t) => t.categoryId === category.Id)
+    const total = categoryTransactions.reduce((sum, t) => sum + t.Amount, 0)
 
     return {
-      categoryId: category.id,
+      categoryId: category.Id,
       categoryName: category.name,
-      categoryType: category.type,
+      categoryType: category.Status,
       total,
       count: categoryTransactions.length,
     }
@@ -211,16 +211,16 @@ export async function getMoneyManagerStatistics() {
 
   // Transactions by account
   const accountStats = accounts.map((account) => {
-    const accountTransactions = transactions.filter((t) => t.accountId === account.id)
-    const income = accountTransactions.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0)
+    const accountTransactions = transactions.filter((t) => t.accountId === account.Id)
+    const income = accountTransactions.filter((t) => t.Status === "income").reduce((sum, t) => sum + t.Amount, 0)
 
-    const expense = accountTransactions.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0)
+    const expense = accountTransactions.filter((t) => t.Status === "expense").reduce((sum, t) => sum + t.Amount, 0)
 
     return {
-      accountId: account.id,
+      accountId: account.Id,
       accountName: account.name,
       balance: account.balance,
-      currency: account.currency,
+      Currency: account.Currency,
       income,
       expense,
       transactionCount: accountTransactions.length,
@@ -231,21 +231,21 @@ export async function getMoneyManagerStatistics() {
   const monthlyData: Record<string, { income: number; expense: number }> = {}
 
   transactions.forEach((transaction) => {
-    const date = new Date(transaction.date)
-    const monthYear = `${date.toLocaleString("default", { month: "short" })} ${date.getFullYear()}`
+    const CreatedAt = new Date(transaction.CreatedAt)
+    const monthYear = `${CreatedAt.toLocaleString("default", { month: "short" })} ${CreatedAt.getFullYear()}`
 
     if (!monthlyData[monthYear]) {
       monthlyData[monthYear] = { income: 0, expense: 0 }
     }
 
-    if (transaction.type === "income") {
-      monthlyData[monthYear].income += transaction.amount
+    if (transaction.Status === "income") {
+      monthlyData[monthYear].income += transaction.Amount
     } else {
-      monthlyData[monthYear].expense += transaction.amount
+      monthlyData[monthYear].expense += transaction.Amount
     }
   })
 
-  // Convert to array and sort by date
+  // Convert to array and sort by CreatedAt
   const monthlyStats = Object.entries(monthlyData)
     .map(([month, data]) => ({
       month,

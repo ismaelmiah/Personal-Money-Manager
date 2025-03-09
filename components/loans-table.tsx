@@ -21,27 +21,27 @@ export async function LoansTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
+              <TableHead>CreatedAt</TableHead>
               <TableHead>Member</TableHead>
-              <TableHead>Type</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead className="hidden md:table-cell">Notes</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loans.map((loan) => (
-              <TableRow key={loan.id}>
-                <TableCell>{formatDate(loan.date)}</TableCell>
-                <TableCell className="max-w-[120px] truncate" title={loan.memberName}>
-                  {loan.memberName}
+              <TableRow key={loan.Id}>
+                <TableCell>{formatDate(loan.CreatedAt)}</TableCell>
+                <TableCell className="max-w-[120px] truncate" title={loan.MemberName}>
+                  {loan.MemberName}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={loan.type === "loan" ? "default" : "secondary"}>
-                    {loan.type === "loan" ? "Loan" : "Return"}
+                  <Badge variant={loan.Status === "loan" ? "default" : "secondary"}>
+                    {loan.Status === "loan" ? "Loan" : "Return"}
                   </Badge>
                 </TableCell>
-                <TableCell>{formatCurrency(loan.amount, loan.currency)}</TableCell>
-                <TableCell className="hidden md:table-cell">{loan.notes || "—"}</TableCell>
+                <TableCell>{formatCurrency(loan.Amount, loan.Currency)}</TableCell>
+                <TableCell className="hidden md:table-cell">{loan.Notes || "—"}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -14,7 +14,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { name, balance, currency } = body
+    const { name, balance, Currency } = body
 
     if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const newAccount = await addAccount({
       name,
       balance: Number.parseFloat(balance) || 0,
-      currency: currency || "BDT",
+      Currency: Currency || "BDT",
     })
     return NextResponse.json(newAccount, { status: 201 })
   } catch (error) {

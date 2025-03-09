@@ -25,8 +25,8 @@ export async function MemberStats() {
             </TableRow>
           ) : (
             memberStats.map((stat) => (
-              <TableRow key={stat.memberId}>
-                <TableCell className="font-medium">{stat.memberName}</TableCell>
+              <TableRow key={stat.MemberId}>
+                <TableCell className="font-medium">{stat.MemberName}</TableCell>
                 <TableCell>{formatCurrency(stat.totalLoaned.BDT, "BDT")}</TableCell>
                 <TableCell>{formatCurrency(stat.totalReturned.BDT, "BDT")}</TableCell>
                 <TableCell

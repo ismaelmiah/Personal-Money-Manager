@@ -29,25 +29,25 @@ export async function MembersTable() {
           </TableHeader>
           <TableBody>
             {members.map((member) => (
-              <TableRow key={member.id} className="cursor-pointer hover:bg-muted/50">
+              <TableRow key={member.Id} className="cursor-pointer hover:bg-muted/50">
                 <TableCell className="font-medium">
-                  <Link href={`/members/${member.id}`} className="block w-full">
-                    {member.name}
+                  <Link href={`/members/${member.Id}`} className="block w-full">
+                    {member.Name}
                   </Link>
                 </TableCell>
                 <TableCell className="hidden sm:table-cell">
-                  <Link href={`/members/${member.id}`} className="block w-full truncate max-w-[200px]">
-                    {member.email || "—"}
+                  <Link href={`/members/${member.Id}`} className="block w-full truncate max-w-[200px]">
+                    {member.Email || "—"}
                   </Link>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  <Link href={`/members/${member.id}`} className="block w-full">
-                    {member.phone || "—"}
+                  <Link href={`/members/${member.Id}`} className="block w-full">
+                    {member.Phone || "—"}
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <Link href={`/members/${member.id}`} className="block w-full">
-                    {formatDate(member.createdAt)}
+                  <Link href={`/members/${member.Id}`} className="block w-full">
+                    {formatDate(member.CreatedAt)}
                   </Link>
                 </TableCell>
               </TableRow>

@@ -14,20 +14,20 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { memberId, memberName, amount, currency, type, date, notes } = body
+    const { MemberId, MemberName, Amount, Currency, Status, CreatedAt, Notes } = body
 
-    if (!memberId || !amount || !currency || !type || !date) {
+    if (!MemberId || !Amount || !Currency || !Status || !CreatedAt) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const newLoan = await addLoan({
-      memberId,
-      memberName,
-      amount: Number.parseFloat(amount),
-      currency,
-      type,
-      date,
-      notes: notes || "",
+      MemberId,
+      MemberName,
+      Amount: Number.parseFloat(Amount),
+      Currency,
+      Status,
+      CreatedAt,
+      Notes: Notes || "",
     })
 
     return NextResponse.json(newLoan, { status: 201 })

@@ -3,22 +3,22 @@ import { JWT } from "google-auth-library"
 
 // Types
 export type Member = {
-  id: string
-  name: string
-  email: string
-  phone: string
-  createdAt: string
+  Id: string
+  Name: string
+  Phone: string
+  Email: string
+  CreatedAt: string
 }
 
 export type Loan = {
-  id: string
-  memberId: string
-  memberName: string
-  amount: number
-  currency: string
-  type: "loan" | "return"
-  date: string
-  notes: string
+  Id: string
+  MemberId: string
+  MemberName: string
+  Amount: number
+  Currency: string
+  Status: "loan" | "return"
+  CreatedAt: string
+  Notes: string
 }
 
 export type Currency = "BDT" | "USD" | "GBP"
@@ -130,11 +130,11 @@ export async function getMembers(): Promise<Member[]> {
     console.log("Raw members data:", data)
 
     return data.map((row: any[]) => ({
-      id: String(row[0] || ""),
-      name: String(row[1] || ""),
-      email: String(row[2] || ""),
-      phone: String(row[3] || ""),
-      createdAt: String(row[4] || new Date().toISOString()),
+      Id: String(row[0] || ""),
+      Name: String(row[1] || ""),
+      Email: String(row[2] || ""),
+      Phone: String(row[3] || ""),
+      CreatedAt: String(row[4] || new Date().toISOString()),
     }))
   } catch (error) {
     console.error("Error in getMembers:", error)
@@ -149,14 +149,14 @@ export async function getLoans(): Promise<Loan[]> {
     console.log("Raw loans data:", data)
 
     return data.map((row: any[]) => ({
-      id: String(row[0] || ""),
-      memberId: String(row[1] || ""),
-      memberName: String(row[2] || ""),
-      amount: typeof row[3] === "number" ? row[3] : Number.parseFloat(row[3]) || 0,
-      currency: String(row[4] || "BDT"),
-      type: row[5] === "loan" || row[5] === "return" ? row[5] : "loan",
-      date: String(row[6] || new Date().toISOString()),
-      notes: String(row[7] || ""),
+      Id: String(row[0] || ""),
+      MemberId: String(row[1] || ""),
+      MemberName: String(row[2] || ""),
+      Amount: typeof row[3] === "number" ? row[3] : Number.parseFloat(row[3]) || 0,
+      Currency: String(row[4] || "BDT"),
+      Status: row[5] === "loan" || row[5] === "return" ? row[5] : "loan",
+      CreatedAt: String(row[6] || new Date().toISOString()),
+      Notes: String(row[7] || ""),
     }))
   } catch (error) {
     console.error("Error in getLoans:", error)
@@ -165,20 +165,20 @@ export async function getLoans(): Promise<Loan[]> {
 }
 
 // Add new member with improved error handling
-export async function addMember(member: Omit<Member, "id" | "createdAt">): Promise<Member> {
+export async function addMember(member: Omit<Member, "Id" | "CreatedAt">): Promise<Member> {
   try {
-    const id = `M${Date.now()}`
-    const createdAt = new Date().toISOString()
+    const Id = `M${Date.now()}`
+    const CreatedAt = new Date().toISOString()
 
-    const values = [[id, member.name, member.email || "", member.phone || "", createdAt]]
+    const values = [[Id, member.Name, member.Email || "", member.Phone || "", CreatedAt]]
     console.log("Adding member with values:", values)
 
     await appendToSpreadsheet("Members!A2:E", values)
 
     return {
-      id,
+      Id,
       ...member,
-      createdAt,
+      CreatedAt,
     }
   } catch (error) {
     console.error("Error in addMember:", error)
@@ -187,19 +187,19 @@ export async function addMember(member: Omit<Member, "id" | "createdAt">): Promi
 }
 
 // Add new loan with improved error handling
-export async function addLoan(loan: Omit<Loan, "id">): Promise<Loan> {
+export async function addLoan(loan: Omit<Loan, "Id">): Promise<Loan> {
   try {
-    const id = `L${Date.now()}`
+    const Id = `L${Date.now()}`
 
     const values = [
-      [id, loan.memberId, loan.memberName, loan.amount, loan.currency, loan.type, loan.date, loan.notes || ""],
+      [Id, loan.MemberId, loan.MemberName, loan.Amount, loan.Currency, loan.Status, loan.CreatedAt, loan.Notes || ""],
     ]
     console.log("Adding loan with values:", values)
 
     await appendToSpreadsheet("Loans!A2:H", values)
 
     return {
-      id,
+      Id,
       ...loan,
     }
   } catch (error) {
@@ -218,27 +218,27 @@ export async function getStatistics() {
       acc: Record<
         string,
         {
-          memberId: string
-          memberName: string
+          MemberId: string
+          MemberName: string
           totalLoaned: Record<Currency, number>
           totalReturned: Record<Currency, number>
         }
       >,
       loan,
     ) => {
-      if (!acc[loan.memberId]) {
-        acc[loan.memberId] = {
-          memberId: loan.memberId,
-          memberName: loan.memberName,
+      if (!acc[loan.MemberId]) {
+        acc[loan.MemberId] = {
+          MemberId: loan.MemberId,
+          MemberName: loan.MemberName,
           totalLoaned: { BDT: 0, USD: 0, GBP: 0 },
           totalReturned: { BDT: 0, USD: 0, GBP: 0 },
         }
       }
 
-      if (loan.type === "loan") {
-        acc[loan.memberId].totalLoaned[loan.currency as Currency] += loan.amount
+      if (loan.Status === "loan") {
+        acc[loan.MemberId].totalLoaned[loan.Currency as Currency] += loan.Amount
       } else {
-        acc[loan.memberId].totalReturned[loan.currency as Currency] += loan.amount
+        acc[loan.MemberId].totalReturned[loan.Currency as Currency] += loan.Amount
       }
 
       return acc
@@ -246,7 +246,7 @@ export async function getStatistics() {
     {},
   )
 
-  // Total by currency
+  // Total by Currency
   const currencyStats = loans.reduce(
     (
       acc: Record<
@@ -258,19 +258,19 @@ export async function getStatistics() {
       >,
       loan,
     ) => {
-      const currency = loan.currency as Currency
+      const Currency = loan.Currency as Currency
 
-      if (!acc[currency]) {
-        acc[currency] = {
+      if (!acc[Currency]) {
+        acc[Currency] = {
           totalLoaned: 0,
           totalReturned: 0,
         }
       }
 
-      if (loan.type === "loan") {
-        acc[currency].totalLoaned += loan.amount
+      if (loan.Status === "loan") {
+        acc[Currency].totalLoaned += loan.Amount
       } else {
-        acc[currency].totalReturned += loan.amount
+        acc[Currency].totalReturned += loan.Amount
       }
 
       return acc

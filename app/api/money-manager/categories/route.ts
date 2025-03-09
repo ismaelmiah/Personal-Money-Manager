@@ -14,7 +14,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { name, type } = body
+    const { name, Status } = body
 
     if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
     const newCategory = await addCategory({
       name,
-      type: type === "income" ? "income" : "expense",
+      Status: Status === "income" ? "income" : "expense",
     })
     return NextResponse.json(newCategory, { status: 201 })
   } catch (error) {

@@ -8,19 +8,19 @@ export async function CurrencyStats() {
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
-      {currencies.map((currency) => (
-        <Card key={currency}>
+      {currencies.map((Currency) => (
+        <Card key={Currency}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{currency}</CardTitle>
+            <CardTitle className="text-sm font-medium">{Currency}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(currencyStats[currency].totalLoaned - currencyStats[currency].totalReturned, currency)}
+              {formatCurrency(currencyStats[Currency].totalLoaned - currencyStats[Currency].totalReturned, Currency)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Loaned: {formatCurrency(currencyStats[currency].totalLoaned, currency)}
+              Loaned: {formatCurrency(currencyStats[Currency].totalLoaned, Currency)}
               <br />
-              Returned: {formatCurrency(currencyStats[currency].totalReturned, currency)}
+              Returned: {formatCurrency(currencyStats[Currency].totalReturned, Currency)}
             </p>
           </CardContent>
         </Card>

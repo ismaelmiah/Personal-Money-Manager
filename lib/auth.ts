@@ -7,7 +7,7 @@ declare module "next-auth" {
   interface Session {
     error?: string;
     user?: {
-      id?: string | null;
+      Id?: string | null;
       name?: string | null;
       email?: string | null;
       image?: string | null;
@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
       // If the email is allowed, add additional data to the session
       if (session.user) {
         if (token.sub) {
-          session.user.id = token.sub;
+          session.user.Id = token.sub;
         }
       }
       return session;

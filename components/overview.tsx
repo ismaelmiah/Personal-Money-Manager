@@ -23,21 +23,21 @@ export function Overview() {
         const monthlyData: Record<string, { loaned: number; returned: number }> = {}
 
         loans.forEach((loan: any) => {
-          const date = new Date(loan.date)
-          const monthYear = `${date.toLocaleString("default", { month: "short" })} ${date.getFullYear()}`
+          const CreatedAt = new Date(loan.CreatedAt)
+          const monthYear = `${CreatedAt.toLocaleString("default", { month: "short" })} ${CreatedAt.getFullYear()}`
 
           if (!monthlyData[monthYear]) {
             monthlyData[monthYear] = { loaned: 0, returned: 0 }
           }
 
-          if (loan.type === "loan" && loan.currency === "BDT") {
-            monthlyData[monthYear].loaned += loan.amount
-          } else if (loan.type === "return" && loan.currency === "BDT") {
-            monthlyData[monthYear].returned += loan.amount
+          if (loan.Status === "loan" && loan.Currency === "BDT") {
+            monthlyData[monthYear].loaned += loan.Amount
+          } else if (loan.Status === "return" && loan.Currency === "BDT") {
+            monthlyData[monthYear].returned += loan.Amount
           }
         })
 
-        // Convert to array and sort by date
+        // Convert to array and sort by CreatedAt
         const chartData = Object.entries(monthlyData)
           .map(([name, values]) => ({
             name,

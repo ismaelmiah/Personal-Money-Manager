@@ -9,25 +9,25 @@ import { ChevronLeft } from "lucide-react"
 import { MemberTransactionsTable } from "@/components/member-transactions-table"
 import { LoadingSpinner } from "@/components/loading-spinner"
 
-export default async function MemberDetailsPage({ params }: { params: { id: string } }) {
+export default async function MemberDetailsPage({ params }: { params: { Id: string } }) {
   const members = await getMembers()
-  const member = members.find((m) => m.id === params.id)
+  const member = members.find((m) => m.Id === params.Id)
 
   if (!member) {
     notFound()
   }
 
   const loans = await getLoans()
-  const memberLoans = loans.filter((loan) => loan.memberId === params.id)
+  const memberLoans = loans.filter((loan) => loan.MemberId === params.Id)
 
   // Calculate totals
   const totalLoaned = memberLoans
-    .filter((loan) => loan.type === "loan")
-    .reduce((sum, loan) => sum + (loan.currency === "BDT" ? loan.amount : 0), 0)
+    .filter((loan) => loan.Status === "loan")
+    .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
 
   const totalReturned = memberLoans
-    .filter((loan) => loan.type === "return")
-    .reduce((sum, loan) => sum + (loan.currency === "BDT" ? loan.amount : 0), 0)
+    .filter((loan) => loan.Status === "return")
+    .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
 
   const balance = totalLoaned - totalReturned
 
@@ -39,7 +39,7 @@ export default async function MemberDetailsPage({ params }: { params: { id: stri
             <ChevronLeft className="h-4 w-4" />
           </Link>
         </Button>
-        <h2 className="text-xl md:text-3xl font-bold tracking-tight truncate">{member.name}</h2>
+        <h2 className="text-xl md:text-3xl font-bold tracking-tight truncate">{member.Name}</h2>
       </div>
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
@@ -80,19 +80,19 @@ export default async function MemberDetailsPage({ params }: { params: { id: stri
           <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <dt className="text-sm font-medium text-muted-foreground">Name</dt>
-              <dd>{member.name}</dd>
+              <dd>{member.Name}</dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-muted-foreground">Email</dt>
-              <dd className="break-words">{member.email || "—"}</dd>
+              <dd className="break-words">{member.Email || "—"}</dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-muted-foreground">Phone</dt>
-              <dd>{member.phone || "—"}</dd>
+              <dd>{member.Phone || "—"}</dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-muted-foreground">Member Since</dt>
-              <dd>{formatDate(member.createdAt)}</dd>
+              <dd>{formatDate(member.CreatedAt)}</dd>
             </div>
           </dl>
         </CardContent>
@@ -105,7 +105,7 @@ export default async function MemberDetailsPage({ params }: { params: { id: stri
         </CardHeader>
         <CardContent>
           <Suspense fallback={<LoadingSpinner />}>
-            <MemberTransactionsTable memberId={params.id} />
+            <MemberTransactionsTable MemberId={params.Id} />
           </Suspense>
         </CardContent>
       </Card>

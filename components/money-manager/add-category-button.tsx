@@ -23,8 +23,8 @@ import { Plus } from "lucide-react"
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  type: z.enum(["expense", "income"], {
-    required_error: "Please select a type",
+  Status: z.enum(["expense", "income"], {
+    required_error: "Please select a Status",
   }),
 })
 
@@ -38,7 +38,7 @@ export function AddCategoryButton() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      type: "expense",
+      Status: "expense",
     },
   })
 
@@ -48,7 +48,7 @@ export function AddCategoryButton() {
       const response = await fetch("/api/money-manager/categories", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Status": "application/json",
         },
         body: JSON.stringify(values),
       })
@@ -108,14 +108,14 @@ export function AddCategoryButton() {
             />
             <FormField
               control={form.control}
-              name="type"
+              name="Status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category Type</FormLabel>
+                  <FormLabel>Category Status</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
+                        <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

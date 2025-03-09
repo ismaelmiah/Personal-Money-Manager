@@ -29,15 +29,15 @@ export async function AccountsTable() {
           </TableHeader>
           <TableBody>
             {accounts.map((account) => (
-              <TableRow key={account.id}>
+              <TableRow key={account.Id}>
                 <TableCell className="font-medium">{account.name}</TableCell>
                 <TableCell className={account.balance >= 0 ? "text-green-600" : "text-red-600"}>
-                  {formatCurrency(account.balance, account.currency)}
+                  {formatCurrency(account.balance, account.Currency)}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  <Badge variant="outline">{account.currency}</Badge>
+                  <Badge variant="outline">{account.Currency}</Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">{formatDate(account.createdAt)}</TableCell>
+                <TableCell className="hidden md:table-cell">{formatDate(account.CreatedAt)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

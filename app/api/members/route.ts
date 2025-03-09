@@ -14,13 +14,13 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { name, email, phone } = body
+    const { Name, Email, Phone } = body
 
-    if (!name) {
+    if (!Name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
-    const newMember = await addMember({ name, email, phone })
+    const newMember = await addMember({ Name, Email, Phone })
     return NextResponse.json(newMember, { status: 201 })
   } catch (error) {
     console.error("Error creating member:", error)

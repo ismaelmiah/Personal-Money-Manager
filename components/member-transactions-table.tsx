@@ -11,7 +11,7 @@ import { formatCurrency, formatDate, cn } from "@/lib/utils"
 import { CalendarIcon, FilterX } from "lucide-react"
 import type { Loan } from "@/lib/google-sheets"
 
-export function MemberTransactionsTable({ memberId }: { memberId: string }) {
+export function MemberTransactionsTable({ MemberId }: { MemberId: string }) {
   const [loans, setLoans] = useState<Loan[]>([])
   const [filteredLoans, setFilteredLoans] = useState<Loan[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,10 +24,10 @@ export function MemberTransactionsTable({ memberId }: { memberId: string }) {
       try {
         const response = await fetch("/api/loans")
         const allLoans = await response.json()
-        const memberLoans = allLoans.filter((loan: Loan) => loan.memberId === memberId)
+        const memberLoans = allLoans.filter((loan: Loan) => loan.MemberId === MemberId)
 
-        // Sort by date (newest first)
-        memberLoans.sort((a: Loan, b: Loan) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        // Sort by CreatedAt (newest first)
+        memberLoans.sort((a: Loan, b: Loan) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime())
 
         setLoans(memberLoans)
         setFilteredLoans(memberLoans)
@@ -39,27 +39,27 @@ export function MemberTransactionsTable({ memberId }: { memberId: string }) {
     }
 
     fetchLoans()
-  }, [memberId])
+  }, [MemberId])
 
   // Apply filters when they change
   useEffect(() => {
     let filtered = [...loans]
 
-    // Filter by type
+    // Filter by Status
     if (typeFilter !== "all") {
-      filtered = filtered.filter((loan) => loan.type === typeFilter)
+      filtered = filtered.filter((loan) => loan.Status === typeFilter)
     }
 
-    // Filter by date range
+    // Filter by CreatedAt range
     if (dateRange.from) {
-      filtered = filtered.filter((loan) => new Date(loan.date) >= dateRange.from!)
+      filtered = filtered.filter((loan) => new Date(loan.CreatedAt) >= dateRange.from!)
     }
 
     if (dateRange.to) {
-      // Add one day to include the end date
+      // Add one day to include the end CreatedAt
       const endDate = new Date(dateRange.to)
       endDate.setDate(endDate.getDate() + 1)
-      filtered = filtered.filter((loan) => new Date(loan.date) < endDate)
+      filtered = filtered.filter((loan) => new Date(loan.CreatedAt) < endDate)
     }
 
     setFilteredLoans(filtered)
@@ -81,7 +81,7 @@ export function MemberTransactionsTable({ memberId }: { memberId: string }) {
         <div className="flex items-center gap-2">
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by type" />
+              <SelectValue placeholder="Filter by Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Transactions</SelectItem>
@@ -111,7 +111,7 @@ export function MemberTransactionsTable({ memberId }: { memberId: string }) {
                     formatDate(dateRange.from.toISOString())
                   )
                 ) : (
-                  "Date range"
+                  "CreatedAt range"
                 )}
               </Button>
             </PopoverTrigger>
@@ -133,23 +133,23 @@ export function MemberTransactionsTable({ memberId }: { memberId: string }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Type</TableHead>
+                <TableHead>CreatedAt</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Notes</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredLoans.map((loan) => (
-                <TableRow key={loan.id}>
-                  <TableCell>{formatDate(loan.date)}</TableCell>
+                <TableRow key={loan.Id}>
+                  <TableCell>{formatDate(loan.CreatedAt)}</TableCell>
                   <TableCell>
-                    <Badge variant={loan.type === "loan" ? "default" : "secondary"}>
-                      {loan.type === "loan" ? "Loan" : "Return"}
+                    <Badge variant={loan.Status === "loan" ? "default" : "secondary"}>
+                      {loan.Status === "loan" ? "Loan" : "Return"}
                     </Badge>
                   </TableCell>
-                  <TableCell>{formatCurrency(loan.amount, loan.currency)}</TableCell>
-                  <TableCell>{loan.notes || "—"}</TableCell>
+                  <TableCell>{formatCurrency(loan.Amount, loan.Currency)}</TableCell>
+                  <TableCell>{loan.Notes || "—"}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
