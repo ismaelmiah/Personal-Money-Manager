@@ -18,7 +18,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts"
-import type { Loan } from "@/lib/google-sheets"
+import type { Loan } from "@/lib/loan-tracker-service"
 
 export function AnalyticsTab() {
   const [loans, setLoans] = useState<Loan[]>([])

@@ -1,4 +1,4 @@
-import { getTransactions } from "@/lib/money-manager"
+import { getTransactions } from "@/lib/money-manager-service"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { ArrowUpCircle, ArrowDownCircle } from "lucide-react"
 

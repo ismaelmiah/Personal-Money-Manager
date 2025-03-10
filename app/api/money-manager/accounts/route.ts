@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { addAccount, getAccounts } from "@/lib/money-manager"
+import { addAccount, getAccounts } from "@/lib/money-manager-service"
 
 export async function GET() {
   try {

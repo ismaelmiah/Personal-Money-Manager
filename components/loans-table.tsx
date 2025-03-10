@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { getLoans } from "@/lib/google-sheets"
+import { getLoans } from "@/lib/loan-tracker-service"
 import { formatCurrency, formatDate } from "@/lib/utils"
 
 export async function LoansTable() {

@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getMoneyManagerStatistics } from "@/lib/money-manager"
+import { getMoneyManagerStatistics } from "@/lib/money-manager-service"
 import { formatCurrency } from "@/lib/utils"
 import { Wallet, ArrowDownCircle, ArrowUpCircle, CreditCard } from "lucide-react"
 

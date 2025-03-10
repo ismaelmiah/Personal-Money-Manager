@@ -1,4 +1,4 @@
-import { getLoans } from "@/lib/google-sheets"
+import { getLoans } from "@/lib/loan-tracker-service"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { ArrowUpCircle, ArrowDownCircle } from "lucide-react"
 

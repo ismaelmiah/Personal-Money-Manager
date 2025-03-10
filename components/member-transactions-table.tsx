@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { formatCurrency, formatDate, cn } from "@/lib/utils"
 import { CalendarIcon, FilterX } from "lucide-react"
-import type { Loan } from "@/lib/google-sheets"
+import type { Loan } from "@/lib/loan-tracker-service"
 
 export function MemberTransactionsTable({ MemberId }: { MemberId: string }) {
   const [loans, setLoans] = useState<Loan[]>([])

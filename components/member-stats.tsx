@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { getStatistics } from "@/lib/google-sheets"
+import { getStatistics } from "@/lib/loan-tracker-service"
 import { formatCurrency } from "@/lib/utils"
 
 export async function MemberStats() {

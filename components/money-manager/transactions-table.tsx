@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input"
 import { formatCurrency, formatDate, cn } from "@/lib/utils"
 import { CalendarIcon, FilterX, Search } from "lucide-react"
-import type { Transaction } from "@/lib/money-manager"
+import type { Transaction } from "@/lib/money-manager-service"
 
 type DateRange = {
   from: Date | undefined;

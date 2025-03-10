@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { getAccounts } from "@/lib/money-manager"
+import { getAccounts } from "@/lib/money-manager-service"
 import { formatCurrency, formatDate } from "@/lib/utils"
 
 export async function AccountsTable() {

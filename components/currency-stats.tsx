@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getStatistics } from "@/lib/google-sheets"
+import { getStatistics } from "@/lib/loan-tracker-service"
 import { formatCurrency } from "@/lib/utils"
 
 export async function CurrencyStats() {

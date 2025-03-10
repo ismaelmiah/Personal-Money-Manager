@@ -24,7 +24,7 @@ import { CalendarIcon, Plus } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn, formatDate } from "@/lib/utils"
-import type { Account, Category } from "@/lib/money-manager"
+import type { Account, Category } from "@/lib/money-manager-service"
 
 const formSchema = z.object({
   accountId: z.string({

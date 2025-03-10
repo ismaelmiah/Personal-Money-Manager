@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { getMembers } from "@/lib/google-sheets"
+import { getMembers } from "@/lib/loan-tracker-service"
 import { formatDate } from "@/lib/utils"
 
 export async function MembersTable() {

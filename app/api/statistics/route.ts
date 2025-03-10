@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getStatistics } from "@/lib/google-sheets"
+import { getStatistics } from "@/lib/loan-tracker-service"
 
 export async function GET() {
   try {

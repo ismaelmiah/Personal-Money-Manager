@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getLoans, getMembers } from "@/lib/google-sheets"
+import { getLoans, getMembers } from "@/lib/loan-tracker-service"
 import { formatCurrency } from "@/lib/utils"
 import { Users, ArrowDownCircle, ArrowUpCircle, CreditCard } from "lucide-react"
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { addLoan, getLoans } from "@/lib/google-sheets"
+import { addLoan, getLoans } from "@/lib/loan-tracker-service"
 
 export async function GET() {
   try {
