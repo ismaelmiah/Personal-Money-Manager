@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { addCategory, getCategories, updateCategory, deleteCategory } from "@/lib/money-manager-service"
+import { getCategories, updateCategory, deleteCategory } from "@/lib/money-manager-service"
 
 export async function GET() {
   try {

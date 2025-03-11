@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getStatistics } from "@/lib/loan-tracker-service"
-import { formatCurrency } from "@/lib/utils"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getStatistics } from "@/lib/loan-tracker-service";
+import { formatCurrency } from "@/lib/utils";
 
 export async function CurrencyStats() {
-  const { currencyStats } = await getStatistics()
-  const currencies = ["BDT", "USD", "GBP"] as const
+  const { currencyStats } = await getStatistics();
+  const currencies = ["BDT", "USD", "GBP"] as const;
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -15,7 +15,10 @@ export async function CurrencyStats() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(currencyStats[Currency].totalLoaned - currencyStats[Currency].totalReturned, Currency)}
+              {formatCurrency(
+                currencyStats[Currency].totalLoaned - currencyStats[Currency].totalReturned,
+                Currency
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
               Loaned: {formatCurrency(currencyStats[Currency].totalLoaned, Currency)}
@@ -26,6 +29,5 @@ export async function CurrencyStats() {
         </Card>
       ))}
     </div>
-  )
+  );
 }
-

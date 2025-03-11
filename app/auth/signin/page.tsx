@@ -28,8 +28,8 @@ export default async function SignInPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              "This platform has revolutionized how I manage personal loans, making it effortless to track and maintain
-              records."
+              &lduo;This platform has revolutionized how I manage personal loans, making it effortless to track and maintain
+              records.&lduo;
             </p>
             <footer className="text-sm">Sofia Davis</footer>
           </blockquote>
