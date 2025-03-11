@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
-import { getCategories, updateCategory, deleteCategory } from "@/lib/money-manager"
+import { getCategories, updateCategory, deleteCategory } from "@/lib/money-manager-service"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const categories = await getCategories()
-    const category = categories.find((c) => c.id === params.id)
+    const category = categories.find((c) => c.Id === params.id)
 
     if (!category) {
       return NextResponse.json({ error: "Category not found" }, { status: 404 })
@@ -20,15 +20,15 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const body = await request.json()
-    const { name, type } = body
+    const { Name, Status } = body
 
-    if (!name) {
+    if (!Name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
     const updatedCategory = await updateCategory(params.id, {
-      name,
-      type: type === "income" ? "income" : "expense",
+      Name,
+      Status: Status === "income" ? "income" : "expense",
     })
 
     return NextResponse.json(updatedCategory)

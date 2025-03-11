@@ -1,5 +1,6 @@
 import { google } from "googleapis"
 import { JWT } from "google-auth-library"
+import { id } from "date-fns/locale"
 
 // Types
 export type Member = {
@@ -262,6 +263,63 @@ export async function addLoan(loan: Omit<Loan, "Id">): Promise<Loan> {
     }
   } catch (error) {
     console.error("Error in addLoan:", error)
+    throw error
+  }
+}
+
+
+// Update member
+export async function updateMember(id: string, member: Omit<Member, "Id" | "CreatedAt">): Promise<Member> {
+  try {
+    // First, get all members to find the row index
+    const members = await getMembers()
+    const memberIndex = members.findIndex((m) => m.Id === id)
+
+    if (memberIndex === -1) {
+      throw new Error(`Member with ID ${id} not found`)
+    }
+
+    // Calculate the row in the spreadsheet (add 2 for header row and 0-indexing)
+    const rowIndex = memberIndex + 2
+
+    // Update the member in the spreadsheet
+    const values = [[id, member.Name, member.Email || "", member.Phone || "", members[memberIndex].CreatedAt]]
+    await updateSpreadsheetData(`Members!A${rowIndex}:E${rowIndex}`, values)
+    const Id = id;
+
+    return {
+      Id,
+      ...member,
+      CreatedAt: members[memberIndex].CreatedAt,
+    }
+  } catch (error) {
+    console.error("Error in updateMember:", error)
+    throw error
+  }
+}
+
+// Delete member
+export async function deleteMember(id: string): Promise<void> {
+  try {
+    // First, get all members to find the row index
+    const members = await getMembers()
+    const memberIndex = members.findIndex((m) => m.Id === id)
+
+    if (memberIndex === -1) {
+      throw new Error(`Member with ID ${id} not found`)
+    }
+
+    // Calculate the row in the spreadsheet (add 2 for header row and 0-indexing)
+    const rowIndex = memberIndex + 2
+
+    // Delete the member by clearing the row
+    await updateSpreadsheetData(`Members!A${rowIndex}:E${rowIndex}`, [[""]])
+
+    // Note: This doesn't actually delete the row, just clears it
+    // For a proper delete, you would need to use the batchUpdate method with deleteRange
+    // But that's more complex and requires different permissions
+  } catch (error) {
+    console.error("Error in deleteMember:", error)
     throw error
   }
 }

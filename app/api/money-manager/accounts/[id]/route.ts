@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
-import { getAccounts, updateAccount, deleteAccount } from "@/lib/money-manager"
+import { getAccounts, updateAccount, deleteAccount } from "@/lib/money-manager-service"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const accounts = await getAccounts()
-    const account = accounts.find((a) => a.id === params.id)
+    const account = accounts.find((a) => a.Id === params.id)
 
     if (!account) {
       return NextResponse.json({ error: "Account not found" }, { status: 404 })
@@ -20,16 +20,16 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const body = await request.json()
-    const { name, balance, currency } = body
+    const { Name, Balance, Currency } = body
 
-    if (!name) {
+    if (!Name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
     const updatedAccount = await updateAccount(params.id, {
-      name,
-      balance: Number.parseFloat(balance) || 0,
-      currency: currency || "BDT",
+      Name,
+      Balance: Number.parseFloat(Balance) || 0,
+      Currency: Currency || "BDT",
     })
 
     return NextResponse.json(updatedAccount)

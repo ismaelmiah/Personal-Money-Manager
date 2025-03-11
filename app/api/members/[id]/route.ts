@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
-import { getMembers, updateMember, deleteMember } from "@/lib/google-sheets"
+import { getMembers, updateMember, deleteMember } from "@/lib/loan-tracker-service"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const members = await getMembers()
-    const member = members.find((m) => m.id === params.id)
+    const member = members.find((m) => m.Id === params.id)
 
     if (!member) {
       return NextResponse.json({ error: "Member not found" }, { status: 404 })
@@ -20,13 +20,13 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const body = await request.json()
-    const { name, email, phone } = body
+    const { Name, Email, Phone } = body
 
-    if (!name) {
+    if (!Name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
-    const updatedMember = await updateMember(params.id, { name, email, phone })
+    const updatedMember = await updateMember(params.id, { Name, Email, Phone })
     return NextResponse.json(updatedMember)
   } catch (error) {
     console.error("Error updating member:", error)

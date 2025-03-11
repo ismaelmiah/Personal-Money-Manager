@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
-import { getLoans, updateLoan, deleteLoan } from "@/lib/google-sheets"
+import { getLoans, updateLoan, deleteLoan } from "@/lib/loan-tracker-service"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const loans = await getLoans()
-    const loan = loans.find((l) => l.id === params.id)
+    const loan = loans.find((l) => l.Id === params.id)
 
     if (!loan) {
       return NextResponse.json({ error: "Loan not found" }, { status: 404 })
@@ -20,20 +20,20 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const body = await request.json()
-    const { memberId, memberName, amount, currency, type, date, notes } = body
+    const { MemberId, MemberName, amount, Currency, Status, CreatedAt, notes } = body
 
-    if (!memberId || !amount || !currency || !type || !date) {
+    if (!MemberId || !amount || !Currency || !Status || !CreatedAt) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const updatedLoan = await updateLoan(params.id, {
-      memberId,
-      memberName,
-      amount: Number.parseFloat(amount),
-      currency,
-      type,
-      date,
-      notes: notes || "",
+      MemberId,
+      MemberName,
+      Amount: Number.parseFloat(amount),
+      Currency,
+      Status,
+      CreatedAt,
+      Notes: notes || "",
     })
 
     return NextResponse.json(updatedLoan)

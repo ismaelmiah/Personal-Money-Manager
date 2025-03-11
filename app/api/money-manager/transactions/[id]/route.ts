@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
-import { getTransactions, updateTransaction, deleteTransaction } from "@/lib/money-manager"
+import { getTransactions, updateTransaction, deleteTransaction } from "@/lib/money-manager-service"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const transactions = await getTransactions()
-    const transaction = transactions.find((t) => t.id === params.id)
+    const transaction = transactions.find((t) => t.Id === params.id)
 
     if (!transaction) {
       return NextResponse.json({ error: "Transaction not found" }, { status: 404 })
@@ -20,22 +20,22 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const body = await request.json()
-    const { accountId, accountName, amount, currency, type, categoryId, categoryName, date, notes } = body
+    const { AccountId, AccountName, Amount, Currency, Status, CategoryId, CategoryName, CreatedAt, Notes } = body
 
-    if (!accountId || !amount || !categoryId || !date) {
+    if (!AccountId || !Amount || !CategoryId || !CreatedAt) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const updatedTransaction = await updateTransaction(params.id, {
-      accountId,
-      accountName,
-      amount: Number.parseFloat(amount),
-      currency,
-      type,
-      categoryId,
-      categoryName,
-      date,
-      notes: notes || "",
+      AccountId,
+      AccountName,
+      Amount: Number.parseFloat(Amount),
+      Currency,
+      Status,
+      CategoryId,
+      CategoryName,
+      CreatedAt,
+      Notes: Notes || "",
     })
 
     return NextResponse.json(updatedTransaction)
