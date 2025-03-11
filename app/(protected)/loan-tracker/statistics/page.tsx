@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MemberStats } from "@/components/member-stats"
-import { CurrencyStats } from "@/components/Currency-stats"
+import { CurrencyStats } from "@/components/currency-stats"
 import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function StatisticsPage() {
