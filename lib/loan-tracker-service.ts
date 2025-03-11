@@ -126,15 +126,14 @@ export async function updateSpreadsheetData(range: string, values: any[][]) {
 // Get all members with improved error handling
 export async function getMembers(): Promise<Member[]> {
   try {
-    const data = await getSpreadsheetData("Members!A2:E")
-    console.log("Raw members data:", data)
+    const data = await getSpreadsheetData("Members!A2:G")
 
     return data.map((row: any[]) => ({
       Id: String(row[0] || ""),
       Name: String(row[1] || ""),
-      Email: String(row[2] || ""),
-      Phone: String(row[3] || ""),
-      CreatedAt: String(row[4] || new Date().toISOString()),
+      Phone: String(row[2] || ""),
+      Email: String(row[3] || ""),
+      CreatedAt: String(row[6] || new Date().toISOString()),
     }))
   } catch (error) {
     console.error("Error in getMembers:", error)

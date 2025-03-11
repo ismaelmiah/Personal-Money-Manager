@@ -7,7 +7,7 @@ import { formatDate } from "@/lib/utils"
 export async function MembersTable() {
   try {
     const members = await getMembers()
-
+console.log("members", members)
     if (!members || members.length === 0) {
       return (
         <div className="rounded-md border p-4">
@@ -47,7 +47,7 @@ export async function MembersTable() {
                 </TableCell>
                 <TableCell>
                   <Link href={`/members/${member.Id}`} className="block w-full">
-                    {formatDate(member.CreatedAt)}
+                    {member.CreatedAt}
                   </Link>
                 </TableCell>
               </TableRow>
