@@ -18,21 +18,22 @@ export function Overview() {
       try {
         const response = await fetch("/api/loans")
         const loans = await response.json()
-
+        console.log(loans)
         // Group by month
         const monthlyData: Record<string, { loaned: number; returned: number }> = {}
 
         loans.forEach((loan: any) => {
-          const CreatedAt = new Date(loan.CreatedAt)
+          const [day, month, year] = loan.CreatedAt.split(" ")[0].split("/")
+          const CreatedAt = new Date(`${year}-${month}-${day}`)
           const monthYear = `${CreatedAt.toLocaleString("default", { month: "short" })} ${CreatedAt.getFullYear()}`
 
           if (!monthlyData[monthYear]) {
             monthlyData[monthYear] = { loaned: 0, returned: 0 }
           }
 
-          if (loan.Status === "loan" && loan.Currency === "BDT") {
+          if (loan.Status === "Loan" && loan.Currency === "BDT") {
             monthlyData[monthYear].loaned += loan.Amount
-          } else if (loan.Status === "return" && loan.Currency === "BDT") {
+          } else if (loan.Status === "Return" && loan.Currency === "BDT") {
             monthlyData[monthYear].returned += loan.Amount
           }
         })
@@ -70,7 +71,7 @@ export function Overview() {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={350}>
+    <ResponsiveContainer width="100%" height={200}>
       <BarChart data={data}>
         <XAxis
           dataKey="name"

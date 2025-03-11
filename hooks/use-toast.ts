@@ -11,7 +11,7 @@ import type {
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
 
-Status ToasterToast = ToastProps & {
+type ToasterToast = ToastProps & {
   Id: string
   title?: React.ReactNode
   description?: React.ReactNode
@@ -32,9 +32,9 @@ function genId() {
   return count.toString()
 }
 
-Status ActionType = typeof actionTypes
+type ActionType = typeof actionTypes
 
-Status Action =
+type Action =
   | {
       Status: ActionType["ADD_TOAST"]
       toast: ToasterToast
@@ -140,7 +140,7 @@ function dispatch(action: Action) {
   })
 }
 
-Status Toast = Omit<ToasterToast, "Id">
+type Toast = Omit<ToasterToast, "Id">
 
 function toast({ ...props }: Toast) {
   const Id = genId()

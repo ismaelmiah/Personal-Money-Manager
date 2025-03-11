@@ -1,60 +1,90 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+"use client"
+
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { getLoans } from "@/lib/loan-tracker-service"
 import { formatCurrency, formatDate } from "@/lib/utils"
+import { useLoans } from "@/hooks/use-loans"
+import { useRouter } from "next/navigation"
+import { EditLoanButton } from "./loan-tracker/edit-loan-button"
+import { DeleteLoanButton } from "./loan-tracker/delete-loan-button"
+import { PaginatedTable } from "./paginated-table"
 
-export async function LoansTable() {
-  try {
-    const loans = await getLoans()
+export function LoansTable() {
+  const router = useRouter()
+  const { loans, isLoading, isError, mutate } = useLoans()
 
-    if (!loans || loans.length === 0) {
-      return (
-        <div className="rounded-md border p-4">
-          <p className="text-center text-muted-foreground">No loans found. Add your first loan.</p>
-        </div>
-      )
-    }
+  console.log("loans: ", loans)
 
-    return (
-      <div className="rounded-md border overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>CreatedAt</TableHead>
-              <TableHead>Member</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead className="hidden md:table-cell">Notes</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loans.map((loan) => (
-              <TableRow key={loan.Id}>
-                <TableCell>{formatDate(loan.CreatedAt)}</TableCell>
-                <TableCell className="max-w-[120px] truncate" title={loan.MemberName}>
-                  {loan.MemberName}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={loan.Status === "Loan" ? "denger" : "success"}>
-                    {loan.Status === "Loan" ? "Loan" : "Return"}
-                  </Badge>
-                </TableCell>
-                <TableCell>{formatCurrency(loan.Amount, loan.Currency)}</TableCell>
-                <TableCell className="hidden md:table-cell">{loan.Notes || "—"}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    )
-  } catch (error) {
-    console.error("Error in LoansTable:", error)
+  if (isError) {
     return (
       <Alert variant="destructive">
         <AlertDescription>Failed to load loans. Please check your Google Sheets configuration.</AlertDescription>
       </Alert>
     )
   }
-}
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
+  if (!loans || loans.length === 0) {
+    return (
+      <div className="rounded-md border p-4">
+        <p className="text-center text-muted-foreground">No loans found. Add your first loan.</p>
+      </div>
+    )
+  }
+
+  const columns = [
+    {
+      header: "Date",
+      accessorKey: (row: any) => formatDate(row.date),
+      searchable: true,
+    },
+    {
+      header: "Member",
+      accessorKey: "memberName",
+      className: "max-w-[120px] truncate",
+      searchable: true,
+    },
+    {
+      header: "Type",
+      accessorKey: (row: any) => (
+        <Badge variant={row.type === "Loan" ? "danger" : "success"}>{row.type === "Loan" ? "Loan" : "Return"}</Badge>
+      ),
+    },
+    {
+      header: "Amount",
+      accessorKey: (row: any) => row.amount,//formatCurrency(row.amount, row.currency),
+    },
+    {
+      header: "Notes",
+      accessorKey: "notes",
+      className: "hidden md:table-cell",
+      searchable: true,
+    },
+    {
+      header: "Actions",
+      accessorKey: (row: any) => (
+        <div className="flex space-x-2">
+          <EditLoanButton loan={row} onSuccess={() => mutate()} />
+          <DeleteLoanButton loanId={row.id} onSuccess={() => mutate()} />
+        </div>
+      ),
+      className: "w-[100px]",
+    },
+  ]
+
+  return (
+    <PaginatedTable
+      data={loans}
+      columns={columns}
+      searchPlaceholder="Search loans..."
+      onRowClick={(row: any) => router.push(`/loan-tracker/members/${row.memberId}`)}
+    />
+  )
+}

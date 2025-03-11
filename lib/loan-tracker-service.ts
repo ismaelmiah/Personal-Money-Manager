@@ -145,7 +145,7 @@ export async function getMembers(): Promise<Member[]> {
 export async function getLoans(): Promise<Loan[]> {
   try {
     const data = await getSpreadsheetData("Loans!A2:H")
-    console.log("Raw loans data:", data)
+    //console.log("Raw loans data:", data)
 
     return data.map((row: any[]) => ({
       Id: String(row[0] || ""),
@@ -162,6 +162,65 @@ export async function getLoans(): Promise<Loan[]> {
     return []
   }
 }
+
+// Update loan
+export async function updateLoan(id: string, loan: Omit<Loan, "Id">): Promise<Loan> {
+  try {
+    // First, get all loans to find the row index
+    const loans = await getLoans()
+    const loanIndex = loans.findIndex((l) => l.Id === id)
+
+    if (loanIndex === -1) {
+      throw new Error(`Loan with ID ${id} not found`)
+    }
+
+    // Calculate the row in the spreadsheet (add 2 for header row and 0-indexing)
+    const rowIndex = loanIndex + 2
+
+    // Update the loan in the spreadsheet
+    const values = [
+      [id, loan.MemberId, loan.MemberName, loan.Amount, loan.Currency, loan.Status, loan.CreatedAt, loan.Notes || ""],
+    ]
+    const Id = id;
+    
+    await updateSpreadsheetData(`Loans!A${rowIndex}:H${rowIndex}`, values)
+
+    return {
+      Id,
+      ...loan,
+    }
+  } catch (error) {
+    console.error("Error in updateLoan:", error)
+    throw error
+  }
+}
+
+// Delete loan
+export async function deleteLoan(id: string): Promise<void> {
+  try {
+    // First, get all loans to find the row index
+    const loans = await getLoans()
+    const loanIndex = loans.findIndex((l) => l.Id === id)
+
+    if (loanIndex === -1) {
+      throw new Error(`Loan with ID ${id} not found`)
+    }
+
+    // Calculate the row in the spreadsheet (add 2 for header row and 0-indexing)
+    const rowIndex = loanIndex + 2
+
+    // Delete the loan by clearing the row
+    await updateSpreadsheetData(`Loans!A${rowIndex}:H${rowIndex}`, [[""]])
+
+    // Note: This doesn't actually delete the row, just clears it
+    // For a proper delete, you would need to use the batchUpdate method with deleteRange
+    // But that's more complex and requires different permissions
+  } catch (error) {
+    console.error("Error in deleteLoan:", error)
+    throw error
+  }
+}
+
 
 // Add new member with improved error handling
 export async function addMember(member: Omit<Member, "Id" | "CreatedAt">): Promise<Member> {

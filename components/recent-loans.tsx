@@ -6,7 +6,7 @@ export async function RecentLoans() {
   const loans = await getLoans()
 
   // Sort by CreatedAt (newest first) and take the 5 most recent
-  const recentLoans = [...loans].sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime()).slice(0, 5)
+  const recentLoans = [...loans].sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime()).slice(0, 4)
 
   return (
     <div className="space-y-8">
@@ -24,7 +24,7 @@ export async function RecentLoans() {
             </div>
             <div className="flex-1 space-y-1">
               <p className="text-sm font-medium leading-none">{loan.MemberName}</p>
-              <p className="text-sm text-muted-foreground">{formatDate(loan.CreatedAt)}</p>
+              <p className="text-sm text-muted-foreground">{loan.CreatedAt}</p>
             </div>
             <div className={`font-medium ${loan.Status === "Loan" ? "text-red-500" : "text-green-500"}`}>
               {loan.Status === "Loan" ? "-" : "+"}

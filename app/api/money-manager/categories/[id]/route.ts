@@ -1,28 +1,34 @@
 import { NextResponse } from "next/server"
-import { addCategory, getCategories, updateCategory, deleteCategory } from "@/lib/money-manager-service"
+import { getCategories, updateCategory, deleteCategory } from "@/lib/money-manager"
 
-export async function GET() {
+export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const categories = await getCategories()
-    return NextResponse.json(categories)
+    const category = categories.find((c) => c.id === params.id)
+
+    if (!category) {
+      return NextResponse.json({ error: "Category not found" }, { status: 404 })
+    }
+
+    return NextResponse.json(category)
   } catch (error) {
-    console.error("Error fetching categories:", error)
-    return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 })
+    console.error("Error fetching category:", error)
+    return NextResponse.json({ error: "Failed to fetch category" }, { status: 500 })
   }
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const body = await request.json()
-    const { Name, type } = body
+    const { name, type } = body
 
-    if (!Name) {
+    if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
     const updatedCategory = await updateCategory(params.id, {
-      Name,
-      Status: type === "income" ? "income" : "expense",
+      name,
+      type: type === "income" ? "income" : "expense",
     })
 
     return NextResponse.json(updatedCategory)

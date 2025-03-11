@@ -1,35 +1,41 @@
 import { NextResponse } from "next/server"
-import { addTransaction, getTransactions,  updateTransaction, deleteTransaction } from "@/lib/money-manager-service"
+import { getTransactions, updateTransaction, deleteTransaction } from "@/lib/money-manager"
 
-export async function GET() {
+export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const transactions = await getTransactions()
-    return NextResponse.json(transactions)
+    const transaction = transactions.find((t) => t.id === params.id)
+
+    if (!transaction) {
+      return NextResponse.json({ error: "Transaction not found" }, { status: 404 })
+    }
+
+    return NextResponse.json(transaction)
   } catch (error) {
-    console.error("Error fetching transactions:", error)
-    return NextResponse.json({ error: "Failed to fetch transactions" }, { status: 500 })
+    console.error("Error fetching transaction:", error)
+    return NextResponse.json({ error: "Failed to fetch transaction" }, { status: 500 })
   }
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const body = await request.json()
-    const { AccountId, AccountName, amount, Currency, Status, CategoryId, CategoryName, CreatedAt, notes } = body
+    const { accountId, accountName, amount, currency, type, categoryId, categoryName, date, notes } = body
 
-    if (!AccountId || !amount || !CategoryId || !CreatedAt) {
+    if (!accountId || !amount || !categoryId || !date) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const updatedTransaction = await updateTransaction(params.id, {
-      AccountId,
-      AccountName,
-      Amount: Number.parseFloat(amount),
-      Currency,
-      Status,
-      CategoryId,
-      CategoryName,
-      CreatedAt,
-      Notes: notes || "",
+      accountId,
+      accountName,
+      amount: Number.parseFloat(amount),
+      currency,
+      type,
+      categoryId,
+      categoryName,
+      date,
+      notes: notes || "",
     })
 
     return NextResponse.json(updatedTransaction)

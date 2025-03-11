@@ -44,7 +44,6 @@ export function LoanTrackerSideNav({ session }: { session: Session }) {
             <CreditCard className="h-6 w-6" />
             <span>Loan Tracker</span>
           </Link>
-          <PlatformSwitcher currentPlatform="loan-tracker" />
         </div>
         <div className="flex-1 overflow-auto py-2">
           <nav className="grid items-start px-2 text-sm font-medium">
@@ -86,6 +85,8 @@ export function LoanTrackerSideNav({ session }: { session: Session }) {
             </Button>
           </div>
         )}
+        
+        <PlatformSwitcher currentPlatform="loan-tracker" />
       </div>
     </div>
   )
