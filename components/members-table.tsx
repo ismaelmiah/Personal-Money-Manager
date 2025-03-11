@@ -1,6 +1,8 @@
+"use client";
+
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { formatDate } from "@/lib/utils"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import { useMembers } from "@/hooks/use-members"
 import { EditMemberButton } from "./money-manager/edit-member-button"
 import { DeleteMemberButton } from "./money-manager/delete-member-button"
