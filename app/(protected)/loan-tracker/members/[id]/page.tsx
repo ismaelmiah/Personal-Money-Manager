@@ -1,35 +1,40 @@
-import { Suspense } from "react"
-import { notFound } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getLoans, getMembers } from "@/lib/loan-tracker-service"
-import { formatCurrency, formatDate } from "@/lib/utils"
-import { ChevronLeft } from "lucide-react"
-import { MemberTransactionsTable } from "@/components/member-transactions-table"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getLoans, getMembers } from "@/lib/loan-tracker-service";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { ChevronLeft } from "lucide-react";
+import { MemberTransactionsTable } from "@/components/member-transactions-table";
+import { LoadingSpinner } from "@/components/loading-spinner";
 
-export default async function MemberDetailsPage({ params }: { params: { Id: string } }) {
-  const members = await getMembers()
-  const member = members.find((m) => m.Id === params.Id)
+type PageProps = {
+  params: { id: string }; // Plain object with id property
+};
+
+export default async function MemberDetailsPage({ params }:  { params: Promise<{ id: string }> }) {
+  const { id } = await params; // Destructure id from params
+  const members = await getMembers();
+  const member = members.find((m) => m.Id === id); // Use id
 
   if (!member) {
-    notFound()
+    notFound();
   }
 
-  const loans = await getLoans()
-  const memberLoans = loans.filter((loan) => loan.MemberId === params.Id)
+  const loans = await getLoans();
+  const memberLoans = loans.filter((loan) => loan.MemberId === id); // Use id
 
   // Calculate totals
   const totalLoaned = memberLoans
     .filter((loan) => loan.Status === "Loan")
-    .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
+    .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0);
 
   const totalReturned = memberLoans
     .filter((loan) => loan.Status === "Return")
-    .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
+    .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0);
 
-  const balance = totalLoaned - totalReturned
+  const balance = totalLoaned - totalReturned;
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -105,11 +110,10 @@ export default async function MemberDetailsPage({ params }: { params: { Id: stri
         </CardHeader>
         <CardContent>
           <Suspense fallback={<LoadingSpinner />}>
-            <MemberTransactionsTable MemberId={params.Id} />
+            <MemberTransactionsTable MemberId={id} /> {/* Use id */}
           </Suspense>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-

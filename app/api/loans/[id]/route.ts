@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server"
 import { getLoans, updateLoan, deleteLoan } from "@/lib/loan-tracker-service"
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params; // Await the params Promise
     const loans = await getLoans()
-    const loan = loans.find((l) => l.Id === params.id)
+    const loan = loans.find((l) => l.Id === id)
 
     if (!loan) {
       return NextResponse.json({ error: "Loan not found" }, { status: 404 })
@@ -17,8 +18,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params; // Await the params Promise
     const body = await request.json()
     const { MemberId, MemberName, amount, Currency, Status, CreatedAt, notes } = body
 
@@ -26,7 +28,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    const updatedLoan = await updateLoan(params.id, {
+    const updatedLoan = await updateLoan(id, {
       MemberId,
       MemberName,
       Amount: Number.parseFloat(amount),
@@ -43,9 +45,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await deleteLoan(params.id)
+    const { id } = await params; // Await the params Promise
+    await deleteLoan(id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error deleting loan:", error)

@@ -32,8 +32,9 @@ export async function POST(request: Request) {
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params; // Await the params Promise
     const body = await request.json()
     const { Name, Balance, Currency } = body
 
@@ -41,7 +42,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
-    const updatedAccount = await updateAccount(params.id, {
+    const updatedAccount = await updateAccount(id, {
       Name,
       Balance: Number.parseFloat(Balance) || 0,
       Currency: Currency || "BDT",
@@ -54,9 +55,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await deleteAccount(params.id)
+    const { id } = await params; // Await the params Promise
+    await deleteAccount(id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error deleting account:", error)

@@ -13,8 +13,9 @@ export async function GET() {
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params; // Await the params Promise
     const body = await request.json()
     const { MemberId, MemberName, Amount, Currency, Status, CreatedAt, Notes } = body
 
@@ -22,7 +23,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    const updatedLoan = await updateLoan(params.id, {
+    const updatedLoan = await updateLoan(id, {
       MemberId,
       MemberName,
       Amount: Number.parseFloat(Amount),
@@ -39,9 +40,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await deleteLoan(params.id)
+    const { id } = await params; // Await the params Promise
+    await deleteLoan(id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error deleting loan:", error)

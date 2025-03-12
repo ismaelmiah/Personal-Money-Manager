@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server"
 import { getCategories, updateCategory, deleteCategory } from "@/lib/money-manager-service"
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params; // Await the params Promise
     const categories = await getCategories()
-    const category = categories.find((c) => c.Id === params.id)
+    const category = categories.find((c) => c.Id === id)
 
     if (!category) {
       return NextResponse.json({ error: "Category not found" }, { status: 404 })
@@ -17,8 +18,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params; // Await the params Promise
     const body = await request.json()
     const { Name, Status } = body
 
@@ -26,7 +28,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
-    const updatedCategory = await updateCategory(params.id, {
+    const updatedCategory = await updateCategory(id, {
       Name,
       Status: Status === "income" ? "income" : "expense",
     })
@@ -38,9 +40,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await deleteCategory(params.id)
+    const { id } = await params; // Await the params Promise
+    await deleteCategory(id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error deleting category:", error)
