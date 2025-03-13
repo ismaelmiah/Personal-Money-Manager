@@ -90,8 +90,8 @@ export function AddTransactionButton() {
         },
         body: JSON.stringify({
           ...values,
-          accountName: selectedAccount.name,
-          categoryName: selectedCategory.name,
+          accountName: selectedAccount.Name,
+          categoryName: selectedCategory.Name,
           CreatedAt: values.CreatedAt.toISOString(),
         }),
       })
@@ -198,7 +198,7 @@ export function AddTransactionButton() {
                     <SelectContent>
                       {accounts.map((account) => (
                         <SelectItem key={account.Id} value={account.Id}>
-                          {account.name}
+                          {account.Name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -222,7 +222,7 @@ export function AddTransactionButton() {
                     <SelectContent>
                       {filteredCategories.map((category) => (
                         <SelectItem key={category.Id} value={category.Id}>
-                          {category.name}
+                          {category.Name}
                         </SelectItem>
                       ))}
                     </SelectContent>

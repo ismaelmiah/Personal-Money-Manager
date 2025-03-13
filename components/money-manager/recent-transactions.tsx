@@ -25,7 +25,7 @@ export async function RecentTransactions() {
               )}
             </div>
             <div className="flex-1 space-y-1">
-              <p className="text-sm font-medium leading-none">{transaction.categoryName}</p>
+              <p className="text-sm font-medium leading-none">{transaction.CategoryName}</p>
               <p className="text-sm text-muted-foreground">{formatDate(transaction.CreatedAt)}</p>
             </div>
             <div className={`font-medium ${transaction.Status === "expense" ? "text-red-500" : "text-green-500"}`}>

@@ -29,9 +29,9 @@ export async function CategoriesTable() {
           <TableBody>
             {categories.map((category) => (
               <TableRow key={category.Id}>
-                <TableCell className="font-medium">{category.name}</TableCell>
+                <TableCell className="font-medium">{category.Name}</TableCell>
                 <TableCell>
-                  <Badge variant={category.Status === "expense" ? "destructive" : "secondary"}>
+                  <Badge variant={category.Status === "expense" ? "danger" : "success"}>
                     {category.Status === "expense" ? "Expense" : "Income"}
                   </Badge>
                 </TableCell>

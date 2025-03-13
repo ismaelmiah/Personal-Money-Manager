@@ -20,7 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Pencil } from "lucide-react"
-import type { Account } from "@/lib/money-manager"
+import type { Account } from "@/lib/money-manager-service"
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -46,16 +46,16 @@ export function EditAccountButton({ account, onSuccess }: EditAccountButtonProps
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: account.name,
-      balance: account.balance.toString(),
-      currency: account.currency as "BDT" | "USD" | "GBP",
+      name: account.Name,
+      balance: account.Balance.toString(),
+      currency: account.Currency as "BDT" | "USD" | "GBP",
     },
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/money-manager/accounts/${account.id}`, {
+      const response = await fetch(`/api/money-manager/accounts/${account.Id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

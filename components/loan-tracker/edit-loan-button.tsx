@@ -71,7 +71,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const selectedMember = members.find((m) => m.id === values.memberId)
+      const selectedMember = members.find((m) => m.Id === values.memberId)
 
       if (!selectedMember) {
         throw new Error("Member not found")
@@ -84,7 +84,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
         },
         body: JSON.stringify({
           ...values,
-          memberName: selectedMember.name,
+          memberName: selectedMember.Name,
           date: values.date.toISOString(),
         }),
       })
@@ -142,8 +142,8 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
                     </FormControl>
                     <SelectContent>
                       {members.map((member) => (
-                        <SelectItem key={member.id} value={member.id}>
-                          {member.name}
+                        <SelectItem key={member.Id} value={member.Id}>
+                          {member.Name}
                         </SelectItem>
                       ))}
                     </SelectContent>

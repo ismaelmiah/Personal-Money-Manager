@@ -76,14 +76,14 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
 
   // Watch the type field to filter categories
   const transactionType = form.watch("type")
-  const filteredCategories = categories.filter((category) => category.type === transactionType)
+  const filteredCategories = categories.filter((category) => category.Status === transactionType)
 
   // Reset category when type changes
   useEffect(() => {
     const currentCategoryId = form.getValues("categoryId")
-    const currentCategory = categories.find((c) => c.id === currentCategoryId)
+    const currentCategory = categories.find((c) => c.Id === currentCategoryId)
 
-    if (currentCategory && currentCategory.type !== transactionType) {
+    if (currentCategory && currentCategory.Status !== transactionType) {
       form.setValue("categoryId", "")
     }
   }, [transactionType, form, categories])
@@ -91,8 +91,8 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const selectedAccount = accounts.find((a) => a.id === values.accountId)
-      const selectedCategory = categories.find((c) => c.id === values.categoryId)
+      const selectedAccount = accounts.find((a) => a.Id === values.accountId)
+      const selectedCategory = categories.find((c) => c.Id === values.categoryId)
 
       if (!selectedAccount || !selectedCategory) {
         throw new Error("Account or category not found")
@@ -105,8 +105,8 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
         },
         body: JSON.stringify({
           ...values,
-          accountName: selectedAccount.name,
-          categoryName: selectedCategory.name,
+          accountName: selectedAccount.Name,
+          categoryName: selectedCategory.Name,
           date: values.date.toISOString(),
         }),
       })
@@ -185,8 +185,8 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
                     </FormControl>
                     <SelectContent>
                       {accounts.map((account) => (
-                        <SelectItem key={account.id} value={account.id}>
-                          {account.name}
+                        <SelectItem key={account.Id} value={account.Id}>
+                          {account.Name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -209,8 +209,8 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
                     </FormControl>
                     <SelectContent>
                       {filteredCategories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
+                        <SelectItem key={category.Id} value={category.Id}>
+                          {category.Name}
                         </SelectItem>
                       ))}
                     </SelectContent>

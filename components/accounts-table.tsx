@@ -30,9 +30,9 @@ export async function AccountsTable() {
           <TableBody>
             {accounts.map((account) => (
               <TableRow key={account.Id}>
-                <TableCell className="font-medium">{account.name}</TableCell>
-                <TableCell className={account.balance >= 0 ? "text-green-600" : "text-red-600"}>
-                  {formatCurrency(account.balance, account.Currency)}
+                <TableCell className="font-medium">{account.Name}</TableCell>
+                <TableCell className={account.Balance >= 0 ? "text-green-600" : "text-red-600"}>
+                  {formatCurrency(account.Balance, account.Currency)}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   <Badge variant="outline">{account.Currency}</Badge>

@@ -116,7 +116,13 @@ export function MemberTransactionsTable({ MemberId }: { MemberId: string }) {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="range" selected={dateRange} onSelect={setDateRange} initialFocus />
+              <Calendar
+                mode="range"
+                selected={dateRange.from && dateRange.to ? { from: dateRange.from, to: dateRange.to } : undefined}
+                onSelect={setDateRange}
+                initialFocus
+                required
+              />
             </PopoverContent>
           </Popover>
         </div>
@@ -144,8 +150,8 @@ export function MemberTransactionsTable({ MemberId }: { MemberId: string }) {
                 <TableRow key={loan.Id}>
                   <TableCell>{formatDate(loan.CreatedAt)}</TableCell>
                   <TableCell>
-                    <Badge variant={loan.Status === "loan" ? "default" : "secondary"}>
-                      {loan.Status === "loan" ? "Loan" : "Return"}
+                    <Badge variant={loan.Status === "Loan" ? "danger" : "success"}>
+                      {loan.Status === "Loan" ? "Loan" : "Return"}
                     </Badge>
                   </TableCell>
                   <TableCell>{formatCurrency(loan.Amount, loan.Currency)}</TableCell>

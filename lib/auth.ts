@@ -1,17 +1,18 @@
 import type { NextAuthOptions, User, Session } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
-const allowedEmails = ["ismail27.dec@gmail.com", "ismaelmiah.swe@gmail.com"]
+// Load allowed emails from environment variable
+const allowedEmails = (process.env.ALLOWED_EMAILS || "").split(",")
 
 declare module "next-auth" {
   interface Session {
-    error?: string;
+    error?: string
     user?: {
-      Id?: string | null;
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-    };
+      Id?: string | null
+      name?: string | null
+      email?: string | null
+      image?: string | null
+    }
   }
 }
 
@@ -28,21 +29,21 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       // Check if the user's email is allowed
-      if (session.user?.email && !allowedEmails.includes(session.user.email.toLowerCase())) {        
-        session.user.name = null;
-        session.user.email = null;
-        session.user.image = null;
-        session.error = "Email not allowed";
-        return session;
+      if (session.user?.email && !allowedEmails.includes(session.user.email.toLowerCase())) {
+        session.user.name = null
+        session.user.email = null
+        session.user.image = null
+        session.error = "Email not allowed"
+        return session
       }
 
       // If the email is allowed, add additional data to the session
       if (session.user) {
         if (token.sub) {
-          session.user.Id = token.sub;
+          session.user.Id = token.sub
         }
       }
-      return session;
+      return session
     },
   },
   pages: {

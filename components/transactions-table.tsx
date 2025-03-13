@@ -70,12 +70,12 @@ export function TransactionsTable() {
 
     // Filter by category
     if (categoryFilter !== "all") {
-      filtered = filtered.filter((transaction) => transaction.categoryId === categoryFilter)
+      filtered = filtered.filter((transaction) => transaction.CategoryId === categoryFilter)
     }
 
     // Filter by account
     if (accountFilter !== "all") {
-      filtered = filtered.filter((transaction) => transaction.accountId === accountFilter)
+      filtered = filtered.filter((transaction) => transaction.AccountId === accountFilter)
     }
 
     // Filter by search query (search in Notes and category name)
@@ -83,7 +83,7 @@ export function TransactionsTable() {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(
         (transaction) =>
-          transaction.Notes.toLowerCase().includes(query) || transaction.categoryName.toLowerCase().includes(query),
+          transaction.Notes.toLowerCase().includes(query) || transaction.CategoryName.toLowerCase().includes(query),
       )
     }
 
@@ -238,10 +238,10 @@ export function TransactionsTable() {
               {filteredTransactions.map((transaction) => (
                 <TableRow key={transaction.Id}>
                   <TableCell>{formatDate(transaction.CreatedAt)}</TableCell>
-                  <TableCell>{transaction.categoryName}</TableCell>
-                  <TableCell>{transaction.accountName}</TableCell>
+                  <TableCell>{transaction.CategoryName}</TableCell>
+                  <TableCell>{transaction.AccountName}</TableCell>
                   <TableCell>
-                    <Badge variant={transaction.Status === "expense" ? "destructive" : "secondary"}>
+                    <Badge variant={transaction.Status === "expense" ? "danger" : "success"}>
                       {transaction.Status === "expense" ? "Expense" : "Income"}
                     </Badge>
                   </TableCell>

@@ -160,7 +160,7 @@ function prepareMonthlyData(loans: Loan[]) {
       monthlyData[monthYear] = { loaned: 0, returned: 0, balance: 0 }
     }
 
-    if (loan.Status === "loan") {
+    if (loan.Status === "Loan") {
       monthlyData[monthYear].loaned += loan.Amount
     } else {
       monthlyData[monthYear].returned += loan.Amount
@@ -205,8 +205,8 @@ function prepareCurrencyData(loans: Loan[]) {
 }
 
 function prepareTypeData(loans: Loan[]) {
-  const loanCount = loans.filter((loan) => loan.Status === "loan").length
-  const returnCount = loans.filter((loan) => loan.Status === "return").length
+  const loanCount = loans.filter((loan) => loan.Status === "Loan").length
+  const returnCount = loans.filter((loan) => loan.Status === "Return").length
 
   return [
     { name: "Loans", value: loanCount },

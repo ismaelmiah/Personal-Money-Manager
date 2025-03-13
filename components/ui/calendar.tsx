@@ -53,9 +53,13 @@ function Calendar({
         day_hidden: "invisible",
         ...classNames,
       }}
-      components={{
-        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+      modifiersClassNames={{
+        selected: "bg-primary text-primary-foreground",
+        today: "bg-accent text-accent-foreground",
+      }}
+      modifiersStyles={{
+        selected: { borderRadius: "50%" },
+        today: { borderRadius: "50%" },
       }}
       {...props}
     />
