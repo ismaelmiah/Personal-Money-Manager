@@ -2,12 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStatistics } from "@/lib/loan-tracker-service";
 import { formatcurrency } from "@/lib/utils";
 
-export async function currencyStats() {
+export async function CurrencyStats() {
   const { currencyStats } = await getStatistics();
   const currencies = ["BDT", "USD", "GBP"] as const;
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-1">
       {currencies.map((currency) => (
         <Card key={currency}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

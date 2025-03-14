@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { getStatistics } from "@/lib/loan-tracker-service"
 import { formatcurrency } from "@/lib/utils"
 
-export async function memberStats() {
+export async function MemberStats() {
   const { memberStats } = await getStatistics()
 
   return (
