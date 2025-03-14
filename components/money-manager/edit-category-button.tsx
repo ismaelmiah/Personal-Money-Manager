@@ -23,7 +23,7 @@ import { Pencil } from "lucide-react"
 import type { Category } from "@/lib/money-manager-service"
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  name: z.string().min(2, "name must be at least 2 characters"),
   type: z.enum(["expense", "income"], {
     required_error: "Please select a type",
   }),
@@ -43,15 +43,15 @@ export function EditCategoryButton({ category, onSuccess }: EditCategoryButtonPr
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: category.Name,
-      type: category.Status as "expense" | "income",
+      name: category.name,
+      type: category.type as "expense" | "income",
     },
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/money-manager/categories/${category.Id}`, {
+      const response = await fetch(`/api/money-manager/categories/${category.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -103,11 +103,11 @@ export function EditCategoryButton({ category, onSuccess }: EditCategoryButtonPr
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category Name</FormLabel>
+                  <FormLabel>Category name</FormLabel>
                   <FormControl>
                     <Input placeholder="Groceries" {...field} />
                   </FormControl>
-                  <FormDescription>Name of the category (e.g., Groceries, Rent, Salary)</FormDescription>
+                  <FormDescription>name of the category (e.g., Groceries, Rent, Salary)</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

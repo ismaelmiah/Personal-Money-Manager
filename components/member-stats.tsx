@@ -1,8 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { getStatistics } from "@/lib/loan-tracker-service"
-import { formatCurrency } from "@/lib/utils"
+import { formatcurrency } from "@/lib/utils"
 
-export async function MemberStats() {
+export async function memberStats() {
   const { memberStats } = await getStatistics()
 
   return (
@@ -10,10 +10,10 @@ export async function MemberStats() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Member</TableHead>
+            <TableHead>member</TableHead>
             <TableHead>Loaned (BDT)</TableHead>
             <TableHead>Returned (BDT)</TableHead>
-            <TableHead>Balance (BDT)</TableHead>
+            <TableHead>balance (BDT)</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -25,14 +25,14 @@ export async function MemberStats() {
             </TableRow>
           ) : (
             memberStats.map((stat) => (
-              <TableRow key={stat.MemberId}>
-                <TableCell className="font-medium">{stat.MemberName}</TableCell>
-                <TableCell>{formatCurrency(stat.totalLoaned.BDT, "BDT")}</TableCell>
-                <TableCell>{formatCurrency(stat.totalReturned.BDT, "BDT")}</TableCell>
+              <TableRow key={stat.memberid}>
+                <TableCell className="font-medium">{stat.membername}</TableCell>
+                <TableCell>{formatcurrency(stat.totalLoaned.BDT, "BDT")}</TableCell>
+                <TableCell>{formatcurrency(stat.totalReturned.BDT, "BDT")}</TableCell>
                 <TableCell
                   className={stat.totalLoaned.BDT - stat.totalReturned.BDT > 0 ? "text-red-500" : "text-green-500"}
                 >
-                  {formatCurrency(stat.totalLoaned.BDT - stat.totalReturned.BDT, "BDT")}
+                  {formatcurrency(stat.totalLoaned.BDT - stat.totalReturned.BDT, "BDT")}
                 </TableCell>
               </TableRow>
             ))

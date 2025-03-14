@@ -23,9 +23,9 @@ import { Pencil } from "lucide-react"
 import type { Account } from "@/lib/money-manager-service"
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  name: z.string().min(2, "name must be at least 2 characters"),
   balance: z.string().refine((val) => !isNaN(Number.parseFloat(val)), {
-    message: "Balance must be a valid number",
+    message: "balance must be a valid number",
   }),
   currency: z.enum(["BDT", "USD", "GBP"], {
     required_error: "Please select a currency",
@@ -46,16 +46,16 @@ export function EditAccountButton({ account, onSuccess }: EditAccountButtonProps
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: account.Name,
-      balance: account.Balance.toString(),
-      currency: account.Currency as "BDT" | "USD" | "GBP",
+      name: account.name,
+      balance: account.balance.toString(),
+      currency: account.currency as "BDT" | "USD" | "GBP",
     },
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/money-manager/accounts/${account.Id}`, {
+      const response = await fetch(`/api/money-manager/accounts/${account.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -107,11 +107,11 @@ export function EditAccountButton({ account, onSuccess }: EditAccountButtonProps
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Account Name</FormLabel>
+                  <FormLabel>Account name</FormLabel>
                   <FormControl>
                     <Input placeholder="Cash" {...field} />
                   </FormControl>
-                  <FormDescription>Name of the account (e.g., Cash, Bank, Credit Card)</FormDescription>
+                  <FormDescription>name of the account (e.g., Cash, Bank, Credit Card)</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -121,7 +121,7 @@ export function EditAccountButton({ account, onSuccess }: EditAccountButtonProps
               name="balance"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Balance</FormLabel>
+                  <FormLabel>balance</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" {...field} />
                   </FormControl>
@@ -135,7 +135,7 @@ export function EditAccountButton({ account, onSuccess }: EditAccountButtonProps
               name="currency"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Currency</FormLabel>
+                  <FormLabel>currency</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>

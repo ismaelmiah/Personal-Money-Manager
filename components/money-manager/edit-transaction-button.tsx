@@ -32,7 +32,7 @@ const formSchema = z.object({
   accountId: z.string({
     required_error: "Please select an account",
   }),
-  amount: z.string().min(1, "Amount is required"),
+  amount: z.string().min(1, "amount is required"),
   currency: z.enum(["BDT", "USD", "GBP"], {
     required_error: "Please select a currency",
   }),
@@ -64,26 +64,26 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      accountId: transaction.AccountId,
-      amount: transaction.Amount.toString(),
-      currency: transaction.Currency as "BDT" | "USD" | "GBP",
-      type: transaction.Status as "expense" | "income",
-      categoryId: transaction.CategoryId,
-      date: new Date(transaction.CreatedAt),
-      notes: transaction.Notes,
+      accountId: transaction.accountId,
+      amount: transaction.amount.toString(),
+      currency: transaction.currency as "BDT" | "USD" | "GBP",
+      type: transaction.type as "expense" | "income",
+      categoryId: transaction.categoryId,
+      date: new Date(transaction.createdAt),
+      notes: transaction.notes,
     },
   })
 
   // Watch the type field to filter categories
   const transactionType = form.watch("type")
-  const filteredCategories = categories.filter((category) => category.Status === transactionType)
+  const filteredCategories = categories.filter((category) => category.type === transactionType)
 
   // Reset category when type changes
   useEffect(() => {
-    const currentCategoryId = form.getValues("categoryId")
-    const currentCategory = categories.find((c) => c.Id === currentCategoryId)
+    const currentcategoryId = form.getValues("categoryId")
+    const currentCategory = categories.find((c) => c.id === currentcategoryId)
 
-    if (currentCategory && currentCategory.Status !== transactionType) {
+    if (currentCategory && currentCategory.type !== transactionType) {
       form.setValue("categoryId", "")
     }
   }, [transactionType, form, categories])
@@ -91,22 +91,22 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const selectedAccount = accounts.find((a) => a.Id === values.accountId)
-      const selectedCategory = categories.find((c) => c.Id === values.categoryId)
+      const selectedAccount = accounts.find((a) => a.id === values.accountId)
+      const selectedCategory = categories.find((c) => c.id === values.categoryId)
 
       if (!selectedAccount || !selectedCategory) {
         throw new Error("Account or category not found")
       }
 
-      const response = await fetch(`/api/money-manager/transactions/${transaction.Id}`, {
+      const response = await fetch(`/api/money-manager/transactions/${transaction.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...values,
-          accountName: selectedAccount.Name,
-          categoryName: selectedCategory.Name,
+          accountName: selectedAccount.name,
+          categoryname: selectedCategory.name,
           date: values.date.toISOString(),
         }),
       })
@@ -185,8 +185,8 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
                     </FormControl>
                     <SelectContent>
                       {accounts.map((account) => (
-                        <SelectItem key={account.Id} value={account.Id}>
-                          {account.Name}
+                        <SelectItem key={account.id} value={account.id}>
+                          {account.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -209,8 +209,8 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
                     </FormControl>
                     <SelectContent>
                       {filteredCategories.map((category) => (
-                        <SelectItem key={category.Id} value={category.Id}>
-                          {category.Name}
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -225,7 +225,7 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount</FormLabel>
+                    <FormLabel>amount</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" {...field} />
                     </FormControl>
@@ -238,7 +238,7 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
                 name="currency"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Currency</FormLabel>
+                    <FormLabel>currency</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -287,7 +287,7 @@ export function EditTransactionButton({ transaction, onSuccess }: EditTransactio
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes</FormLabel>
+                  <FormLabel>notes</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>

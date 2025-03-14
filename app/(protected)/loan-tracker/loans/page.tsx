@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { LoansTable } from "@/components/loans-table"
+import { LoansTable } from "@/components/loan-tracker/loans-table"
 import { AddLoanButton } from "@/components/add-loan-button"
 import { LoadingSpinner } from "@/components/loading-spinner"
 

@@ -21,12 +21,12 @@ import * as z from "zod"
 import { Plus } from "lucide-react"
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  name: z.string().min(2, "name must be at least 2 characters"),
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
   phone: z.string().optional(),
 })
 
-export function AddMemberButton() {
+export function AddmemberButton() {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -47,7 +47,7 @@ export function AddMemberButton() {
       const response = await fetch("/api/members", {
         method: "POST",
         headers: {
-          "Content-Status": "application/json",
+          "Content-status": "application/json",
         },
         body: JSON.stringify(values),
       })
@@ -58,7 +58,7 @@ export function AddMemberButton() {
 
       toast({
         title: "Success",
-        description: "Member added successfully",
+        description: "member added successfully",
       })
 
       setOpen(false)
@@ -81,12 +81,12 @@ export function AddMemberButton() {
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Add Member
+          Add member
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Member</DialogTitle>
+          <DialogTitle>Add New member</DialogTitle>
           <DialogDescription>Add a new member to track their loans.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -96,7 +96,7 @@ export function AddMemberButton() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>name</FormLabel>
                   <FormControl>
                     <Input placeholder="John Doe" {...field} />
                   </FormControl>
@@ -110,11 +110,11 @@ export function AddMemberButton() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>email</FormLabel>
                   <FormControl>
                     <Input placeholder="john@example.com" {...field} />
                   </FormControl>
-                  <FormDescription>Email address (optional).</FormDescription>
+                  <FormDescription>email address (optional).</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -124,11 +124,11 @@ export function AddMemberButton() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel>phone</FormLabel>
                   <FormControl>
                     <Input placeholder="+1234567890" {...field} />
                   </FormControl>
-                  <FormDescription>Phone number (optional).</FormDescription>
+                  <FormDescription>phone number (optional).</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

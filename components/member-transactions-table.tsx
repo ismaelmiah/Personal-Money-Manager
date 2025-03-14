@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { formatCurrency, formatDate, cn } from "@/lib/utils"
+import { formatcurrency, formatDate, cn } from "@/lib/utils"
 import { CalendarIcon, FilterX } from "lucide-react"
 import type { Loan } from "@/lib/loan-tracker-service"
 
-export function MemberTransactionsTable({ MemberId }: { MemberId: string }) {
+export function memberTransactionsTable({ memberid }: { memberid: string }) {
   const [loans, setLoans] = useState<Loan[]>([])
   const [filteredLoans, setFilteredLoans] = useState<Loan[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,10 +24,10 @@ export function MemberTransactionsTable({ MemberId }: { MemberId: string }) {
       try {
         const response = await fetch("/api/loans")
         const allLoans = await response.json()
-        const memberLoans = allLoans.filter((loan: Loan) => loan.MemberId === MemberId)
+        const memberLoans = allLoans.filter((loan: Loan) => loan.memberid === memberid)
 
-        // Sort by CreatedAt (newest first)
-        memberLoans.sort((a: Loan, b: Loan) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime())
+        // Sort by createdAt (newest first)
+        memberLoans.sort((a: Loan, b: Loan) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
         setLoans(memberLoans)
         setFilteredLoans(memberLoans)
@@ -39,27 +39,27 @@ export function MemberTransactionsTable({ MemberId }: { MemberId: string }) {
     }
 
     fetchLoans()
-  }, [MemberId])
+  }, [memberid])
 
   // Apply filters when they change
   useEffect(() => {
     let filtered = [...loans]
 
-    // Filter by Status
+    // Filter by status
     if (typeFilter !== "all") {
-      filtered = filtered.filter((loan) => loan.Status === typeFilter)
+      filtered = filtered.filter((loan) => loan.status === typeFilter)
     }
 
-    // Filter by CreatedAt range
+    // Filter by createdAt range
     if (dateRange.from) {
-      filtered = filtered.filter((loan) => new Date(loan.CreatedAt) >= dateRange.from!)
+      filtered = filtered.filter((loan) => new Date(loan.createdAt) >= dateRange.from!)
     }
 
     if (dateRange.to) {
-      // Add one day to include the end CreatedAt
+      // Add one day to include the end createdAt
       const endDate = new Date(dateRange.to)
       endDate.setDate(endDate.getDate() + 1)
-      filtered = filtered.filter((loan) => new Date(loan.CreatedAt) < endDate)
+      filtered = filtered.filter((loan) => new Date(loan.createdAt) < endDate)
     }
 
     setFilteredLoans(filtered)
@@ -81,7 +81,7 @@ export function MemberTransactionsTable({ MemberId }: { MemberId: string }) {
         <div className="flex items-center gap-2">
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by Status" />
+              <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Transactions</SelectItem>
@@ -111,7 +111,7 @@ export function MemberTransactionsTable({ MemberId }: { MemberId: string }) {
                     formatDate(dateRange.from.toISOString())
                   )
                 ) : (
-                  "CreatedAt range"
+                  "createdAt range"
                 )}
               </Button>
             </PopoverTrigger>
@@ -139,23 +139,23 @@ export function MemberTransactionsTable({ MemberId }: { MemberId: string }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>CreatedAt</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Notes</TableHead>
+                <TableHead>createdAt</TableHead>
+                <TableHead>status</TableHead>
+                <TableHead>amount</TableHead>
+                <TableHead>notes</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredLoans.map((loan) => (
-                <TableRow key={loan.Id}>
-                  <TableCell>{formatDate(loan.CreatedAt)}</TableCell>
+                <TableRow key={loan.id}>
+                  <TableCell>{formatDate(loan.createdAt)}</TableCell>
                   <TableCell>
-                    <Badge variant={loan.Status === "Loan" ? "danger" : "success"}>
-                      {loan.Status === "Loan" ? "Loan" : "Return"}
+                    <Badge variant={loan.status === "Loan" ? "danger" : "success"}>
+                      {loan.status === "Loan" ? "Loan" : "Return"}
                     </Badge>
                   </TableCell>
-                  <TableCell>{formatCurrency(loan.Amount, loan.Currency)}</TableCell>
-                  <TableCell>{loan.Notes || "—"}</TableCell>
+                  <TableCell>{formatcurrency(loan.amount, loan.currency)}</TableCell>
+                  <TableCell>{loan.notes || "—"}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

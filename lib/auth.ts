@@ -2,13 +2,13 @@ import type { NextAuthOptions, User, Session } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
 // Load allowed emails from environment variable
-const allowedEmails = (process.env.ALLOWED_EMAILS || "").split(",")
+const allowedemails = (process.env.ALLOWED_EMAILS || "").split(",")
 
 declare module "next-auth" {
   interface Session {
     error?: string
     user?: {
-      Id?: string | null
+      id?: string | null
       name?: string | null
       email?: string | null
       image?: string | null
@@ -25,22 +25,22 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user }) {
-      return allowedEmails.includes(user.email?.toLowerCase() ?? "")
+      return allowedemails.includes(user.email?.toLowerCase() ?? "")
     },
     async session({ session, token }) {
       // Check if the user's email is allowed
-      if (session.user?.email && !allowedEmails.includes(session.user.email.toLowerCase())) {
+      if (session.user?.email && !allowedemails.includes(session.user.email.toLowerCase())) {
         session.user.name = null
         session.user.email = null
         session.user.image = null
-        session.error = "Email not allowed"
+        session.error = "email not allowed"
         return session
       }
 
       // If the email is allowed, add additional data to the session
       if (session.user) {
         if (token.sub) {
-          session.user.Id = token.sub
+          session.user.id = token.sub
         }
       }
       return session

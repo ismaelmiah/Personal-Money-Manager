@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MemberStats } from "@/components/member-stats"
-import { CurrencyStats } from "@/components/currency-stats"
+import { memberStats } from "@/components/member-stats"
+import { currencyStats } from "@/components/currency-stats"
 import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function StatisticsPage() {
@@ -13,23 +13,23 @@ export default function StatisticsPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Member Statistics</CardTitle>
+            <CardTitle>member Statistics</CardTitle>
             <CardDescription>Total loans and returns by member</CardDescription>
           </CardHeader>
           <CardContent>
             <Suspense fallback={<LoadingSpinner />}>
-              <MemberStats />
+              <memberStats />
             </Suspense>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Currency Statistics</CardTitle>
-            <CardDescription>Loans and returns by Currency</CardDescription>
+            <CardTitle>currency Statistics</CardTitle>
+            <CardDescription>Loans and returns by currency</CardDescription>
           </CardHeader>
           <CardContent>
             <Suspense fallback={<LoadingSpinner />}>
-              <CurrencyStats />
+              <currencyStats />
             </Suspense>
           </CardContent>
         </Card>

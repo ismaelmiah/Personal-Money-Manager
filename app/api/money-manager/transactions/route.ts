@@ -15,22 +15,22 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params; // Await the params Promise
     const body = await request.json()
-    const { AccountId, AccountName, amount, Currency, Status, CategoryId, CategoryName, CreatedAt, notes } = body
+    const { accountId, accountName, amount, currency, type, categoryId, categoryName, createdAt, notes } = body
 
-    if (!AccountId || !amount || !CategoryId || !CreatedAt) {
+    if (!accountId || !amount || !categoryId || !createdAt) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const updatedTransaction = await updateTransaction(id, {
-      AccountId,
-      AccountName,
-      Amount: Number.parseFloat(amount),
-      Currency,
-      Status,
-      CategoryId,
-      CategoryName,
-      CreatedAt,
-      Notes: notes || "",
+      accountId,
+      accountName,
+      amount: Number.parseFloat(amount),
+      currency,
+      type,
+      categoryId,
+      categoryName,
+      createdAt,
+      notes: notes || "",
     })
 
     return NextResponse.json(updatedTransaction)

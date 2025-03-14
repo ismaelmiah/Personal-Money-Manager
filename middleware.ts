@@ -4,11 +4,11 @@ import { NextResponse } from "next/server"
 export default withAuth(
   function middleware(req) {
     // If the user is authenticated but not authorized, redirect to error page
-  const allowedEmails = (process.env.ALLOWED_EMAILS ?? "").split(",");
+  const allowedemails = (process.env.ALLOWED_EMAILS ?? "").split(",");
   
     if (
       req.nextauth.token &&
-      !allowedEmails.includes(req.nextauth.token.email ?? "")
+      !allowedemails.includes(req.nextauth.token.email ?? "")
     ) {
       return NextResponse.redirect(new URL("/auth/error", req.url))
     }

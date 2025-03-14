@@ -18,7 +18,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts"
-import { formatCurrency } from "@/lib/utils"
+import { formatcurrency } from "@/lib/utils"
 
 export function MoneyManagerAnalytics() {
   const [stats, setStats] = useState<any>(null)
@@ -51,9 +51,9 @@ export function MoneyManagerAnalytics() {
 
   // Prepare data for category chart
   const categoryData = stats.categoryStats.map((cat: any) => ({
-    name: cat.categoryName,
+    name: cat.categoryname,
     value: cat.total,
-    Status: cat.categoryType,
+    status: cat.categoryType,
   }))
 
   // Prepare data for account chart
@@ -91,7 +91,7 @@ export function MoneyManagerAnalytics() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={categoryData.filter((cat: any) => cat.Status === "expense")}
+                    data={categoryData.filter((cat: any) => cat.status === "expense")}
                     cx="50%"
                     cy="50%"
                     labelLine={true}
@@ -104,7 +104,7 @@ export function MoneyManagerAnalytics() {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => [formatCurrency(value, "BDT"), ""]} />
+                  <Tooltip formatter={(value: number) => [formatcurrency(value, "BDT"), ""]} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -115,7 +115,7 @@ export function MoneyManagerAnalytics() {
         <TabsContent value="accounts" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Account Balance</CardTitle>
+              <CardTitle>Account balance</CardTitle>
               <CardDescription>Income and expenses by account</CardDescription>
             </CardHeader>
             <CardContent className="h-[400px]">
@@ -124,11 +124,11 @@ export function MoneyManagerAnalytics() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis tickFormatter={(value) => `৳${value}`} />
-                  <Tooltip formatter={(value: number) => [formatCurrency(value, "BDT"), ""]} />
+                  <Tooltip formatter={(value: number) => [formatcurrency(value, "BDT"), ""]} />
                   <Legend />
                   <Bar dataKey="income" name="Income" fill="#22c55e" />
                   <Bar dataKey="expense" name="Expense" fill="#ef4444" />
-                  <Bar dataKey="balance" name="Balance" fill="#3b82f6" />
+                  <Bar dataKey="balance" name="balance" fill="#3b82f6" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -148,13 +148,13 @@ export function MoneyManagerAnalytics() {
                   <XAxis dataKey="name" />
                   <YAxis tickFormatter={(value) => `৳${value}`} />
                   <Tooltip
-                    formatter={(value: number) => [formatCurrency(value, "BDT"), ""]}
+                    formatter={(value: number) => [formatcurrency(value, "BDT"), ""]}
                     labelFormatter={(label) => `Month: ${label}`}
                   />
                   <Legend />
                   <Line type="monotone" dataKey="income" name="Income" stroke="#22c55e" activeDot={{ r: 8 }} />
                   <Line type="monotone" dataKey="expense" name="Expense" stroke="#ef4444" />
-                  <Line type="monotone" dataKey="balance" name="Balance" stroke="#3b82f6" strokeDasharray="5 5" />
+                  <Line type="monotone" dataKey="balance" name="balance" stroke="#3b82f6" strokeDasharray="5 5" />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>

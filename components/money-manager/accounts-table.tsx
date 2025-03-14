@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { getAccounts } from "@/lib/money-manager-service"
-import { formatCurrency, formatDate } from "@/lib/utils"
+import { formatcurrency, formatDate } from "@/lib/utils"
 
 export async function AccountsTable() {
   try {
@@ -21,23 +21,23 @@ export async function AccountsTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Balance</TableHead>
-              <TableHead className="hidden md:table-cell">Currency</TableHead>
+              <TableHead>name</TableHead>
+              <TableHead>balance</TableHead>
+              <TableHead className="hidden md:table-cell">currency</TableHead>
               <TableHead className="hidden md:table-cell">Created On</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {accounts.map((account) => (
-              <TableRow key={account.Id}>
-                <TableCell className="font-medium">{account.Name}</TableCell>
-                <TableCell className={account.Balance >= 0 ? "text-green-600" : "text-red-600"}>
-                  {formatCurrency(account.Balance, account.Currency)}
+              <TableRow key={account.id}>
+                <TableCell className="font-medium">{account.name}</TableCell>
+                <TableCell className={account.balance >= 0 ? "text-green-600" : "text-red-600"}>
+                  {formatcurrency(account.balance, account.currency)}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  <Badge variant="outline">{account.Currency}</Badge>
+                  <Badge variant="outline">{account.currency}</Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">{formatDate(account.CreatedAt)}</TableCell>
+                <TableCell className="hidden md:table-cell">{formatDate(account.createdAt)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

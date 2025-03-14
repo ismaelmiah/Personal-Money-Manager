@@ -3,26 +3,26 @@ import { JWT } from "google-auth-library"
 import { id } from "date-fns/locale"
 
 // Types
-export type Member = {
-  Id: string
-  Name: string
-  Phone: string
-  Email: string
-  CreatedAt: string
+export type member = {
+  id: string
+  name: string
+  phone: string
+  email: string
+  createdAt: string
 }
 
 export type Loan = {
-  Id: string
-  MemberId: string
-  MemberName: string
-  Amount: number
-  Currency: string
-  Status: "Loan" | "Return"
-  CreatedAt: string
-  Notes: string
+  id: string
+  memberid: string
+  membername: string
+  amount: number
+  currency: string
+  status: "Loan" | "Return"
+  createdAt: string
+  notes: string
 }
 
-export type Currency = "BDT" | "USD" | "GBP"
+export type currency = "BDT" | "USD" | "GBP"
 
 // Initialize Google Sheets client with better error handling
 const initializeGoogleSheetsClient = () => {
@@ -56,8 +56,6 @@ export async function getSpreadsheetData(range: string) {
       valueRenderOption: "UNFORMATTED_VALUE",
       dateTimeRenderOption: "FORMATTED_STRING",
     })
-
-    //console.log(`Raw response data:`, response.data)
 
     if (!response.data.values) {
       console.log(`No values found in range: ${range}`)
@@ -125,19 +123,19 @@ export async function updateSpreadsheetData(range: string, values: any[][]) {
 }
 
 // Get all members with improved error handling
-export async function getMembers(): Promise<Member[]> {
+export async function getmembers(): Promise<member[]> {
   try {
-    const data = await getSpreadsheetData("Members!A2:G")
+    const data = await getSpreadsheetData("members!A2:G")
 
     return data.map((row: any[]) => ({
-      Id: String(row[0] || ""),
-      Name: String(row[1] || ""),
-      Phone: String(row[2] || ""),
-      Email: String(row[3] || ""),
-      CreatedAt: String(row[6] || new Date().toISOString()),
+      id: String(row[0] || ""),
+      name: String(row[1] || ""),
+      phone: String(row[2] || ""),
+      email: String(row[3] || ""),
+      createdAt: String(row[6] || new Date().toISOString()),
     }))
   } catch (error) {
-    console.error("Error in getMembers:", error)
+    console.error("Error in getmembers:", error)
     return []
   }
 }
@@ -146,17 +144,16 @@ export async function getMembers(): Promise<Member[]> {
 export async function getLoans(): Promise<Loan[]> {
   try {
     const data = await getSpreadsheetData("Loans!A2:H")
-    //console.log("Raw loans data:", data)
 
     return data.map((row: any[]) => ({
-      Id: String(row[0] || ""),
-      MemberId: String(row[1] || ""),
-      MemberName: String(row[2] || ""),
-      Status: row[3] === "Loan" || row[3] === "Return" ? row[3] : "Loan",
-      Currency: String(row[4] || "BDT"),
-      Amount: typeof row[5] === "number" ? row[5] : Number.parseFloat(row[5]) || 0,
-      CreatedAt: String(row[6] || new Date().toISOString()),
-      Notes: String(row[7] || ""),
+      id: String(row[0] || ""),
+      memberid: String(row[1] || ""),
+      membername: String(row[2] || ""),
+      status: row[3] === "Loan" || row[3] === "Return" ? row[3] : "Loan",
+      currency: String(row[4] || "BDT"),
+      amount: typeof row[5] === "number" ? row[5] : Number.parseFloat(row[5]) || 0,
+      createdAt: String(row[6] || new Date().toISOString()),
+      notes: String(row[7] || ""),
     }))
   } catch (error) {
     console.error("Error in getLoans:", error)
@@ -165,11 +162,11 @@ export async function getLoans(): Promise<Loan[]> {
 }
 
 // Update loan
-export async function updateLoan(id: string, loan: Omit<Loan, "Id">): Promise<Loan> {
+export async function updateLoan(id: string, loan: Omit<Loan, "id">): Promise<Loan> {
   try {
     // First, get all loans to find the row index
     const loans = await getLoans()
-    const loanIndex = loans.findIndex((l) => l.Id === id)
+    const loanIndex = loans.findIndex((l) => l.id === id)
 
     if (loanIndex === -1) {
       throw new Error(`Loan with ID ${id} not found`)
@@ -180,14 +177,13 @@ export async function updateLoan(id: string, loan: Omit<Loan, "Id">): Promise<Lo
 
     // Update the loan in the spreadsheet
     const values = [
-      [id, loan.MemberId, loan.MemberName, loan.Amount, loan.Currency, loan.Status, loan.CreatedAt, loan.Notes || ""],
+      [id, loan.memberid, loan.membername, loan.amount, loan.currency, loan.status, loan.createdAt, loan.notes || ""],
     ]
-    const Id = id;
     
     await updateSpreadsheetData(`Loans!A${rowIndex}:H${rowIndex}`, values)
 
     return {
-      Id,
+      id,
       ...loan,
     }
   } catch (error) {
@@ -201,7 +197,7 @@ export async function deleteLoan(id: string): Promise<void> {
   try {
     // First, get all loans to find the row index
     const loans = await getLoans()
-    const loanIndex = loans.findIndex((l) => l.Id === id)
+    const loanIndex = loans.findIndex((l) => l.id === id)
 
     if (loanIndex === -1) {
       throw new Error(`Loan with ID ${id} not found`)
@@ -224,41 +220,41 @@ export async function deleteLoan(id: string): Promise<void> {
 
 
 // Add new member with improved error handling
-export async function addMember(member: Omit<Member, "Id" | "CreatedAt">): Promise<Member> {
+export async function addmember(member: Omit<member, "id" | "createdAt">): Promise<member> {
   try {
-    const Id = `M${Date.now()}`
-    const CreatedAt = new Date().toISOString()
+    const id = `M${Date.now()}`
+    const createdAt = new Date().toISOString()
 
-    const values = [[Id, member.Name, member.Email || "", member.Phone || "", CreatedAt]]
+    const values = [[id, member.name, member.email || "", member.phone || "", createdAt]]
     console.log("Adding member with values:", values)
 
-    await appendToSpreadsheet("Members!A2:E", values)
+    await appendToSpreadsheet("members!A2:E", values)
 
     return {
-      Id,
+      id,
       ...member,
-      CreatedAt,
+      createdAt,
     }
   } catch (error) {
-    console.error("Error in addMember:", error)
+    console.error("Error in addmember:", error)
     throw error
   }
 }
 
 // Add new loan with improved error handling
-export async function addLoan(loan: Omit<Loan, "Id">): Promise<Loan> {
+export async function addLoan(loan: Omit<Loan, "id">): Promise<Loan> {
   try {
-    const Id = `L${Date.now()}`
+    const id = `L${Date.now()}`
 
     const values = [
-      [Id, loan.MemberId, loan.MemberName, loan.Amount, loan.Currency, loan.Status, loan.CreatedAt, loan.Notes || ""],
+      [id, loan.memberid, loan.membername, loan.amount, loan.currency, loan.status, loan.createdAt, loan.notes || ""],
     ]
     console.log("Adding loan with values:", values)
 
     await appendToSpreadsheet("Loans!A2:H", values)
 
     return {
-      Id,
+      id,
       ...loan,
     }
   } catch (error) {
@@ -269,57 +265,56 @@ export async function addLoan(loan: Omit<Loan, "Id">): Promise<Loan> {
 
 
 // Update member
-export async function updateMember(id: string, member: Omit<Member, "Id" | "CreatedAt">): Promise<Member> {
+export async function updatemember(id: string, member: Omit<member, "id" | "createdAt">): Promise<member> {
   try {
     // First, get all members to find the row index
-    const members = await getMembers()
-    const memberIndex = members.findIndex((m) => m.Id === id)
+    const members = await getmembers()
+    const memberIndex = members.findIndex((m) => m.id === id)
 
     if (memberIndex === -1) {
-      throw new Error(`Member with ID ${id} not found`)
+      throw new Error(`member with ID ${id} not found`)
     }
 
     // Calculate the row in the spreadsheet (add 2 for header row and 0-indexing)
     const rowIndex = memberIndex + 2
 
     // Update the member in the spreadsheet
-    const values = [[id, member.Name, member.Email || "", member.Phone || "", members[memberIndex].CreatedAt]]
-    await updateSpreadsheetData(`Members!A${rowIndex}:E${rowIndex}`, values)
-    const Id = id;
+    const values = [[id, member.name, member.email || "", member.phone || "", members[memberIndex].createdAt]]
+    await updateSpreadsheetData(`members!A${rowIndex}:E${rowIndex}`, values)
 
     return {
-      Id,
+      id,
       ...member,
-      CreatedAt: members[memberIndex].CreatedAt,
+      createdAt: members[memberIndex].createdAt,
     }
   } catch (error) {
-    console.error("Error in updateMember:", error)
+    console.error("Error in updatemember:", error)
     throw error
   }
 }
 
 // Delete member
-export async function deleteMember(id: string): Promise<void> {
+export async function deletemember(id: string): Promise<void> {
   try {
     // First, get all members to find the row index
-    const members = await getMembers()
-    const memberIndex = members.findIndex((m) => m.Id === id)
+    const members = await getmembers()
+    const memberIndex = members.findIndex((m) => m.id === id)
 
     if (memberIndex === -1) {
-      throw new Error(`Member with ID ${id} not found`)
+      throw new Error(`member with ID ${id} not found`)
     }
 
     // Calculate the row in the spreadsheet (add 2 for header row and 0-indexing)
     const rowIndex = memberIndex + 2
 
     // Delete the member by clearing the row
-    await updateSpreadsheetData(`Members!A${rowIndex}:E${rowIndex}`, [[""]])
+    await updateSpreadsheetData(`members!A${rowIndex}:E${rowIndex}`, [[""]])
 
     // Note: This doesn't actually delete the row, just clears it
     // For a proper delete, you would need to use the batchUpdate method with deleteRange
     // But that's more complex and requires different permissions
   } catch (error) {
-    console.error("Error in deleteMember:", error)
+    console.error("Error in deletemember:", error)
     throw error
   }
 }
@@ -334,27 +329,27 @@ export async function getStatistics() {
       acc: Record<
         string,
         {
-          MemberId: string
-          MemberName: string
-          totalLoaned: Record<Currency, number>
-          totalReturned: Record<Currency, number>
+          memberid: string
+          membername: string
+          totalLoaned: Record<currency, number>
+          totalReturned: Record<currency, number>
         }
       >,
       loan,
     ) => {
-      if (!acc[loan.MemberId]) {
-        acc[loan.MemberId] = {
-          MemberId: loan.MemberId,
-          MemberName: loan.MemberName,
+      if (!acc[loan.memberid]) {
+        acc[loan.memberid] = {
+          memberid: loan.memberid,
+          membername: loan.membername,
           totalLoaned: { BDT: 0, USD: 0, GBP: 0 },
           totalReturned: { BDT: 0, USD: 0, GBP: 0 },
         }
       }
 
-      if (loan.Status === "Loan") {
-        acc[loan.MemberId].totalLoaned[loan.Currency as Currency] += loan.Amount
+      if (loan.status === "Loan") {
+        acc[loan.memberid].totalLoaned[loan.currency as currency] += loan.amount
       } else {
-        acc[loan.MemberId].totalReturned[loan.Currency as Currency] += loan.Amount
+        acc[loan.memberid].totalReturned[loan.currency as currency] += loan.amount
       }
 
       return acc
@@ -362,11 +357,11 @@ export async function getStatistics() {
     {},
   )
 
-  // Total by Currency
+  // Total by currency
   const currencyStats = loans.reduce(
     (
       acc: Record<
-        Currency,
+        currency,
         {
           totalLoaned: number
           totalReturned: number
@@ -374,19 +369,19 @@ export async function getStatistics() {
       >,
       loan,
     ) => {
-      const Currency = loan.Currency as Currency
+      const currency = loan.currency as currency
 
-      if (!acc[Currency]) {
-        acc[Currency] = {
+      if (!acc[currency]) {
+        acc[currency] = {
           totalLoaned: 0,
           totalReturned: 0,
         }
       }
 
-      if (loan.Status === "Loan") {
-        acc[Currency].totalLoaned += loan.Amount
+      if (loan.status === "Loan") {
+        acc[currency].totalLoaned += loan.amount
       } else {
-        acc[Currency].totalReturned += loan.Amount
+        acc[currency].totalReturned += loan.amount
       }
 
       return acc

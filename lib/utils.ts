@@ -1,11 +1,12 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { parse, format } from "date-fns"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatCurrency(amount: number, currency: string) {
+export function formatcurrency(amount: number, currency: string) {
   // Map currency to valid ISO 4217 codes
   const currencyCode = currency.toUpperCase(); // Ensure uppercase (e.g., "bdt" → "BDT")
 
@@ -16,7 +17,10 @@ export function formatCurrency(amount: number, currency: string) {
   }).format(amount);
 }
 
-export function formatDate(CreatedAt: string): string {
-  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-  return new Date(CreatedAt).toLocaleString('en-GB', options).replace(',', '');
+export function formatDate(createdAt: string): string {
+  // Parse the date string using date-fns
+  const parsedDate = parse(createdAt, "dd/MM/yyyy HH:mm:ss", new Date())
+
+  // Format the parsed date to the desired format
+  return format(parsedDate, "dd/MM/yyyy HH:mm:ss")
 }

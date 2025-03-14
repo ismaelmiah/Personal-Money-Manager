@@ -15,15 +15,15 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params; // Await the params Promise
     const body = await request.json()
-    const { Name, type } = body
+    const { name, type } = body
 
-    if (!Name) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 })
+    if (!name) {
+      return NextResponse.json({ error: "name is required" }, { status: 400 })
     }
 
     const updatedCategory = await updateCategory(id, {
-      Name,
-      Status: type === "income" ? "income" : "expense",
+      name,
+      type: type === "income" ? "income" : "expense",
     })
 
     return NextResponse.json(updatedCategory)

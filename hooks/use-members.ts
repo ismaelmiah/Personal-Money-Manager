@@ -1,8 +1,8 @@
 import useSWR from "swr"
-import type { Member } from "@/lib/loan-tracker-service"
+import type { member } from "@/lib/loan-tracker-service"
 
-export function useMembers() {
-  const { data, error, isLoading, mutate } = useSWR<Member[]>("/api/members")
+export function usemembers() {
+  const { data, error, isLoading, mutate } = useSWR<member[]>("/api/members")
 
   return {
     members: data || [],

@@ -22,9 +22,9 @@ import * as z from "zod"
 import { Plus } from "lucide-react"
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  Status: z.enum(["expense", "income"], {
-    required_error: "Please select a Status",
+  name: z.string().min(2, "name must be at least 2 characters"),
+  status: z.enum(["expense", "income"], {
+    required_error: "Please select a status",
   }),
 })
 
@@ -38,7 +38,7 @@ export function AddCategoryButton() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      Status: "expense",
+      status: "expense",
     },
   })
 
@@ -48,7 +48,7 @@ export function AddCategoryButton() {
       const response = await fetch("/api/money-manager/categories", {
         method: "POST",
         headers: {
-          "Content-Status": "application/json",
+          "Content-status": "application/json",
         },
         body: JSON.stringify(values),
       })
@@ -97,25 +97,25 @@ export function AddCategoryButton() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category Name</FormLabel>
+                  <FormLabel>Category name</FormLabel>
                   <FormControl>
                     <Input placeholder="Groceries" {...field} />
                   </FormControl>
-                  <FormDescription>Name of the category (e.g., Groceries, Rent, Salary)</FormDescription>
+                  <FormDescription>name of the category (e.g., Groceries, Rent, Salary)</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
-              name="Status"
+              name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category Status</FormLabel>
+                  <FormLabel>Category status</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
+                        <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

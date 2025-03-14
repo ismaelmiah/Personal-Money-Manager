@@ -22,7 +22,7 @@ export const loanTrackerNavItems = [
     icon: CreditCard,
   },
   {
-    title: "Members",
+    title: "members",
     href: "/members",
     icon: Users,
   },

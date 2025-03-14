@@ -48,8 +48,8 @@ export function AnalyticsTab() {
   // Prepare data for monthly chart
   const monthlyData = prepareMonthlyData(loans)
 
-  // Prepare data for Currency distribution
-  const currencyData = prepareCurrencyData(loans)
+  // Prepare data for currency distribution
+  const currencyData = preparecurrencyData(loans)
 
   // Prepare data for transaction types
   const typeData = prepareTypeData(loans)
@@ -59,8 +59,8 @@ export function AnalyticsTab() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="w-full flex justify-start overflow-x-auto">
           <TabsTrigger value="monthly">Monthly Trends</TabsTrigger>
-          <TabsTrigger value="Currency">Currency Distribution</TabsTrigger>
-          <TabsTrigger value="Status">Transaction Types</TabsTrigger>
+          <TabsTrigger value="currency">currency Distribution</TabsTrigger>
+          <TabsTrigger value="status">Transaction Types</TabsTrigger>
         </TabsList>
 
         <TabsContent value="monthly" className="space-y-4">
@@ -82,18 +82,18 @@ export function AnalyticsTab() {
                   <Legend />
                   <Line type="monotone" dataKey="loaned" name="Loans" stroke="#ef4444" activeDot={{ r: 8 }} />
                   <Line type="monotone" dataKey="returned" name="Returns" stroke="#22c55e" />
-                  <Line type="monotone" dataKey="balance" name="Balance" stroke="#3b82f6" strokeDasharray="5 5" />
+                  <Line type="monotone" dataKey="balance" name="balance" stroke="#3b82f6" strokeDasharray="5 5" />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="Currency" className="space-y-4">
+        <TabsContent value="currency" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Currency Distribution</CardTitle>
-              <CardDescription>Breakdown of loans by Currency</CardDescription>
+              <CardTitle>currency Distribution</CardTitle>
+              <CardDescription>Breakdown of loans by currency</CardDescription>
             </CardHeader>
             <CardContent className="h-[300px] md:h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -120,7 +120,7 @@ export function AnalyticsTab() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="Status" className="space-y-4">
+        <TabsContent value="status" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Transaction Types</CardTitle>
@@ -150,25 +150,25 @@ function prepareMonthlyData(loans: Loan[]) {
   const monthlyData: Record<string, { loaned: number; returned: number; balance: number }> = {}
 
   // Only consider BDT for simplicity
-  const bdtLoans = loans.filter((loan) => loan.Currency === "BDT")
+  const bdtLoans = loans.filter((loan) => loan.currency === "BDT")
 
   bdtLoans.forEach((loan) => {
-    const CreatedAt = new Date(loan.CreatedAt)
-    const monthYear = `${CreatedAt.toLocaleString("default", { month: "short" })} ${CreatedAt.getFullYear()}`
+    const createdAt = new Date(loan.createdAt)
+    const monthYear = `${createdAt.toLocaleString("default", { month: "short" })} ${createdAt.getFullYear()}`
 
     if (!monthlyData[monthYear]) {
       monthlyData[monthYear] = { loaned: 0, returned: 0, balance: 0 }
     }
 
-    if (loan.Status === "Loan") {
-      monthlyData[monthYear].loaned += loan.Amount
+    if (loan.status === "Loan") {
+      monthlyData[monthYear].loaned += loan.amount
     } else {
-      monthlyData[monthYear].returned += loan.Amount
+      monthlyData[monthYear].returned += loan.amount
     }
   })
 
   // Calculate running balance
-  let runningBalance = 0
+  let runningbalance = 0
   const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
     const [monthA, yearA] = a.split(" ")
     const [monthB, yearB] = b.split(" ")
@@ -176,8 +176,8 @@ function prepareMonthlyData(loans: Loan[]) {
   })
 
   sortedMonths.forEach((month) => {
-    runningBalance += monthlyData[month].loaned - monthlyData[month].returned
-    monthlyData[month].balance = runningBalance
+    runningbalance += monthlyData[month].loaned - monthlyData[month].returned
+    monthlyData[month].balance = runningbalance
   })
 
   return sortedMonths.map((month) => ({
@@ -188,14 +188,14 @@ function prepareMonthlyData(loans: Loan[]) {
   }))
 }
 
-function prepareCurrencyData(loans: Loan[]) {
+function preparecurrencyData(loans: Loan[]) {
   const currencyCounts: Record<string, number> = {}
 
   loans.forEach((loan) => {
-    if (!currencyCounts[loan.Currency]) {
-      currencyCounts[loan.Currency] = 0
+    if (!currencyCounts[loan.currency]) {
+      currencyCounts[loan.currency] = 0
     }
-    currencyCounts[loan.Currency]++
+    currencyCounts[loan.currency]++
   })
 
   return Object.entries(currencyCounts).map(([name, value]) => ({
@@ -205,8 +205,8 @@ function prepareCurrencyData(loans: Loan[]) {
 }
 
 function prepareTypeData(loans: Loan[]) {
-  const loanCount = loans.filter((loan) => loan.Status === "Loan").length
-  const returnCount = loans.filter((loan) => loan.Status === "Return").length
+  const loanCount = loans.filter((loan) => loan.status === "Loan").length
+  const returnCount = loans.filter((loan) => loan.status === "Return").length
 
   return [
     { name: "Loans", value: loanCount },

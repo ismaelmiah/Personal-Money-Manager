@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
-import { addMember, getMembers } from "@/lib/loan-tracker-service"
+import { addmember, getmembers } from "@/lib/loan-tracker-service"
 
 export async function GET() {
   try {
-    const members = await getMembers()
+    const members = await getmembers()
     return NextResponse.json(members)
   } catch (error) {
     console.error("Error fetching members:", error)
@@ -14,14 +14,14 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { Name, Email, Phone } = body
+    const { name, email, phone } = body
 
-    if (!Name) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 })
+    if (!name) {
+      return NextResponse.json({ error: "name is required" }, { status: 400 })
     }
 
-    const newMember = await addMember({ Name, Email, Phone })
-    return NextResponse.json(newMember, { status: 201 })
+    const newmember = await addmember({ name, email, phone })
+    return NextResponse.json(newmember, { status: 201 })
   } catch (error) {
     console.error("Error creating member:", error)
     return NextResponse.json({ error: "Failed to create member" }, { status: 500 })

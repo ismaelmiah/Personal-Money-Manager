@@ -14,16 +14,16 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { Name, Balance, Currency } = body
+    const { name, balance, currency } = body
 
-    if (!Name) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 })
+    if (!name) {
+      return NextResponse.json({ error: "name is required" }, { status: 400 })
     }
 
     const newAccount = await addAccount({
-      Name,
-      Balance: Number.parseFloat(Balance) || 0,
-      Currency: Currency || "BDT",
+      name,
+      balance: Number.parseFloat(balance) || 0,
+      currency: currency || "BDT",
     })
     return NextResponse.json(newAccount, { status: 201 })
   } catch (error) {
@@ -36,16 +36,16 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params; // Await the params Promise
     const body = await request.json()
-    const { Name, Balance, Currency } = body
+    const { name, balance, currency } = body
 
-    if (!Name) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 })
+    if (!name) {
+      return NextResponse.json({ error: "name is required" }, { status: 400 })
     }
 
     const updatedAccount = await updateAccount(id, {
-      Name,
-      Balance: Number.parseFloat(Balance) || 0,
-      Currency: Currency || "BDT",
+      name,
+      balance: Number.parseFloat(balance) || 0,
+      currency: currency || "BDT",
     })
 
     return NextResponse.json(updatedAccount)

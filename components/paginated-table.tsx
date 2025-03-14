@@ -34,7 +34,7 @@ export function PaginatedTable<T extends { id: string }>({
   columns,
   searchPlaceholder = "Search...",
   onRowClick,
-}: PaginatedTableProps<T>) {
+}: PaginatedTableProps<T>): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [searchQuery, setSearchQuery] = useState("")
@@ -99,6 +99,8 @@ export function PaginatedTable<T extends { id: string }>({
 
     return pages
   }
+
+  console.log('Paginated Data: ', paginatedData)
 
   return (
     <div className="space-y-4">
@@ -166,7 +168,6 @@ export function PaginatedTable<T extends { id: string }>({
                   {columns.map((column, cellIndex) => {
                     const key = column.accessorKey
                     const value = typeof key === "function" ? key(row) : row[key]
-
                     return (
                       <TableCell key={cellIndex} className={column.className}>
                         {value as React.ReactNode}

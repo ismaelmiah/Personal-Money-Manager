@@ -2,18 +2,16 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { formatCurrency, formatDate } from "@/lib/utils"
+import { formatcurrency, formatDate } from "@/lib/utils"
 import { useLoans } from "@/hooks/use-loans"
 import { useRouter } from "next/navigation"
-import { EditLoanButton } from "./loan-tracker/edit-loan-button"
-import { DeleteLoanButton } from "./loan-tracker/delete-loan-button"
-import { PaginatedTable } from "./paginated-table"
+import { EditLoanButton } from "./edit-loan-button"
+import { DeleteLoanButton } from "./delete-loan-button"
+import { PaginatedTable } from "../paginated-table"
 
 export function LoansTable() {
   const router = useRouter()
   const { loans, isLoading, isError, mutate } = useLoans()
-
-  console.log("loans: ", loans)
 
   if (isError) {
     return (
@@ -42,28 +40,28 @@ export function LoansTable() {
   const columns = [
     {
       header: "Date",
-      accessorKey: (row: any) => formatDate(row.date),
+      accessorKey: (row: any) => formatDate(row.createdAt),
       searchable: true,
     },
     {
       header: "Member",
-      accessorKey: "memberName",
-      className: "max-w-[120px] truncate",
+      accessorKey: (row: any) => row.membername,
+      className: "max-w-[200px] truncate",
       searchable: true,
     },
     {
-      header: "Type",
+      header: "Status",
       accessorKey: (row: any) => (
-        <Badge variant={row.type === "Loan" ? "danger" : "success"}>{row.type === "Loan" ? "Loan" : "Return"}</Badge>
+        <Badge variant={row.status === "Loan" ? "danger" : "success"}>{row.status === "Loan" ? "Loan" : "Return"}</Badge>
       ),
     },
     {
       header: "Amount",
-      accessorKey: (row: any) => row.amount,//formatCurrency(row.amount, row.currency),
+      accessorKey: (row: any) => row.amount,//formatcurrency(row.amount, row.currency),
     },
     {
       header: "Notes",
-      accessorKey: "notes",
+      accessorKey: (row: any) => row.notes,
       className: "hidden md:table-cell",
       searchable: true,
     },
@@ -72,7 +70,7 @@ export function LoansTable() {
       accessorKey: (row: any) => (
         <div className="flex space-x-2">
           <EditLoanButton loan={row} onSuccess={() => mutate()} />
-          <DeleteLoanButton loanId={row.id} onSuccess={() => mutate()} />
+          <DeleteLoanButton loanid={row.id} onSuccess={() => mutate()} />
         </div>
       ),
       className: "w-[100px]",
@@ -84,7 +82,7 @@ export function LoansTable() {
       data={loans}
       columns={columns}
       searchPlaceholder="Search loans..."
-      onRowClick={(row: any) => router.push(`/loan-tracker/members/${row.memberId}`)}
+      onRowClick={(row: any) => router.push(`/loan-tracker/members/${row.memberid}`)}
     />
   )
 }

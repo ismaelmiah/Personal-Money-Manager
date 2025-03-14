@@ -8,7 +8,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { formatCurrency, formatDate, cn } from "@/lib/utils"
+import { formatcurrency, formatDate, cn } from "@/lib/utils"
 import { CalendarIcon, FilterX, Search } from "lucide-react"
 import type { Transaction } from "@/lib/money-manager-service"
 
@@ -26,8 +26,8 @@ export function TransactionsTable() {
   const [accountFilter, setAccountFilter] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined })
-  const [categories, setCategories] = useState<{ Id: string; name: string }[]>([])
-  const [accounts, setAccounts] = useState<{ Id: string; name: string }[]>([])
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
+  const [accounts, setAccounts] = useState<{ id: string; name: string }[]>([])
 
   // Fetch transactions, categories, and accounts
   useEffect(() => {
@@ -37,9 +37,9 @@ export function TransactionsTable() {
         const transactionsResponse = await fetch("/api/money-manager/transactions")
         const transactionsData = await transactionsResponse.json()
 
-        // Sort by CreatedAt (newest first)
+        // Sort by createdAt (newest first)
         transactionsData.sort(
-          (a: Transaction, b: Transaction) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime(),
+          (a: Transaction, b: Transaction) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         )
 
         setTransactions(transactionsData)
@@ -48,12 +48,12 @@ export function TransactionsTable() {
         // Fetch categories
         const categoriesResponse = await fetch("/api/money-manager/categories")
         const categoriesData = await categoriesResponse.json()
-        setCategories(categoriesData.map((cat: any) => ({ Id: cat.Id, name: cat.name })))
+        setCategories(categoriesData.map((cat: any) => ({ id: cat.id, name: cat.name })))
 
         // Fetch accounts
         const accountsResponse = await fetch("/api/money-manager/accounts")
         const accountsData = await accountsResponse.json()
-        setAccounts(accountsData.map((acc: any) => ({ Id: acc.Id, name: acc.name })))
+        setAccounts(accountsData.map((acc: any) => ({ id: acc.id, name: acc.name })))
       } catch (error) {
         console.error("Error fetching data:", error)
       } finally {
@@ -68,19 +68,19 @@ export function TransactionsTable() {
   useEffect(() => {
     let filtered = [...transactions]
 
-    // Filter by Status
+    // Filter by status
     if (typeFilter !== "all") {
-      filtered = filtered.filter((transaction) => transaction.Status === typeFilter)
+      filtered = filtered.filter((transaction) => transaction.type === typeFilter)
     }
 
     // Filter by category
     if (categoryFilter !== "all") {
-      filtered = filtered.filter((transaction) => transaction.CategoryId === categoryFilter)
+      filtered = filtered.filter((transaction) => transaction.categoryId === categoryFilter)
     }
 
     // Filter by account
     if (accountFilter !== "all") {
-      filtered = filtered.filter((transaction) => transaction.AccountId === accountFilter)
+      filtered = filtered.filter((transaction) => transaction.accountId === accountFilter)
     }
 
     // Filter by search query (search in notes and category name)
@@ -88,20 +88,20 @@ export function TransactionsTable() {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(
         (transaction) =>
-          transaction.Notes.toLowerCase().includes(query) || transaction.CategoryName.toLowerCase().includes(query),
+          transaction.notes.toLowerCase().includes(query) || transaction.categoryName.toLowerCase().includes(query),
       )
     }
 
     // Filter by date range
     if (dateRange.from) {
-      filtered = filtered.filter((transaction) => new Date(transaction.CreatedAt) >= dateRange.from!)
+      filtered = filtered.filter((transaction) => new Date(transaction.createdAt) >= dateRange.from!)
     }
 
     if (dateRange.to) {
       // Add one day to include the end date
       const endDate = new Date(dateRange.to)
       endDate.setDate(endDate.getDate() + 1)
-      filtered = filtered.filter((transaction) => new Date(transaction.CreatedAt) < endDate)
+      filtered = filtered.filter((transaction) => new Date(transaction.createdAt) < endDate)
     }
 
     setFilteredTransactions(filtered)
@@ -127,7 +127,7 @@ export function TransactionsTable() {
           <div className="flex items-center gap-2">
             <Select value={typeFilter} onValueChange={setTypeFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by Status" />
+                <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
@@ -145,7 +145,7 @@ export function TransactionsTable() {
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
-                  <SelectItem key={category.Id} value={category.Id}>
+                  <SelectItem key={category.id} value={category.id}>
                     {category.name}
                   </SelectItem>
                 ))}
@@ -161,7 +161,7 @@ export function TransactionsTable() {
               <SelectContent>
                 <SelectItem value="all">All Accounts</SelectItem>
                 {accounts.map((account) => (
-                  <SelectItem key={account.Id} value={account.Id}>
+                  <SelectItem key={account.id} value={account.id}>
                     {account.name}
                   </SelectItem>
                 ))}
@@ -232,30 +232,30 @@ export function TransactionsTable() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>CreatedAt</TableHead>
+                <TableHead>createdAt</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Account</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead className="hidden md:table-cell">Notes</TableHead>
+                <TableHead>status</TableHead>
+                <TableHead>amount</TableHead>
+                <TableHead className="hidden md:table-cell">notes</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredTransactions.map((transaction) => (
-                <TableRow key={transaction.Id}>
-                  <TableCell>{formatDate(transaction.CreatedAt)}</TableCell>
-                  <TableCell>{transaction.CategoryName}</TableCell>
-                  <TableCell>{transaction.AccountName}</TableCell>
+                <TableRow key={transaction.id}>
+                  <TableCell>{formatDate(transaction.createdAt)}</TableCell>
+                  <TableCell>{transaction.categoryName}</TableCell>
+                  <TableCell>{transaction.accountName}</TableCell>
                   <TableCell>
-                    <Badge variant={transaction.Status === "expense" ? "danger" : "success"}>
-                      {transaction.Status === "expense" ? "Expense" : "Income"}
+                    <Badge variant={transaction.type === "expense" ? "danger" : "success"}>
+                      {transaction.type === "expense" ? "Expense" : "Income"}
                     </Badge>
                   </TableCell>
-                  <TableCell className={transaction.Status === "expense" ? "text-red-600" : "text-green-600"}>
-                    {formatCurrency(transaction.Amount, transaction.Currency)}
+                  <TableCell className={transaction.type === "expense" ? "text-red-600" : "text-green-600"}>
+                    {formatcurrency(transaction.amount, transaction.currency)}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell max-w-[200px] truncate" title={transaction.Notes}>
-                    {transaction.Notes || "—"}
+                  <TableCell className="hidden md:table-cell max-w-[200px] truncate" title={transaction.notes}>
+                    {transaction.notes || "—"}
                   </TableCell>
                 </TableRow>
               ))}

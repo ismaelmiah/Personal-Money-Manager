@@ -18,11 +18,11 @@ import { useToast } from "@/components/ui/use-toast"
 import { Trash2 } from "lucide-react"
 
 interface DeleteTransactionButtonProps {
-  transactionId: string
+  transactionid: string
   onSuccess?: () => void
 }
 
-export function DeleteTransactionButton({ transactionId, onSuccess }: DeleteTransactionButtonProps) {
+export function DeleteTransactionButton({ transactionid, onSuccess }: DeleteTransactionButtonProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -31,7 +31,7 @@ export function DeleteTransactionButton({ transactionId, onSuccess }: DeleteTran
   const handleDelete = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/money-manager/transactions/${transactionId}`, {
+      const response = await fetch(`/api/money-manager/transactions/${transactionid}`, {
         method: "DELETE",
       })
 

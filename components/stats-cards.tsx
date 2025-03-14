@@ -1,19 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getLoans, getMembers } from "@/lib/loan-tracker-service"
-import { formatCurrency } from "@/lib/utils"
+import { getLoans, getmembers } from "@/lib/loan-tracker-service"
+import { formatcurrency } from "@/lib/utils"
 import { Users, ArrowDownCircle, ArrowUpCircle, CreditCard } from "lucide-react"
 
 export async function StatsCards() {
   const loans = await getLoans()
-  const members = await getMembers()
+  const members = await getmembers()
 
   const totalLoaned = loans
-    .filter((loan) => loan.Status === "Loan")
-    .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
+    .filter((loan) => loan.status === "Loan")
+    .reduce((sum, loan) => sum + (loan.currency === "BDT" ? loan.amount : 0), 0)
 
   const totalReturned = loans
-    .filter((loan) => loan.Status === "Return")
-    .reduce((sum, loan) => sum + (loan.Currency === "BDT" ? loan.Amount : 0), 0)
+    .filter((loan) => loan.status === "Return")
+    .reduce((sum, loan) => sum + (loan.currency === "BDT" ? loan.amount : 0), 0)
 
   const totalOutstanding = totalLoaned - totalReturned
 
@@ -27,8 +27,8 @@ export async function StatsCards() {
           <CreditCard className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(totalOutstanding, "BDT")}</div>
-          <p className="text-xs text-muted-foreground">Total Amount yet to be returned</p>
+          <div className="text-2xl font-bold">{formatcurrency(totalOutstanding, "BDT")}</div>
+          <p className="text-xs text-muted-foreground">Total amount yet to be returned</p>
         </CardContent>
       </Card>
       <Card>
@@ -37,8 +37,8 @@ export async function StatsCards() {
           <ArrowUpCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(totalLoaned, "BDT")}</div>
-          <p className="text-xs text-muted-foreground">Total Amount loaned out</p>
+          <div className="text-2xl font-bold">{formatcurrency(totalLoaned, "BDT")}</div>
+          <p className="text-xs text-muted-foreground">Total amount loaned out</p>
         </CardContent>
       </Card>
       <Card>
@@ -47,13 +47,13 @@ export async function StatsCards() {
           <ArrowDownCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(totalReturned, "BDT")}</div>
-          <p className="text-xs text-muted-foreground">Total Amount returned</p>
+          <div className="text-2xl font-bold">{formatcurrency(totalReturned, "BDT")}</div>
+          <p className="text-xs text-muted-foreground">Total amount returned</p>
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Active Members</CardTitle>
+          <CardTitle className="text-sm font-medium">Active members</CardTitle>
           <Users className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>

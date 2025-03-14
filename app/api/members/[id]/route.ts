@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server"
-import { getMembers, updateMember, deleteMember } from "@/lib/loan-tracker-service"
+import { getmembers, updatemember, deletemember } from "@/lib/loan-tracker-service"
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params; // Await the params Promise
-    const members = await getMembers()
-    const member = members.find((m) => m.Id === id)
+    const members = await getmembers()
+    const member = members.find((m) => m.id === id)
 
     if (!member) {
-      return NextResponse.json({ error: "Member not found" }, { status: 404 })
+      return NextResponse.json({ error: "member not found" }, { status: 404 })
     }
 
     return NextResponse.json(member)
@@ -22,14 +22,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params; // Await the params Promise
     const body = await request.json()
-    const { Name, Email, Phone } = body
+    const { name, email, phone } = body
 
-    if (!Name) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 })
+    if (!name) {
+      return NextResponse.json({ error: "name is required" }, { status: 400 })
     }
 
-    const updatedMember = await updateMember(id, { Name, Email, Phone })
-    return NextResponse.json(updatedMember)
+    const updatedmember = await updatemember(id, { name, email, phone })
+    return NextResponse.json(updatedmember)
   } catch (error) {
     console.error("Error updating member:", error)
     return NextResponse.json({ error: "Failed to update member" }, { status: 500 })
@@ -39,7 +39,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params; // Await the params Promise
-    await deleteMember(id)
+    await deletemember(id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error deleting member:", error)

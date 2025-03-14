@@ -17,12 +17,12 @@ import {
 import { useToast } from "@/components/ui/use-toast"
 import { Trash2 } from "lucide-react"
 
-interface DeleteMemberButtonProps {
-  memberId: string
+interface DeletememberButtonProps {
+  memberid: string
   onSuccess?: () => void
 }
 
-export function DeleteMemberButton({ memberId, onSuccess }: DeleteMemberButtonProps) {
+export function DeletememberButton({ memberid, onSuccess }: DeletememberButtonProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -31,7 +31,7 @@ export function DeleteMemberButton({ memberId, onSuccess }: DeleteMemberButtonPr
   const handleDelete = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/members/${memberId}`, {
+      const response = await fetch(`/api/members/${memberid}`, {
         method: "DELETE",
       })
 
@@ -41,7 +41,7 @@ export function DeleteMemberButton({ memberId, onSuccess }: DeleteMemberButtonPr
 
       toast({
         title: "Success",
-        description: "Member deleted successfully",
+        description: "member deleted successfully",
       })
 
       setOpen(false)

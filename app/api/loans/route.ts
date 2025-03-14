@@ -5,7 +5,6 @@ import {  getLoans, updateLoan, deleteLoan } from "@/lib/loan-tracker-service"
 export async function GET() {
   try {
     const loans = await getLoans()
-    console.log("loans GET: ", loans)
     return NextResponse.json(loans)
   } catch (error) {
     console.error("Error fetching loans:", error)
@@ -17,20 +16,20 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params; // Await the params Promise
     const body = await request.json()
-    const { MemberId, MemberName, Amount, Currency, Status, CreatedAt, Notes } = body
+    const { memberid, membername, amount, currency, status, createdAt, notes } = body
 
-    if (!MemberId || !Amount || !Currency || !Status || !CreatedAt) {
+    if (!memberid || !amount || !currency || !status || !createdAt) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const updatedLoan = await updateLoan(id, {
-      MemberId,
-      MemberName,
-      Amount: Number.parseFloat(Amount),
-      Currency,
-      Status,
-      CreatedAt,
-      Notes: Notes || "",
+      memberid,
+      membername,
+      amount: Number.parseFloat(amount),
+      currency,
+      status,
+      createdAt,
+      notes: notes || "",
     })
 
     return NextResponse.json(updatedLoan)

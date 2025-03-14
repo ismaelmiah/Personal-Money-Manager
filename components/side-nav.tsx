@@ -20,7 +20,7 @@ export const navItems = [
     icon: CreditCard,
   },
   {
-    title: "Members",
+    title: "members",
     href: "/members",
     icon: Users,
   },

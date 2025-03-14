@@ -5,7 +5,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params; // Await the params Promise
     const transactions = await getTransactions()
-    const transaction = transactions.find((t) => t.Id === id)
+    const transaction = transactions.find((t) => t.id === id)
 
     if (!transaction) {
       return NextResponse.json({ error: "Transaction not found" }, { status: 404 })
@@ -22,22 +22,22 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params; // Await the params Promise
     const body = await request.json()
-    const { AccountId, AccountName, Amount, Currency, Status, CategoryId, CategoryName, CreatedAt, Notes } = body
+    const { accountId, accountName, amount, currency, type, categoryId, categoryName, createdAt, notes } = body
 
-    if (!AccountId || !Amount || !CategoryId || !CreatedAt) {
+    if (!accountId || !amount || !categoryId || !createdAt) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const updatedTransaction = await updateTransaction(id, {
-      AccountId,
-      AccountName,
-      Amount: Number.parseFloat(Amount),
-      Currency,
-      Status,
-      CategoryId,
-      CategoryName,
-      CreatedAt,
-      Notes: Notes || "",
+      accountId,
+      accountName,
+      amount: Number.parseFloat(amount),
+      currency,
+      type,
+      categoryId,
+      categoryName,
+      createdAt,
+      notes: notes || "",
     })
 
     return NextResponse.json(updatedTransaction)

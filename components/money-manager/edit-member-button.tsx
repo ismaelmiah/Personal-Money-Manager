@@ -19,20 +19,20 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Pencil } from "lucide-react"
-import type { Member } from "@/lib/loan-tracker-service"
+import type { member } from "@/lib/loan-tracker-service"
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  name: z.string().min(2, "name must be at least 2 characters"),
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
   phone: z.string().optional(),
 })
 
-interface EditMemberButtonProps {
-  member: Member
+interface EditmemberButtonProps {
+  member: member
   onSuccess?: () => void
 }
 
-export function EditMemberButton({ member, onSuccess }: EditMemberButtonProps) {
+export function EditmemberButton({ member, onSuccess }: EditmemberButtonProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -41,16 +41,16 @@ export function EditMemberButton({ member, onSuccess }: EditMemberButtonProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: member.Name,
-      email: member.Email || "",
-      phone: member.Phone || "",
+      name: member.name,
+      email: member.email || "",
+      phone: member.phone || "",
     },
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/members/${member.Id}`, {
+      const response = await fetch(`/api/members/${member.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export function EditMemberButton({ member, onSuccess }: EditMemberButtonProps) {
 
       toast({
         title: "Success",
-        description: "Member updated successfully",
+        description: "member updated successfully",
       })
 
       setOpen(false)
@@ -92,7 +92,7 @@ export function EditMemberButton({ member, onSuccess }: EditMemberButtonProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Member</DialogTitle>
+          <DialogTitle>Edit member</DialogTitle>
           <DialogDescription>Update member information.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -102,7 +102,7 @@ export function EditMemberButton({ member, onSuccess }: EditMemberButtonProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>name</FormLabel>
                   <FormControl>
                     <Input placeholder="John Doe" {...field} />
                   </FormControl>
@@ -116,11 +116,11 @@ export function EditMemberButton({ member, onSuccess }: EditMemberButtonProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>email</FormLabel>
                   <FormControl>
                     <Input placeholder="john@example.com" {...field} />
                   </FormControl>
-                  <FormDescription>Email address (optional).</FormDescription>
+                  <FormDescription>email address (optional).</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -130,11 +130,11 @@ export function EditMemberButton({ member, onSuccess }: EditMemberButtonProps) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel>phone</FormLabel>
                   <FormControl>
                     <Input placeholder="+1234567890" {...field} />
                   </FormControl>
-                  <FormDescription>Phone number (optional).</FormDescription>
+                  <FormDescription>phone number (optional).</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

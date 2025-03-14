@@ -3,14 +3,14 @@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { formatDate } from "@/lib/utils"
 import { useRouter } from "next/navigation"
-import { useMembers } from "@/hooks/use-members"
-import { EditMemberButton } from "./money-manager/edit-member-button"
-import { DeleteMemberButton } from "./money-manager/delete-member-button"
-import { PaginatedTable } from "./paginated-table"
+import { usemembers } from "@/hooks/use-members"
+import { EditmemberButton } from "../money-manager/edit-member-button"
+import { DeletememberButton } from "../money-manager/delete-member-button"
+import { PaginatedTable } from "../paginated-table"
 
-export async function MembersTable() {
+export function MembersTable() {
   const router = useRouter()
-  const { members, isLoading, isError, mutate } = useMembers()
+  const { members, isLoading, isError, mutate } = usemembers()
 
   if (isError) {
     return (
@@ -39,19 +39,19 @@ export async function MembersTable() {
   const columns = [
     {
       header: "Name",
-      accessorKey: "name",
+      accessorKey: (row: any) => row.name,
       className: "font-medium",
       searchable: true,
     },
     {
       header: "Email",
-      accessorKey: "email",
+      accessorKey: (row: any) => row.email,
       className: "hidden sm:table-cell truncate max-w-[200px]",
       searchable: true,
     },
     {
       header: "Phone",
-      accessorKey: "phone",
+      accessorKey: (row: any) => row.phone,
       className: "hidden md:table-cell",
       searchable: true,
     },
@@ -63,8 +63,8 @@ export async function MembersTable() {
       header: "Actions",
       accessorKey: (row: any) => (
         <div className="flex space-x-2">
-          <EditMemberButton member={row} onSuccess={() => mutate()} />
-          <DeleteMemberButton memberId={row.id} onSuccess={() => mutate()} />
+          <EditmemberButton member={row} onSuccess={() => mutate()} />
+          <DeletememberButton memberid={row.id} onSuccess={() => mutate()} />
         </div>
       ),
       className: "w-[100px]",

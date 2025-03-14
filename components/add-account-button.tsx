@@ -22,12 +22,12 @@ import * as z from "zod"
 import { Plus } from "lucide-react"
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  name: z.string().min(2, "name must be at least 2 characters"),
   balance: z.string().refine((val) => !isNaN(Number.parseFloat(val)), {
-    message: "Balance must be a valid number",
+    message: "balance must be a valid number",
   }),
-  Currency: z.enum(["BDT", "USD", "GBP"], {
-    required_error: "Please select a Currency",
+  currency: z.enum(["BDT", "USD", "GBP"], {
+    required_error: "Please select a currency",
   }),
 })
 
@@ -42,7 +42,7 @@ export function AddAccountButton() {
     defaultValues: {
       name: "",
       balance: "0",
-      Currency: "BDT",
+      currency: "BDT",
     },
   })
 
@@ -52,7 +52,7 @@ export function AddAccountButton() {
       const response = await fetch("/api/money-manager/accounts", {
         method: "POST",
         headers: {
-          "Content-Status": "application/json",
+          "Content-status": "application/json",
         },
         body: JSON.stringify(values),
       })
@@ -101,11 +101,11 @@ export function AddAccountButton() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Account Name</FormLabel>
+                  <FormLabel>Account name</FormLabel>
                   <FormControl>
                     <Input placeholder="Cash" {...field} />
                   </FormControl>
-                  <FormDescription>Name of the account (e.g., Cash, Bank, Credit Card)</FormDescription>
+                  <FormDescription>name of the account (e.g., Cash, Bank, Credit Card)</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -115,7 +115,7 @@ export function AddAccountButton() {
               name="balance"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Initial Balance</FormLabel>
+                  <FormLabel>Initial balance</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" {...field} />
                   </FormControl>
@@ -126,14 +126,14 @@ export function AddAccountButton() {
             />
             <FormField
               control={form.control}
-              name="Currency"
+              name="currency"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Currency</FormLabel>
+                  <FormLabel>currency</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Currency" />
+                        <SelectValue placeholder="Select currency" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

@@ -30,20 +30,20 @@ const formSchema = z.object({
   accountId: z.string({
     required_error: "Please select an account",
   }),
-  Amount: z.string().min(1, "Amount is required"),
-  Currency: z.enum(["BDT", "USD", "GBP"], {
-    required_error: "Please select a Currency",
+  amount: z.string().min(1, "amount is required"),
+  currency: z.enum(["BDT", "USD", "GBP"], {
+    required_error: "Please select a currency",
   }),
-  Status: z.enum(["expense", "income"], {
-    required_error: "Please select a Status",
+  status: z.enum(["expense", "income"], {
+    required_error: "Please select a status",
   }),
   categoryId: z.string({
     required_error: "Please select a category",
   }),
-  CreatedAt: z.date({
-    required_error: "Please select a CreatedAt",
+  createdAt: z.date({
+    required_error: "Please select a createdAt",
   }),
-  Notes: z.string().optional(),
+  notes: z.string().optional(),
 })
 
 export function AddTransactionButton() {
@@ -57,18 +57,18 @@ export function AddTransactionButton() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      Currency: "BDT",
-      Status: "expense",
-      CreatedAt: new Date(),
-      Notes: "",
+      currency: "BDT",
+      status: "expense",
+      createdAt: new Date(),
+      notes: "",
     },
   })
 
-  // Watch the Status field to filter categories
-  const transactionType = form.watch("Status")
-  const filteredCategories = categories.filter((category) => category.Status === transactionType)
+  // Watch the status field to filter categories
+  const transactionType = form.watch("status")
+  const filteredCategories = categories.filter((category) => category.type === transactionType)
 
-  // Reset category when Status changes
+  // Reset category when status changes
   useEffect(() => {
     form.setValue("categoryId", "")
   }, [transactionType, form])
@@ -76,8 +76,8 @@ export function AddTransactionButton() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const selectedAccount = accounts.find((a) => a.Id === values.accountId)
-      const selectedCategory = categories.find((c) => c.Id === values.categoryId)
+      const selectedAccount = accounts.find((a) => a.id === values.accountId)
+      const selectedCategory = categories.find((c) => c.id === values.categoryId)
 
       if (!selectedAccount || !selectedCategory) {
         throw new Error("Account or category not found")
@@ -86,13 +86,13 @@ export function AddTransactionButton() {
       const response = await fetch("/api/money-manager/transactions", {
         method: "POST",
         headers: {
-          "Content-Status": "application/json",
+          "Content-status": "application/json",
         },
         body: JSON.stringify({
           ...values,
-          accountName: selectedAccount.Name,
-          categoryName: selectedCategory.Name,
-          CreatedAt: values.CreatedAt.toISOString(),
+          accountName: selectedAccount.name,
+          categoryname: selectedCategory.name,
+          createdAt: values.createdAt.toISOString(),
         }),
       })
 
@@ -102,7 +102,7 @@ export function AddTransactionButton() {
 
       toast({
         title: "Success",
-        description: `${values.Status === "expense" ? "Expense" : "Income"} added successfully`,
+        description: `${values.status === "expense" ? "Expense" : "Income"} added successfully`,
       })
 
       setOpen(false)
@@ -164,14 +164,14 @@ export function AddTransactionButton() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="Status"
+              name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Transaction Status</FormLabel>
+                  <FormLabel>Transaction status</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
+                        <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -197,8 +197,8 @@ export function AddTransactionButton() {
                     </FormControl>
                     <SelectContent>
                       {accounts.map((account) => (
-                        <SelectItem key={account.Id} value={account.Id}>
-                          {account.Name}
+                        <SelectItem key={account.id} value={account.id}>
+                          {account.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -221,8 +221,8 @@ export function AddTransactionButton() {
                     </FormControl>
                     <SelectContent>
                       {filteredCategories.map((category) => (
-                        <SelectItem key={category.Id} value={category.Id}>
-                          {category.Name}
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -234,10 +234,10 @@ export function AddTransactionButton() {
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="Amount"
+                name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount</FormLabel>
+                    <FormLabel>amount</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" {...field} />
                     </FormControl>
@@ -247,14 +247,14 @@ export function AddTransactionButton() {
               />
               <FormField
                 control={form.control}
-                name="Currency"
+                name="currency"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Currency</FormLabel>
+                    <FormLabel>currency</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select Currency" />
+                          <SelectValue placeholder="Select currency" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -270,10 +270,10 @@ export function AddTransactionButton() {
             </div>
             <FormField
               control={form.control}
-              name="CreatedAt"
+              name="createdAt"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>CreatedAt</FormLabel>
+                  <FormLabel>createdAt</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -281,7 +281,7 @@ export function AddTransactionButton() {
                           variant={"outline"}
                           className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                         >
-                          {field.value ? formatDate(field.value.toISOString()) : <span>Pick a CreatedAt</span>}
+                          {field.value ? formatDate(field.value.toISOString()) : <span>Pick a createdAt</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
@@ -296,10 +296,10 @@ export function AddTransactionButton() {
             />
             <FormField
               control={form.control}
-              name="Notes"
+              name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes</FormLabel>
+                  <FormLabel>notes</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>

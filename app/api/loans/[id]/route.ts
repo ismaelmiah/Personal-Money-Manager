@@ -5,7 +5,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params; // Await the params Promise
     const loans = await getLoans()
-    const loan = loans.find((l) => l.Id === id)
+    const loan = loans.find((l) => l.id === id)
 
     if (!loan) {
       return NextResponse.json({ error: "Loan not found" }, { status: 404 })
@@ -22,20 +22,20 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params; // Await the params Promise
     const body = await request.json()
-    const { MemberId, MemberName, amount, Currency, Status, CreatedAt, notes } = body
+    const { memberid, membername, amount, currency, status, createdAt, notes } = body
 
-    if (!MemberId || !amount || !Currency || !Status || !CreatedAt) {
+    if (!memberid || !amount || !currency || !status || !createdAt) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const updatedLoan = await updateLoan(id, {
-      MemberId,
-      MemberName,
-      Amount: Number.parseFloat(amount),
-      Currency,
-      Status,
-      CreatedAt,
-      Notes: notes || "",
+      memberid,
+      membername,
+      amount: Number.parseFloat(amount),
+      currency,
+      status,
+      createdAt,
+      notes: notes || "",
     })
 
     return NextResponse.json(updatedLoan)

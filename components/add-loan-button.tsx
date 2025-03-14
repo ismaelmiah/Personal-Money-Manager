@@ -24,28 +24,28 @@ import { CalendarIcon, Plus } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn, formatDate } from "@/lib/utils"
-import type { Member } from "@/lib/loan-tracker-service"
+import type { member } from "@/lib/loan-tracker-service"
 
 const formSchema = z.object({
-  MemberId: z.string({
+  memberid: z.string({
     required_error: "Please select a member",
   }),
-  Amount: z.string().min(1, "Amount is required"),
-  Currency: z.enum(["BDT", "USD", "GBP"], {
-    required_error: "Please select a Currency",
+  amount: z.string().min(1, "amount is required"),
+  currency: z.enum(["BDT", "USD", "GBP"], {
+    required_error: "Please select a currency",
   }),
-  Status: z.enum(["loan", "return"], {
-    required_error: "Please select a Status",
+  status: z.enum(["loan", "return"], {
+    required_error: "Please select a status",
   }),
-  CreatedAt: z.date({
-    required_error: "Please select a CreatedAt",
+  createdAt: z.date({
+    required_error: "Please select a createdAt",
   }),
-  Notes: z.string().optional(),
+  notes: z.string().optional(),
 })
 
 export function AddLoanButton() {
   const [open, setOpen] = useState(false)
-  const [members, setMembers] = useState<Member[]>([])
+  const [members, setmembers] = useState<member[]>([])
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
@@ -53,31 +53,31 @@ export function AddLoanButton() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      Currency: "BDT",
-      Status: "loan",
-      CreatedAt: new Date(),
-      Notes: "",
+      currency: "BDT",
+      status: "loan",
+      createdAt: new Date(),
+      notes: "",
     },
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const selectedMember = members.find((m) => m.Id === values.MemberId)
+      const selectedmember = members.find((m) => m.id === values.memberid)
 
-      if (!selectedMember) {
-        throw new Error("Member not found")
+      if (!selectedmember) {
+        throw new Error("member not found")
       }
 
       const response = await fetch("/api/loans", {
         method: "POST",
         headers: {
-          "Content-Status": "application/json",
+          "Content-status": "application/json",
         },
         body: JSON.stringify({
           ...values,
-          MemberName: selectedMember.Name,
-          CreatedAt: values.CreatedAt.toISOString(),
+          membername: selectedmember.name,
+          createdAt: values.createdAt.toISOString(),
         }),
       })
 
@@ -87,7 +87,7 @@ export function AddLoanButton() {
 
       toast({
         title: "Success",
-        description: `${values.Status === "loan" ? "Loan" : "Return"} added successfully`,
+        description: `${values.status === "loan" ? "Loan" : "Return"} added successfully`,
       })
 
       setOpen(false)
@@ -105,14 +105,14 @@ export function AddLoanButton() {
     }
   }
 
-  const loadMembers = async () => {
+  const loadmembers = async () => {
     try {
       const response = await fetch("/api/members")
       if (!response.ok) {
         throw new Error("Failed to fetch members")
       }
       const data = await response.json()
-      setMembers(data)
+      setmembers(data)
     } catch (error) {
       console.error("Error loading members:", error)
       toast({
@@ -126,7 +126,7 @@ export function AddLoanButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={loadMembers}>
+        <Button onClick={loadmembers}>
           <Plus className="mr-2 h-4 w-4" />
           Add Transaction
         </Button>
@@ -140,10 +140,10 @@ export function AddLoanButton() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="MemberId"
+              name="memberid"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Member</FormLabel>
+                  <FormLabel>member</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -152,8 +152,8 @@ export function AddLoanButton() {
                     </FormControl>
                     <SelectContent>
                       {members.map((member) => (
-                        <SelectItem key={member.Id} value={member.Id}>
-                          {member.Name}
+                        <SelectItem key={member.id} value={member.id}>
+                          {member.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -165,10 +165,10 @@ export function AddLoanButton() {
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="Amount"
+                name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount</FormLabel>
+                    <FormLabel>amount</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" {...field} />
                     </FormControl>
@@ -178,14 +178,14 @@ export function AddLoanButton() {
               />
               <FormField
                 control={form.control}
-                name="Currency"
+                name="currency"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Currency</FormLabel>
+                    <FormLabel>currency</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select Currency" />
+                          <SelectValue placeholder="Select currency" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -201,14 +201,14 @@ export function AddLoanButton() {
             </div>
             <FormField
               control={form.control}
-              name="Status"
+              name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Transaction Status</FormLabel>
+                  <FormLabel>Transaction status</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
+                        <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -222,10 +222,10 @@ export function AddLoanButton() {
             />
             <FormField
               control={form.control}
-              name="CreatedAt"
+              name="createdAt"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>CreatedAt</FormLabel>
+                  <FormLabel>createdAt</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -233,7 +233,7 @@ export function AddLoanButton() {
                           variant={"outline"}
                           className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                         >
-                          {field.value ? formatDate(field.value.toISOString()) : <span>Pick a CreatedAt</span>}
+                          {field.value ? formatDate(field.value.toISOString()) : <span>Pick a createdAt</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
@@ -248,10 +248,10 @@ export function AddLoanButton() {
             />
             <FormField
               control={form.control}
-              name="Notes"
+              name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes</FormLabel>
+                  <FormLabel>notes</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
