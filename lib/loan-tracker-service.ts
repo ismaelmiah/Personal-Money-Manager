@@ -13,8 +13,8 @@ export type Member = {
 
 export type Loan = {
   id: string
-  memberid: string
-  membername: string
+  memberId: string
+  memberName: string
   amount: number
   currency: string
   status: "Loan" | "Return"
@@ -147,8 +147,8 @@ export async function getLoans(): Promise<Loan[]> {
 
     return data.map((row: any[]) => ({
       id: String(row[0] || ""),
-      memberid: String(row[1] || ""),
-      membername: String(row[2] || ""),
+      memberId: String(row[1] || ""),
+      memberName: String(row[2] || ""),
       status: row[3] === "Loan" || row[3] === "Return" ? row[3] : "Loan",
       currency: String(row[4] || "BDT"),
       amount: typeof row[5] === "number" ? row[5] : Number.parseFloat(row[5]) || 0,
@@ -177,7 +177,7 @@ export async function updateLoan(id: string, loan: Omit<Loan, "id">): Promise<Lo
 
     // Update the loan in the spreadsheet
     const values = [
-      [id, loan.memberid, loan.membername, loan.amount, loan.currency, loan.status, loan.createdAt, loan.notes || ""],
+      [id, loan.memberId, loan.memberName, loan.amount, loan.currency, loan.status, loan.createdAt, loan.notes || ""],
     ]
     
     await updateSpreadsheetData(`Loans!A${rowIndex}:H${rowIndex}`, values)
@@ -247,7 +247,7 @@ export async function addLoan(loan: Omit<Loan, "id">): Promise<Loan> {
     const id = `L${Date.now()}`
 
     const values = [
-      [id, loan.memberid, loan.membername, loan.amount, loan.currency, loan.status, loan.createdAt, loan.notes || ""],
+      [id, loan.memberId, loan.memberName, loan.amount, loan.currency, loan.status, loan.createdAt, loan.notes || ""],
     ]
     console.log("Adding loan with values:", values)
 
@@ -337,19 +337,19 @@ export async function getStatistics() {
       >,
       loan,
     ) => {
-      if (!acc[loan.memberid]) {
-        acc[loan.memberid] = {
-          memberid: loan.memberid,
-          membername: loan.membername,
+      if (!acc[loan.memberId]) {
+        acc[loan.memberId] = {
+          memberid: loan.memberId,
+          membername: loan.memberName,
           totalLoaned: { BDT: 0, USD: 0, GBP: 0 },
           totalReturned: { BDT: 0, USD: 0, GBP: 0 },
         }
       }
 
       if (loan.status === "Loan") {
-        acc[loan.memberid].totalLoaned[loan.currency as currency] += loan.amount
+        acc[loan.memberId].totalLoaned[loan.currency as currency] += loan.amount
       } else {
-        acc[loan.memberid].totalReturned[loan.currency as currency] += loan.amount
+        acc[loan.memberId].totalReturned[loan.currency as currency] += loan.amount
       }
 
       return acc

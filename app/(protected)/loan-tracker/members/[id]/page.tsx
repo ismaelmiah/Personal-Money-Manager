@@ -4,14 +4,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getLoans, getmembers } from "@/lib/loan-tracker-service";
-import { formatcurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
-import { memberTransactionsTable } from "@/components/member-transactions-table";
+import { MemberTransactionsTable } from "@/components/member-transactions-table";
 import { LoadingSpinner } from "@/components/loading-spinner";
-
-type PageProps = {
-  params: { id: string }; // Plain object with id property
-};
 
 export default async function memberDetailsPage({ params }:  { params: Promise<{ id: string }> }) {
   const { id } = await params; // Destructure id from params
@@ -23,7 +19,7 @@ export default async function memberDetailsPage({ params }:  { params: Promise<{
   }
 
   const loans = await getLoans();
-  const memberLoans = loans.filter((loan) => loan.memberid === id); // Use id
+  const memberLoans = loans.filter((loan) => loan.memberId === id); // Use id
 
   // Calculate totals
   const totalLoaned = memberLoans
@@ -53,7 +49,7 @@ export default async function memberDetailsPage({ params }:  { params: Promise<{
             <CardTitle className="text-sm font-medium">Total Loaned</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatcurrency(totalLoaned, "BDT")}</div>
+            <div className="text-2xl font-bold">{formatCurrency(totalLoaned, "BDT")}</div>
           </CardContent>
         </Card>
         <Card>
@@ -61,7 +57,7 @@ export default async function memberDetailsPage({ params }:  { params: Promise<{
             <CardTitle className="text-sm font-medium">Total Returned</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatcurrency(totalReturned, "BDT")}</div>
+            <div className="text-2xl font-bold">{formatCurrency(totalReturned, "BDT")}</div>
           </CardContent>
         </Card>
         <Card className="sm:col-span-2 md:col-span-1">
@@ -70,7 +66,7 @@ export default async function memberDetailsPage({ params }:  { params: Promise<{
           </CardHeader>
           <CardContent>
             <div className={`text-2xl font-bold ${balance > 0 ? "text-red-500" : "text-green-500"}`}>
-              {formatcurrency(balance, "BDT")}
+              {formatCurrency(balance, "BDT")}
             </div>
           </CardContent>
         </Card>
@@ -110,7 +106,7 @@ export default async function memberDetailsPage({ params }:  { params: Promise<{
         </CardHeader>
         <CardContent>
           <Suspense fallback={<LoadingSpinner />}>
-            <memberTransactionsTable memberid={id} /> {/* Use id */}
+            <MemberTransactionsTable memberId={id} /> {/* Use id */}
           </Suspense>
         </CardContent>
       </Card>

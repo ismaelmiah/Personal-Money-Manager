@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { getStatistics } from "@/lib/loan-tracker-service"
-import { formatcurrency } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils"
 
 export async function MemberStats() {
   const { memberStats } = await getStatistics()
@@ -27,12 +27,12 @@ export async function MemberStats() {
             memberStats.map((stat) => (
               <TableRow key={stat.memberid}>
                 <TableCell className="font-medium">{stat.membername}</TableCell>
-                <TableCell>{formatcurrency(stat.totalLoaned.BDT, "BDT")}</TableCell>
-                <TableCell>{formatcurrency(stat.totalReturned.BDT, "BDT")}</TableCell>
+                <TableCell>{formatCurrency(stat.totalLoaned.BDT, "BDT")}</TableCell>
+                <TableCell>{formatCurrency(stat.totalReturned.BDT, "BDT")}</TableCell>
                 <TableCell
                   className={stat.totalLoaned.BDT - stat.totalReturned.BDT > 0 ? "text-red-500" : "text-green-500"}
                 >
-                  {formatcurrency(stat.totalLoaned.BDT - stat.totalReturned.BDT, "BDT")}
+                  {formatCurrency(stat.totalLoaned.BDT - stat.totalReturned.BDT, "BDT")}
                 </TableCell>
               </TableRow>
             ))

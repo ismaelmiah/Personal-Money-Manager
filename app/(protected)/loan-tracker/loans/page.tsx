@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { LoansTable } from "@/components/loan-tracker/loans-table"
-import { AddLoanButton } from "@/components/add-loan-button"
+import { AddLoanButton } from "@/components/loan-tracker/add-loan-button"
 import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function LoansPage() {

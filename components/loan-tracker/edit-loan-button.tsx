@@ -24,11 +24,11 @@ import { CalendarIcon, Pencil } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn, formatDate } from "@/lib/utils"
-import { usemembers } from "@/hooks/use-members"
+import { useMembers } from "@/hooks/use-members"
 import type { Loan } from "@/lib/loan-tracker-service"
 
 const formSchema = z.object({
-  memberid: z.string({
+  memberId: z.string({
     required_error: "Please select a member",
   }),
   amount: z.string().min(1, "amount is required"),
@@ -54,12 +54,12 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
-  const { members } = usemembers()
+  const { members } = useMembers()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      memberid: loan.memberid,
+      memberId: loan.memberId,
       amount: loan.amount.toString(),
       currency: loan.currency as "BDT" | "USD" | "GBP",
       status: loan.status as "Loan" | "Return",
@@ -71,7 +71,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const selectedmember = members.find((m) => m.id === values.memberid)
+      const selectedmember = members.find((m) => m.id === values.memberId)
 
       if (!selectedmember) {
         throw new Error("member not found")
@@ -130,7 +130,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="memberid"
+              name="memberId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>member</FormLabel>

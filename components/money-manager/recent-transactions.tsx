@@ -1,5 +1,5 @@
 import { getTransactions } from "@/lib/money-manager-service"
-import { formatcurrency, formatDate } from "@/lib/utils"
+import { formatCurrency, formatDate } from "@/lib/utils"
 import { ArrowUpCircle, ArrowDownCircle } from "lucide-react"
 
 export async function RecentTransactions() {
@@ -30,7 +30,7 @@ export async function RecentTransactions() {
             </div>
             <div className={`font-medium ${transaction.type === "expense" ? "text-red-500" : "text-green-500"}`}>
               {transaction.type === "expense" ? "-" : "+"}
-              {formatcurrency(transaction.amount, transaction.currency)}
+              {formatCurrency(transaction.amount, transaction.currency)}
             </div>
           </div>
         ))

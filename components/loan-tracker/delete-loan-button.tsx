@@ -16,22 +16,41 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { Trash2 } from "lucide-react"
+import { useOptimistic } from "@/lib/optimistic-context"
 
 interface DeleteLoanButtonProps {
-  loanid: string
+  loanId: string
   onSuccess?: () => void
 }
 
-export function DeleteLoanButton({ loanid, onSuccess }: DeleteLoanButtonProps) {
+export function DeleteLoanButton({ loanId, onSuccess }: DeleteLoanButtonProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const { deleteOptimisticLoan } = useOptimistic()
 
   const handleDelete = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/loans/${loanid}`, {
+
+      // Update optimistic state immediately
+      deleteOptimisticLoan(loanId)
+
+      // Show success toast
+      toast({
+        title: "Success",
+        description: "Transaction deleted successfully",
+      })
+
+      // Close dialog
+      setOpen(false)
+
+      // Call success callback if provided
+      if (onSuccess) onSuccess()
+
+      // Make API call in the background
+      const response = await fetch(`/api/loans/${loanId}`, {
         method: "DELETE",
       })
 
@@ -39,13 +58,7 @@ export function DeleteLoanButton({ loanid, onSuccess }: DeleteLoanButtonProps) {
         throw new Error("Failed to delete loan")
       }
 
-      toast({
-        title: "Success",
-        description: "Transaction deleted successfully",
-      })
-
-      setOpen(false)
-      if (onSuccess) onSuccess()
+      // Refresh the page to update the UI
       router.refresh()
     } catch (error) {
       console.error("Error deleting loan:", error)

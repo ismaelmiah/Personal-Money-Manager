@@ -18,7 +18,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts"
-import { formatcurrency } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils"
 
 export function MoneyManagerAnalytics() {
   const [stats, setStats] = useState<any>(null)
@@ -104,7 +104,7 @@ export function MoneyManagerAnalytics() {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => [formatcurrency(value, "BDT"), ""]} />
+                  <Tooltip formatter={(value: number) => [formatCurrency(value, "BDT"), ""]} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -124,7 +124,7 @@ export function MoneyManagerAnalytics() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis tickFormatter={(value) => `৳${value}`} />
-                  <Tooltip formatter={(value: number) => [formatcurrency(value, "BDT"), ""]} />
+                  <Tooltip formatter={(value: number) => [formatCurrency(value, "BDT"), ""]} />
                   <Legend />
                   <Bar dataKey="income" name="Income" fill="#22c55e" />
                   <Bar dataKey="expense" name="Expense" fill="#ef4444" />
@@ -148,7 +148,7 @@ export function MoneyManagerAnalytics() {
                   <XAxis dataKey="name" />
                   <YAxis tickFormatter={(value) => `৳${value}`} />
                   <Tooltip
-                    formatter={(value: number) => [formatcurrency(value, "BDT"), ""]}
+                    formatter={(value: number) => [formatCurrency(value, "BDT"), ""]}
                     labelFormatter={(label) => `Month: ${label}`}
                   />
                   <Legend />

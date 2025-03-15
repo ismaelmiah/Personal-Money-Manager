@@ -24,38 +24,40 @@ import { CalendarIcon, Plus } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn, formatDate } from "@/lib/utils"
-import type { member } from "@/lib/loan-tracker-service"
+import { useMembers } from "@/hooks/use-members"
+import { useOptimistic } from "@/lib/optimistic-context"
 
 const formSchema = z.object({
-  memberid: z.string({
+  memberId: z.string({
     required_error: "Please select a member",
   }),
-  amount: z.string().min(1, "amount is required"),
+  amount: z.string().min(1, "Amount is required"),
   currency: z.enum(["BDT", "USD", "GBP"], {
     required_error: "Please select a currency",
   }),
-  status: z.enum(["loan", "return"], {
-    required_error: "Please select a status",
+  type: z.enum(["loan", "return"], {
+    required_error: "Please select a type",
   }),
-  createdAt: z.date({
-    required_error: "Please select a createdAt",
+  date: z.date({
+    required_error: "Please select a date",
   }),
   notes: z.string().optional(),
 })
 
 export function AddLoanButton() {
   const [open, setOpen] = useState(false)
-  const [members, setmembers] = useState<member[]>([])
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const { members } = useMembers()
+  const { addOptimisticLoan, setOptimisticMembers } = useOptimistic() // Moved hook call outside conditional
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       currency: "BDT",
-      status: "loan",
-      createdAt: new Date(),
+      type: "loan",
+      date: new Date(),
       notes: "",
     },
   })
@@ -63,21 +65,47 @@ export function AddLoanButton() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const selectedmember = members.find((m) => m.id === values.memberid)
+      const selectedMember = members.find((m) => m.id === values.memberId)
 
-      if (!selectedmember) {
-        throw new Error("member not found")
+      if (!selectedMember) {
+        throw new Error("Member not found")
       }
 
+      // Create the new loan object
+      const newLoan = {
+        id: `L${Date.now()}`,
+        memberId: values.memberId,
+        memberName: selectedMember.name,
+        amount: Number.parseFloat(values.amount),
+        currency: values.currency,
+        status: values.type as "Loan" | "Return",
+        createdAt: values.date.toISOString(),
+        notes: values.notes || "",
+      }
+
+      // Update optimistic state immediately
+      addOptimisticLoan(newLoan)
+
+      // Show success toast
+      toast({
+        title: "Success",
+        description: `${values.type === "loan" ? "Loan" : "Return"} added successfully`,
+      })
+
+      // Close the dialog and reset form
+      setOpen(false)
+      form.reset()
+
+      // Make API call in the background
       const response = await fetch("/api/loans", {
         method: "POST",
         headers: {
-          "Content-status": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...values,
-          membername: selectedmember.name,
-          createdAt: values.createdAt.toISOString(),
+          memberName: selectedMember.name,
+          date: values.date.toISOString(),
         }),
       })
 
@@ -85,13 +113,7 @@ export function AddLoanButton() {
         throw new Error("Failed to create loan")
       }
 
-      toast({
-        title: "Success",
-        description: `${values.status === "loan" ? "Loan" : "Return"} added successfully`,
-      })
-
-      setOpen(false)
-      form.reset()
+      // Refresh the page to update the UI
       router.refresh()
     } catch (error) {
       console.error("Error adding loan:", error)
@@ -105,14 +127,18 @@ export function AddLoanButton() {
     }
   }
 
-  const loadmembers = async () => {
+  const loadMembers = async () => {
+    // We don't need to fetch members again if we already have them
+    if (members.length > 0) return
+
     try {
       const response = await fetch("/api/members")
       if (!response.ok) {
         throw new Error("Failed to fetch members")
       }
       const data = await response.json()
-      setmembers(data)
+      // Update the optimistic state with the fetched members
+      setOptimisticMembers(data)
     } catch (error) {
       console.error("Error loading members:", error)
       toast({
@@ -126,7 +152,7 @@ export function AddLoanButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={loadmembers}>
+        <Button onClick={loadMembers}>
           <Plus className="mr-2 h-4 w-4" />
           Add Transaction
         </Button>
@@ -140,10 +166,10 @@ export function AddLoanButton() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="memberid"
+              name="memberId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>member</FormLabel>
+                  <FormLabel>Member</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -168,7 +194,7 @@ export function AddLoanButton() {
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>amount</FormLabel>
+                    <FormLabel>Amount</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" {...field} />
                     </FormControl>
@@ -181,7 +207,7 @@ export function AddLoanButton() {
                 name="currency"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>currency</FormLabel>
+                    <FormLabel>Currency</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -201,14 +227,14 @@ export function AddLoanButton() {
             </div>
             <FormField
               control={form.control}
-              name="status"
+              name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Transaction status</FormLabel>
+                  <FormLabel>Transaction Type</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
+                        <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -222,10 +248,10 @@ export function AddLoanButton() {
             />
             <FormField
               control={form.control}
-              name="createdAt"
+              name="date"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>createdAt</FormLabel>
+                  <FormLabel>Date</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -233,7 +259,7 @@ export function AddLoanButton() {
                           variant={"outline"}
                           className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                         >
-                          {field.value ? formatDate(field.value.toISOString()) : <span>Pick a createdAt</span>}
+                          {field.value ? formatDate(field.value.toISOString()) : <span>Pick a date</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
@@ -251,7 +277,7 @@ export function AddLoanButton() {
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>notes</FormLabel>
+                  <FormLabel>Notes</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>

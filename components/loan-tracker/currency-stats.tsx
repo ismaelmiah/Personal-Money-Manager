@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStatistics } from "@/lib/loan-tracker-service";
-import { formatcurrency } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 
 export async function CurrencyStats() {
   const { currencyStats } = await getStatistics();
@@ -15,15 +15,15 @@ export async function CurrencyStats() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatcurrency(
+              {formatCurrency(
                 currencyStats[currency].totalLoaned - currencyStats[currency].totalReturned,
                 currency
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Loaned: {formatcurrency(currencyStats[currency].totalLoaned, currency)}
+              Loaned: {formatCurrency(currencyStats[currency].totalLoaned, currency)}
               <br />
-              Returned: {formatcurrency(currencyStats[currency].totalReturned, currency)}
+              Returned: {formatCurrency(currencyStats[currency].totalReturned, currency)}
             </p>
           </CardContent>
         </Card>

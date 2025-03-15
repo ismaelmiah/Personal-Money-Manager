@@ -3,14 +3,14 @@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { formatDate } from "@/lib/utils"
 import { useRouter } from "next/navigation"
-import { usemembers } from "@/hooks/use-members"
+import { useMembers } from "@/hooks/use-members"
 import { EditmemberButton } from "../money-manager/edit-member-button"
 import { DeletememberButton } from "../money-manager/delete-member-button"
 import { PaginatedTable } from "../paginated-table"
 
 export function MembersTable() {
   const router = useRouter()
-  const { members, isLoading, isError, mutate } = usemembers()
+  const { members, isLoading, isError, mutate } = useMembers()
 
   if (isError) {
     return (

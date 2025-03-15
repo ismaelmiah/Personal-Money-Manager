@@ -8,7 +8,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { formatcurrency, formatDate, cn } from "@/lib/utils"
+import { formatCurrency, formatDate, cn } from "@/lib/utils"
 import { CalendarIcon, FilterX, Search } from "lucide-react"
 import type { Transaction } from "@/lib/money-manager-service"
 
@@ -252,7 +252,7 @@ export function TransactionsTable() {
                     </Badge>
                   </TableCell>
                   <TableCell className={transaction.type === "expense" ? "text-red-600" : "text-green-600"}>
-                    {formatcurrency(transaction.amount, transaction.currency)}
+                    {formatCurrency(transaction.amount, transaction.currency)}
                   </TableCell>
                   <TableCell className="hidden md:table-cell max-w-[200px] truncate" title={transaction.notes}>
                     {transaction.notes || "—"}

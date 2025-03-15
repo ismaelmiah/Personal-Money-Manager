@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getLoans, getmembers } from "@/lib/loan-tracker-service"
-import { formatcurrency } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils"
 import { Users, ArrowDownCircle, ArrowUpCircle, CreditCard } from "lucide-react"
 
 export async function StatsCards() {
@@ -27,7 +27,7 @@ export async function StatsCards() {
           <CreditCard className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatcurrency(totalOutstanding, "BDT")}</div>
+          <div className="text-2xl font-bold">{formatCurrency(totalOutstanding, "BDT")}</div>
           <p className="text-xs text-muted-foreground">Total amount yet to be returned</p>
         </CardContent>
       </Card>
@@ -37,7 +37,7 @@ export async function StatsCards() {
           <ArrowUpCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatcurrency(totalLoaned, "BDT")}</div>
+          <div className="text-2xl font-bold">{formatCurrency(totalLoaned, "BDT")}</div>
           <p className="text-xs text-muted-foreground">Total amount loaned out</p>
         </CardContent>
       </Card>
@@ -47,7 +47,7 @@ export async function StatsCards() {
           <ArrowDownCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatcurrency(totalReturned, "BDT")}</div>
+          <div className="text-2xl font-bold">{formatCurrency(totalReturned, "BDT")}</div>
           <p className="text-xs text-muted-foreground">Total amount returned</p>
         </CardContent>
       </Card>

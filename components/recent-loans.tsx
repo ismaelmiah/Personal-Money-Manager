@@ -1,5 +1,5 @@
 import { getLoans } from "@/lib/loan-tracker-service"
-import { formatcurrency, formatDate } from "@/lib/utils"
+import { formatCurrency, formatDate } from "@/lib/utils"
 import { ArrowUpCircle, ArrowDownCircle } from "lucide-react"
 
 export async function RecentLoans() {
@@ -23,12 +23,12 @@ export async function RecentLoans() {
               )}
             </div>
             <div className="flex-1 space-y-1">
-              <p className="text-sm font-medium leading-none">{loan.membername}</p>
+              <p className="text-sm font-medium leading-none">{loan.memberName}</p>
               <p className="text-sm text-muted-foreground">{loan.createdAt}</p>
             </div>
             <div className={`font-medium ${loan.status === "Loan" ? "text-red-500" : "text-green-500"}`}>
               {loan.status === "Loan" ? "-" : "+"}
-              {formatcurrency(loan.amount, loan.currency)}
+              {formatCurrency(loan.amount, loan.currency)}
             </div>
           </div>
         ))

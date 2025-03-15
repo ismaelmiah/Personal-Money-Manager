@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { formatcurrency, formatDate, cn } from "@/lib/utils"
+import { formatCurrency, formatDate, cn } from "@/lib/utils"
 import { CalendarIcon, FilterX } from "lucide-react"
 import type { Loan } from "@/lib/loan-tracker-service"
 
-export function memberTransactionsTable({ memberid }: { memberid: string }) {
+export function MemberTransactionsTable({ memberId }: { memberId: string }) {
   const [loans, setLoans] = useState<Loan[]>([])
   const [filteredLoans, setFilteredLoans] = useState<Loan[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,7 +24,7 @@ export function memberTransactionsTable({ memberid }: { memberid: string }) {
       try {
         const response = await fetch("/api/loans")
         const allLoans = await response.json()
-        const memberLoans = allLoans.filter((loan: Loan) => loan.memberid === memberid)
+        const memberLoans = allLoans.filter((loan: Loan) => loan.memberId === memberId)
 
         // Sort by createdAt (newest first)
         memberLoans.sort((a: Loan, b: Loan) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -39,7 +39,7 @@ export function memberTransactionsTable({ memberid }: { memberid: string }) {
     }
 
     fetchLoans()
-  }, [memberid])
+  }, [memberId])
 
   // Apply filters when they change
   useEffect(() => {
@@ -154,7 +154,7 @@ export function memberTransactionsTable({ memberid }: { memberid: string }) {
                       {loan.status === "Loan" ? "Loan" : "Return"}
                     </Badge>
                   </TableCell>
-                  <TableCell>{formatcurrency(loan.amount, loan.currency)}</TableCell>
+                  <TableCell>{formatCurrency(loan.amount, loan.currency)}</TableCell>
                   <TableCell>{loan.notes || "—"}</TableCell>
                 </TableRow>
               ))}

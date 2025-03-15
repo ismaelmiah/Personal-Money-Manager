@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Pencil } from "lucide-react"
-import type { member } from "@/lib/loan-tracker-service"
+import type { Member } from "@/lib/loan-tracker-service"
 
 const formSchema = z.object({
   name: z.string().min(2, "name must be at least 2 characters"),
@@ -28,7 +28,7 @@ const formSchema = z.object({
 })
 
 interface EditmemberButtonProps {
-  member: member
+  member: Member
   onSuccess?: () => void
 }
 

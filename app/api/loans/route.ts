@@ -16,15 +16,15 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params; // Await the params Promise
     const body = await request.json()
-    const { memberid, membername, amount, currency, status, createdAt, notes } = body
+    const { memberId, memberName, amount, currency, status, createdAt, notes } = body
 
-    if (!memberid || !amount || !currency || !status || !createdAt) {
+    if (!memberId || !amount || !currency || !status || !createdAt) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const updatedLoan = await updateLoan(id, {
-      memberid,
-      membername,
+      memberId,
+      memberName,
       amount: Number.parseFloat(amount),
       currency,
       status,

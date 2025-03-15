@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { MembersTable } from "@/components/loan-tracker/members-table";
-import { AddmemberButton } from "@/components/add-member-button"
+import { AddmemberButton } from "@/components/loan-tracker/add-member-button"
 import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function membersPage() {

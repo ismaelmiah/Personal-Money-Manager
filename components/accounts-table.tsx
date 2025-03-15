@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { getAccounts } from "@/lib/money-manager-service"
-import { formatcurrency, formatDate } from "@/lib/utils"
+import { formatCurrency, formatDate } from "@/lib/utils"
 
 export async function AccountsTable() {
   try {
@@ -32,7 +32,7 @@ export async function AccountsTable() {
               <TableRow key={account.id}>
                 <TableCell className="font-medium">{account.name}</TableCell>
                 <TableCell className={account.balance >= 0 ? "text-green-600" : "text-red-600"}>
-                  {formatcurrency(account.balance, account.currency)}
+                  {formatCurrency(account.balance, account.currency)}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   <Badge variant="outline">{account.currency}</Badge>

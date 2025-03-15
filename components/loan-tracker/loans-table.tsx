@@ -1,13 +1,13 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { formatcurrency, formatDate } from "@/lib/utils"
+import { PaginatedTable } from "@/components/paginated-table"
 import { useLoans } from "@/hooks/use-loans"
-import { useRouter } from "next/navigation"
-import { EditLoanButton } from "./edit-loan-button"
-import { DeleteLoanButton } from "./delete-loan-button"
-import { PaginatedTable } from "../paginated-table"
+import { formatCurrency, formatDate } from "@/lib/utils"
+import { EditLoanButton } from "@/components/loan-tracker/edit-loan-button"
+import { DeleteLoanButton } from "@/components/loan-tracker/delete-loan-button"
 
 export function LoansTable() {
   const router = useRouter()
@@ -45,23 +45,23 @@ export function LoansTable() {
     },
     {
       header: "Member",
-      accessorKey: (row: any) => row.membername,
+      accessorKey: (row: any) => formatDate(row.memberName),
       className: "max-w-[200px] truncate",
       searchable: true,
     },
     {
-      header: "Status",
+      header: "Type",
       accessorKey: (row: any) => (
-        <Badge variant={row.status === "Loan" ? "danger" : "success"}>{row.status === "Loan" ? "Loan" : "Return"}</Badge>
+        <Badge variant={row.type === "Loan" ? "danger" : "success"}>{row.type === "Loan" ? "Loan" : "Return"}</Badge>
       ),
     },
     {
       header: "Amount",
-      accessorKey: (row: any) => row.amount,//formatcurrency(row.amount, row.currency),
+      accessorKey: (row: any) => formatCurrency(row.amount, row.currency),
     },
     {
       header: "Notes",
-      accessorKey: (row: any) => row.notes,
+      accessorKey: (row: any) => formatDate(row.notes),
       className: "hidden md:table-cell",
       searchable: true,
     },
@@ -70,7 +70,7 @@ export function LoansTable() {
       accessorKey: (row: any) => (
         <div className="flex space-x-2">
           <EditLoanButton loan={row} onSuccess={() => mutate()} />
-          <DeleteLoanButton loanid={row.id} onSuccess={() => mutate()} />
+          <DeleteLoanButton loanId={row.id} onSuccess={() => mutate()} />
         </div>
       ),
       className: "w-[100px]",
@@ -82,7 +82,9 @@ export function LoansTable() {
       data={loans}
       columns={columns}
       searchPlaceholder="Search loans..."
-      onRowClick={(row: any) => router.push(`/loan-tracker/members/${row.memberid}`)}
+      onRowClick={(row) => router.push(`/loan-tracker/members/${row.memberId}`)}
+      maxHeight="calc(100vh - 250px)" // Adjust based on your layout
     />
   )
 }
+

@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatcurrency(amount: number, currency: string) {
+export function formatCurrency(amount: number, currency: string) {
   // Map currency to valid ISO 4217 codes
   const currencyCode = currency.toUpperCase(); // Ensure uppercase (e.g., "bdt" → "BDT")
 
