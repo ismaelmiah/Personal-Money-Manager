@@ -12,10 +12,16 @@ export const swrConfig = {
   revalidateOnFocus: false,
   revalidateIfStale: false,
   revalidateOnReconnect: false,
-  dedupingInterval: 6000, // 1 minute
+  dedupingInterval: 300000, // 5 minutes
+  keepPreviousData: true, // Keep showing previous data while fetching
+  errorRetryCount: 3, // Retry failed requests 3 times
+  provider: () => {
+    // Create a persistent cache that survives component unmounts
+    const cache = new Map()
+    return cache
+  }
 }
 
 export function SwrProvider({ children }: { children: React.ReactNode }) {
   return <SWRConfig value={swrConfig}>{children}</SWRConfig>
 }
-

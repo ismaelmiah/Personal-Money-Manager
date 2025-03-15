@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Pagination,
@@ -27,6 +27,7 @@ interface PaginatedTableProps<T> {
   }[]
   searchPlaceholder?: string
   onRowClick?: (row: T) => void
+  maxHeight?: string
 }
 
 export function PaginatedTable<T extends { id: string }>({
@@ -34,10 +35,29 @@ export function PaginatedTable<T extends { id: string }>({
   columns,
   searchPlaceholder = "Search...",
   onRowClick,
-}: PaginatedTableProps<T>): React.JSX.Element {
+  maxHeight,
+}: PaginatedTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [searchQuery, setSearchQuery] = useState("")
+  const [tableHeight, setTableHeight] = useState<string | undefined>(maxHeight)
+
+  // Calculate dynamic table height based on viewport if not explicitly provided
+  useEffect(() => {
+    if (!maxHeight) {
+      const calculateHeight = () => {
+        const viewportHeight = window.innerHeight
+        // Adjust this value based on your layout (header, pagination, etc.)
+        const otherElementsHeight = 250
+        const calculatedHeight = `${Math.max(400, viewportHeight - otherElementsHeight)}px`
+        setTableHeight(calculatedHeight)
+      }
+
+      calculateHeight()
+      window.addEventListener("resize", calculateHeight)
+      return () => window.removeEventListener("resize", calculateHeight)
+    }
+  }, [maxHeight])
 
   // Filter data based on search query
   const filteredData = data.filter((row) => {
@@ -100,8 +120,6 @@ export function PaginatedTable<T extends { id: string }>({
     return pages
   }
 
-  console.log('Paginated Data: ', paginatedData)
-
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between gap-4">
@@ -140,45 +158,54 @@ export function PaginatedTable<T extends { id: string }>({
         </div>
       </div>
 
-      <div className="rounded-md border overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {columns.map((column, index) => (
-                <TableHead key={index} className={column.className}>
-                  {column.header}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedData.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results found.
-                </TableCell>
-              </TableRow>
-            ) : (
-              paginatedData.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className={onRowClick ? "cursor-pointer hover:bg-muted/50" : undefined}
-                  onClick={onRowClick ? () => onRowClick(row) : undefined}
-                >
-                  {columns.map((column, cellIndex) => {
-                    const key = column.accessorKey
-                    const value = typeof key === "function" ? key(row) : row[key]
-                    return (
-                      <TableCell key={cellIndex} className={column.className}>
-                        {value as React.ReactNode}
-                      </TableCell>
-                    )
-                  })}
+      <div className="rounded-md border overflow-hidden">
+        <div style={{ height: tableHeight, display: "flex", flexDirection: "column" }}>
+          <div className="overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {columns.map((column, index) => (
+                    <TableHead key={index} className={column.className}>
+                      {column.header}
+                    </TableHead>
+                  ))}
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              </TableHeader>
+            </Table>
+          </div>
+          <div className="overflow-auto flex-1">
+            <Table>
+              <TableBody>
+                {paginatedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                      No results found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedData.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      className={onRowClick ? "cursor-pointer hover:bg-muted/50" : undefined}
+                      onClick={onRowClick ? () => onRowClick(row) : undefined}
+                    >
+                      {columns.map((column, cellIndex) => {
+                        const key = column.accessorKey
+                        const value = typeof key === "function" ? key(row) : row[key]
+
+                        return (
+                          <TableCell key={cellIndex} className={column.className}>
+                            {value as React.ReactNode}
+                          </TableCell>
+                        )
+                      })}
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
 
       {totalPages > 1 && (

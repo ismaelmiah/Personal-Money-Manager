@@ -3,7 +3,7 @@ import { JWT } from "google-auth-library"
 import { id } from "date-fns/locale"
 
 // Types
-export type member = {
+export type Member = {
   id: string
   name: string
   phone: string
@@ -123,7 +123,7 @@ export async function updateSpreadsheetData(range: string, values: any[][]) {
 }
 
 // Get all members with improved error handling
-export async function getmembers(): Promise<member[]> {
+export async function getmembers(): Promise<Member[]> {
   try {
     const data = await getSpreadsheetData("members!A2:G")
 
@@ -220,7 +220,7 @@ export async function deleteLoan(id: string): Promise<void> {
 
 
 // Add new member with improved error handling
-export async function addmember(member: Omit<member, "id" | "createdAt">): Promise<member> {
+export async function addmember(member: Omit<Member, "id" | "createdAt">): Promise<Member> {
   try {
     const id = `M${Date.now()}`
     const createdAt = new Date().toISOString()
@@ -265,7 +265,7 @@ export async function addLoan(loan: Omit<Loan, "id">): Promise<Loan> {
 
 
 // Update member
-export async function updatemember(id: string, member: Omit<member, "id" | "createdAt">): Promise<member> {
+export async function updatemember(id: string, member: Omit<Member, "id" | "createdAt">): Promise<Member> {
   try {
     // First, get all members to find the row index
     const members = await getmembers()
