@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { parse, format } from "date-fns"
+import { parse, format, isValid } from "date-fns"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -20,6 +20,12 @@ export function formatCurrency(amount: number, currency: string) {
 export function formatDate(createdAt: string): string {
   // Parse the date string using date-fns
   const parsedDate = parse(createdAt, "dd/MM/yyyy HH:mm:ss", new Date())
+
+  // Check if the parsed date is valid
+  if (!isValid(parsedDate)) {
+    console.error("Invalid date:", createdAt)
+    return "Invalid Date"
+  }
 
   // Format the parsed date to the desired format
   return format(parsedDate, "dd/MM/yyyy HH:mm:ss")

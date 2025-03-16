@@ -6,7 +6,7 @@ export async function MemberStats() {
   const { memberStats } = await getStatistics()
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-auto" style={{ maxHeight: "calc(100vh - 250px)" }}>
       <Table>
         <TableHeader>
           <TableRow>

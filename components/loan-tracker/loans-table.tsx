@@ -45,14 +45,14 @@ export function LoansTable() {
     },
     {
       header: "Member",
-      accessorKey: (row: any) => formatDate(row.memberName),
+      accessorKey: (row: any) => row.memberName,
       className: "max-w-[200px] truncate",
       searchable: true,
     },
     {
       header: "Type",
       accessorKey: (row: any) => (
-        <Badge variant={row.type === "Loan" ? "danger" : "success"}>{row.type === "Loan" ? "Loan" : "Return"}</Badge>
+        <Badge variant={row.status === "Loan" ? "danger" : "success"}>{row.status === "Loan" ? "Loan" : "Return"}</Badge>
       ),
     },
     {
@@ -61,7 +61,7 @@ export function LoansTable() {
     },
     {
       header: "Notes",
-      accessorKey: (row: any) => formatDate(row.notes),
+      accessorKey: (row: any) => row.notes,
       className: "hidden md:table-cell",
       searchable: true,
     },
