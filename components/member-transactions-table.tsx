@@ -22,7 +22,7 @@ export function MemberTransactionsTable({ memberId }: { memberId: string }) {
   useEffect(() => {
     const fetchLoans = async () => {
       try {
-        const response = await fetch("/api/loans")
+        const response = await fetch("/api/loan-tracker/loans")
         const allLoans = await response.json()
         const memberLoans = allLoans.filter((loan: Loan) => loan.memberId === memberId)
 

@@ -28,7 +28,7 @@ export function AnalyticsTab() {
   useEffect(() => {
     const fetchLoans = async () => {
       try {
-        const response = await fetch("/api/loans")
+        const response = await fetch("/api/loan-tracker/loans")
         const data = await response.json()
         setLoans(data)
       } catch (error) {

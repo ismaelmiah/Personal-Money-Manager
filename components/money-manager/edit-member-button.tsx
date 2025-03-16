@@ -50,7 +50,7 @@ export function EditmemberButton({ member, onSuccess }: EditmemberButtonProps) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/members/${member.id}`, {
+      const response = await fetch(`/api/loan-tracker/members/${member.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

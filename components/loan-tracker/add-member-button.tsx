@@ -44,7 +44,7 @@ export function AddmemberButton() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const response = await fetch("/api/members", {
+      const response = await fetch("/api/loan-tracker/members", {
         method: "POST",
         headers: {
           "Content-status": "application/json",

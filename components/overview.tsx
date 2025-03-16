@@ -16,7 +16,7 @@ export function Overview() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/loans")
+        const response = await fetch("/api/loan-tracker/loans")
         const loans = await response.json()
         console.log(loans)
         // Group by month

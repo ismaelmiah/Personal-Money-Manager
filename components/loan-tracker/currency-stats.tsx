@@ -1,9 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getStatistics } from "@/lib/loan-tracker-service";
 import { formatCurrency } from "@/lib/utils";
 
-export async function CurrencyStats() {
-  const { currencyStats } = await getStatistics();
+export async function CurrencyStats({currencyStats}: any) {
+
   const currencies = ["BDT", "USD", "GBP"] as const;
 
   return (

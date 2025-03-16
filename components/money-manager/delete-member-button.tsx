@@ -31,7 +31,7 @@ export function DeletememberButton({ memberid, onSuccess }: DeletememberButtonPr
   const handleDelete = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/members/${memberid}`, {
+      const response = await fetch(`/api/loan-tracker/members/${memberid}`, {
         method: "DELETE",
       })
 

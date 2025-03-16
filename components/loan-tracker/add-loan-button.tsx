@@ -26,6 +26,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn, formatDate } from "@/lib/utils"
 import { useMembers } from "@/hooks/use-members"
 import { useOptimistic } from "@/lib/optimistic-context"
+import { addLoan } from "@/lib/loan-tracker-service"
 
 const formSchema = z.object({
   memberId: z.string({
@@ -35,10 +36,10 @@ const formSchema = z.object({
   currency: z.enum(["BDT", "USD", "GBP"], {
     required_error: "Please select a currency",
   }),
-  type: z.enum(["loan", "return"], {
+  status: z.enum(["Loan", "Return"], {
     required_error: "Please select a type",
   }),
-  date: z.date({
+  createdAt: z.date({
     required_error: "Please select a date",
   }),
   notes: z.string().optional(),
@@ -56,8 +57,8 @@ export function AddLoanButton() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       currency: "BDT",
-      type: "loan",
-      date: new Date(),
+      status: "Loan",
+      createdAt: new Date(),
       notes: "",
     },
   })
@@ -78,8 +79,8 @@ export function AddLoanButton() {
         memberName: selectedMember.name,
         amount: Number.parseFloat(values.amount),
         currency: values.currency,
-        status: values.type as "Loan" | "Return",
-        createdAt: values.date.toISOString(),
+        status: values.status as "Loan" | "Return",
+        createdAt: values.createdAt.toISOString(),
         notes: values.notes || "",
       }
 
@@ -89,7 +90,7 @@ export function AddLoanButton() {
       // Show success toast
       toast({
         title: "Success",
-        description: `${values.type === "loan" ? "Loan" : "Return"} added successfully`,
+        description: `${values.status === "Loan" ? "Loan" : "Return"} added successfully`,
       })
 
       // Close the dialog and reset form
@@ -97,7 +98,7 @@ export function AddLoanButton() {
       form.reset()
 
       // Make API call in the background
-      const response = await fetch("/api/loans", {
+      const response = await fetch("/api/loan-tracker/loans", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +106,7 @@ export function AddLoanButton() {
         body: JSON.stringify({
           ...values,
           memberName: selectedMember.name,
-          date: values.date.toISOString(),
+          date: values.createdAt.toISOString(),
         }),
       })
 
@@ -132,7 +133,7 @@ export function AddLoanButton() {
     if (members.length > 0) return
 
     try {
-      const response = await fetch("/api/members")
+      const response = await fetch("/api/loan-tracker/members")
       if (!response.ok) {
         throw new Error("Failed to fetch members")
       }
@@ -227,7 +228,7 @@ export function AddLoanButton() {
             </div>
             <FormField
               control={form.control}
-              name="type"
+              name="status"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Transaction Type</FormLabel>
@@ -238,8 +239,8 @@ export function AddLoanButton() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="loan">Loan (Money Out)</SelectItem>
-                      <SelectItem value="return">Return (Money In)</SelectItem>
+                      <SelectItem value="Loan">Loan (Money Out)</SelectItem>
+                      <SelectItem value="Return">Return (Money In)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -248,7 +249,7 @@ export function AddLoanButton() {
             />
             <FormField
               control={form.control}
-              name="date"
+              name="createdAt"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Date</FormLabel>

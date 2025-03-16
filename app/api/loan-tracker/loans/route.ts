@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import {  getLoans, updateLoan, deleteLoan } from "@/lib/loan-tracker-service"
+import {  getLoans, addLoan, updateLoan, deleteLoan } from "@/lib/loan-tracker-service"
 
 
 export async function GET() {
@@ -9,6 +9,33 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching loans:", error)
     return NextResponse.json({ error: "Failed to fetch loans" }, { status: 500 })
+  }
+}
+
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params; // Await the params Promise
+    const body = await request.json()
+    const { memberId, memberName, amount, currency, status, createdAt, notes } = body
+
+    if (!memberId || !amount || !currency || !status || !createdAt) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    }
+
+    const newLoan = await addLoan(id, {
+      memberId,
+      memberName,
+      amount: Number.parseFloat(amount),
+      currency,
+      status,
+      createdAt,
+      notes: notes || "",
+    })
+
+    return NextResponse.json(updatedLoan)
+  } catch (error) {
+    console.error("Error updating loan:", error)
+    return NextResponse.json({ error: "Failed to update loan" }, { status: 500 })
   }
 }
 

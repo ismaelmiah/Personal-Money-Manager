@@ -50,7 +50,7 @@ export function DeleteLoanButton({ loanId, onSuccess }: DeleteLoanButtonProps) {
       if (onSuccess) onSuccess()
 
       // Make API call in the background
-      const response = await fetch(`/api/loans/${loanId}`, {
+      const response = await fetch(`/api/loan-tracker/loans/${loanId}`, {
         method: "DELETE",
       })
 

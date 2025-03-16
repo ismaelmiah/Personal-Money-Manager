@@ -3,8 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MemberStats } from "@/components/loan-tracker/member-stats"
 import { CurrencyStats } from "@/components/loan-tracker/currency-stats"
 import { LoadingSpinner } from "@/components/loading-spinner"
+import { useStatistics } from "@/hooks/use-statistics"
+import { getStatistics } from "@/lib/loan-tracker-service"
 
-export default function StatisticsPage() {
+export default async function StatisticsPage() {
+  
+  //const { statistics, isLoading, isError, mutate } = useStatistics()
+  const {memberStats, currencyStats} =await getStatistics();
+  
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between">
@@ -18,7 +24,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <Suspense fallback={<LoadingSpinner />}>
-              <MemberStats />
+              <MemberStats memberStats={memberStats} />
             </Suspense>
           </CardContent>
         </Card>
@@ -29,7 +35,7 @@ export default function StatisticsPage() {
           </CardHeader>
           <CardContent>
             <Suspense fallback={<LoadingSpinner />}>
-              <CurrencyStats />
+              <CurrencyStats currencyStats={currencyStats} />
             </Suspense>
           </CardContent>
         </Card>

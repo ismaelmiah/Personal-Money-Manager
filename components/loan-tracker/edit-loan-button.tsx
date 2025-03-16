@@ -77,7 +77,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
         throw new Error("member not found")
       }
 
-      const response = await fetch(`/api/loans/${loan.id}`, {
+      const response = await fetch(`/api/loan-tracker/loans/${loan.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

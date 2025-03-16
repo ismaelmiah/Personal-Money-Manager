@@ -1,9 +1,11 @@
+"use client";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useStatistics } from "@/hooks/use-statistics"
 import { getStatistics } from "@/lib/loan-tracker-service"
 import { formatCurrency } from "@/lib/utils"
 
-export async function MemberStats() {
-  const { memberStats } = await getStatistics()
+export function MemberStats({memberStats}: any) {
 
   return (
     <div className="rounded-md border overflow-auto" style={{ maxHeight: "calc(100vh - 250px)" }}>
@@ -24,9 +26,9 @@ export async function MemberStats() {
               </TableCell>
             </TableRow>
           ) : (
-            memberStats.map((stat) => (
-              <TableRow key={stat.memberid}>
-                <TableCell className="font-medium">{stat.membername}</TableCell>
+            memberStats.map((stat: any) => (
+              <TableRow key={stat.memberId}>
+                <TableCell className="font-medium">{stat.memberName}</TableCell>
                 <TableCell>{formatCurrency(stat.totalLoaned.BDT, "BDT")}</TableCell>
                 <TableCell>{formatCurrency(stat.totalReturned.BDT, "BDT")}</TableCell>
                 <TableCell
