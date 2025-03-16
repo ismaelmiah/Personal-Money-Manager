@@ -6,7 +6,7 @@ import type { Member } from "@/lib/loan-tracker-service"
 import { useOptimistic } from "@/lib/optimistic-context"
 
 export function useMembers() {
-  const { data: fetchedMembers, error, isLoading, mutate } = useSWR<Member[]>("/api/members")
+  const { data: fetchedMembers, error, isLoading, mutate } = useSWR<Member[]>("/api/loan-tracker/members")
   const {
     data: optimisticData,
     setOptimisticMembers,
@@ -37,7 +37,7 @@ export function useMembers() {
 
       // Make API call in the background
       try {
-        await fetch("/api/members", {
+        await fetch("/api/loan-tracker/members", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(member),
@@ -56,7 +56,7 @@ export function useMembers() {
 
       // Make API call in the background
       try {
-        await fetch(`/api/members/${member.id}`, {
+        await fetch(`/api/loan-tracker/members/${member.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(member),
@@ -75,7 +75,7 @@ export function useMembers() {
 
       // Make API call in the background
       try {
-        await fetch(`/api/members/${id}`, {
+        await fetch(`/api/loan-tracker/members/${id}`, {
           method: "DELETE",
         })
         // Revalidate data after successful API call

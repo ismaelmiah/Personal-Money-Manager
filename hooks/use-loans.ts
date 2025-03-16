@@ -6,7 +6,7 @@ import type { Loan } from "@/lib/loan-tracker-service"
 import { useOptimistic } from "@/lib/optimistic-context"
 
 export function useLoans() {
-  const { data: fetchedLoans, error, isLoading, mutate } = useSWR<Loan[]>("/api/loans")
+  const { data: fetchedLoans, error, isLoading, mutate } = useSWR<Loan[]>("/api/loan-tracker/loans")
   const {
     data: optimisticData,
     setOptimisticLoans,
@@ -37,7 +37,7 @@ export function useLoans() {
 
       // Make API call in the background
       try {
-        await fetch("/api/loans", {
+        await fetch("/api/loan-tracker/loans", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(loan),
@@ -56,7 +56,7 @@ export function useLoans() {
 
       // Make API call in the background
       try {
-        await fetch(`/api/loans/${loan.id}`, {
+        await fetch(`/api/loan-tracker/loans/${loan.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(loan),
@@ -75,7 +75,7 @@ export function useLoans() {
 
       // Make API call in the background
       try {
-        await fetch(`/api/loans/${id}`, {
+        await fetch(`/api/loan-tracker/loans/${id}`, {
           method: "DELETE",
         })
         // Revalidate data after successful API call

@@ -16,13 +16,13 @@ export type Loan = {
   memberId: string
   memberName: string
   amount: number
-  currency: string
+  currency: Currency
   status: "Loan" | "Return"
   createdAt: string
   notes: string
 }
 
-export type currency = "BDT" | "USD" | "GBP"
+export type Currency = "BDT" | "USD" | "GBP"
 
 // Initialize Google Sheets client with better error handling
 const initializeGoogleSheetsClient = () => {
@@ -150,7 +150,7 @@ export async function getLoans(): Promise<Loan[]> {
       memberId: String(row[1] || ""),
       memberName: String(row[2] || ""),
       status: row[3] === "Loan" || row[3] === "Return" ? row[3] : "Loan",
-      currency: String(row[4] || "BDT"),
+      currency: (row[4] as Currency || "BDT"),
       amount: typeof row[5] === "number" ? row[5] : Number.parseFloat(row[5]) || 0,
       createdAt: String(row[6] || new Date().toISOString()),
       notes: String(row[7] || ""),
@@ -329,27 +329,27 @@ export async function getStatistics() {
       acc: Record<
         string,
         {
-          memberid: string
-          membername: string
-          totalLoaned: Record<currency, number>
-          totalReturned: Record<currency, number>
+          memberId: string
+          memberName: string
+          totalLoaned: Record<Currency, number>
+          totalReturned: Record<Currency, number>
         }
       >,
       loan,
     ) => {
       if (!acc[loan.memberId]) {
         acc[loan.memberId] = {
-          memberid: loan.memberId,
-          membername: loan.memberName,
+          memberId: loan.memberId,
+          memberName: loan.memberName,
           totalLoaned: { BDT: 0, USD: 0, GBP: 0 },
           totalReturned: { BDT: 0, USD: 0, GBP: 0 },
         }
       }
 
       if (loan.status === "Loan") {
-        acc[loan.memberId].totalLoaned[loan.currency as currency] += loan.amount
+        acc[loan.memberId].totalLoaned[loan.currency as Currency] += loan.amount
       } else {
-        acc[loan.memberId].totalReturned[loan.currency as currency] += loan.amount
+        acc[loan.memberId].totalReturned[loan.currency as Currency] += loan.amount
       }
 
       return acc
@@ -361,7 +361,7 @@ export async function getStatistics() {
   const currencyStats = loans.reduce(
     (
       acc: Record<
-        currency,
+        Currency,
         {
           totalLoaned: number
           totalReturned: number
@@ -369,7 +369,7 @@ export async function getStatistics() {
       >,
       loan,
     ) => {
-      const currency = loan.currency as currency
+      const currency = loan.currency as Currency
 
       if (!acc[currency]) {
         acc[currency] = {

@@ -18,8 +18,17 @@ export function formatCurrency(amount: number, currency: string) {
 }
 
 export function formatDate(createdAt: string): string {
-  // Parse the date string using date-fns
-  const parsedDate = parse(createdAt, "dd/MM/yyyy HH:mm:ss", new Date())
+  // Define the date formats to try
+  const formats = ["dd/MM/yyyy HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss.SSSX"]
+
+  // Try parsing the date string with each format
+  let parsedDate = null
+  for (const fmt of formats) {
+    parsedDate = parse(createdAt, fmt, new Date())
+    if (isValid(parsedDate)) {
+      break
+    }
+  }
 
   // Check if the parsed date is valid
   if (!isValid(parsedDate)) {
@@ -28,5 +37,5 @@ export function formatDate(createdAt: string): string {
   }
 
   // Format the parsed date to the desired format
-  return format(parsedDate, "dd/MM/yyyy HH:mm:ss")
+  return format(parsedDate as Date, "dd/MM/yyyy HH:mm:ss")
 }
