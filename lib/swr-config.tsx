@@ -19,9 +19,10 @@ export const swrConfig = {
     // Create a persistent cache that survives component unmounts
     const cache = new Map()
     return cache
-  }
+  },
 }
 
 export function SwrProvider({ children }: { children: React.ReactNode }) {
   return <SWRConfig value={swrConfig}>{children}</SWRConfig>
 }
+

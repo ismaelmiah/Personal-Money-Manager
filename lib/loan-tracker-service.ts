@@ -47,7 +47,8 @@ const initializeGoogleSheetsClient = () => {
 // Get spreadsheet data with improved error handling and logging
 export async function getSpreadsheetData(range: string) {
   try {
-    console.log(`Fetching data from range: ${range}`)
+    
+    console.log(`${new Date().toLocaleTimeString()} Fetching data from range: ${range}`);
     const sheets = initializeGoogleSheetsClient()
 
     const response = await sheets.spreadsheets.values.get({
