@@ -37,11 +37,16 @@ export function useLoans() {
 
       // Make API call in the background
       try {
-        await fetch("/api/loan-tracker/loans", {
+        const response = await fetch("/api/loan-tracker/loans", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(loan),
         })
+
+        if (!response.ok) {
+          throw new Error("Failed to add loan")
+        }
+
         // Revalidate data after successful API call
         mutate()
       } catch (error) {
@@ -56,11 +61,16 @@ export function useLoans() {
 
       // Make API call in the background
       try {
-        await fetch(`/api/loan-tracker/loans/${loan.id}`, {
+        const response = await fetch(`/api/loan-tracker/loans/${loan.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(loan),
         })
+
+        if (!response.ok) {
+          throw new Error("Failed to update loan")
+        }
+
         // Revalidate data after successful API call
         mutate()
       } catch (error) {
@@ -75,9 +85,14 @@ export function useLoans() {
 
       // Make API call in the background
       try {
-        await fetch(`/api/loan-tracker/loans/${id}`, {
+        const response = await fetch(`/api/loan-tracker/loans/${id}`, {
           method: "DELETE",
         })
+
+        if (!response.ok) {
+          throw new Error("Failed to delete loan")
+        }
+
         // Revalidate data after successful API call
         mutate()
       } catch (error) {

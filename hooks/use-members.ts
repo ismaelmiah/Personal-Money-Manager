@@ -37,11 +37,16 @@ export function useMembers() {
 
       // Make API call in the background
       try {
-        await fetch("/api/loan-tracker/members", {
+        const response = await fetch("/api/loan-tracker/members", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(member),
         })
+
+        if (!response.ok) {
+          throw new Error("Failed to add member")
+        }
+
         // Revalidate data after successful API call
         mutate()
       } catch (error) {
@@ -56,11 +61,16 @@ export function useMembers() {
 
       // Make API call in the background
       try {
-        await fetch(`/api/loan-tracker/members/${member.id}`, {
+        const response = await fetch(`/api/loan-tracker/members/${member.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(member),
         })
+
+        if (!response.ok) {
+          throw new Error("Failed to update member")
+        }
+
         // Revalidate data after successful API call
         mutate()
       } catch (error) {
@@ -75,9 +85,14 @@ export function useMembers() {
 
       // Make API call in the background
       try {
-        await fetch(`/api/loan-tracker/members/${id}`, {
+        const response = await fetch(`/api/loan-tracker/members/${id}`, {
           method: "DELETE",
         })
+
+        if (!response.ok) {
+          throw new Error("Failed to delete member")
+        }
+
         // Revalidate data after successful API call
         mutate()
       } catch (error) {
