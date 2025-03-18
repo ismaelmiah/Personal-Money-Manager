@@ -247,7 +247,7 @@ export async function addLoan(loan: Omit<Loan, "id">): Promise<Loan> {
     const id = `L${Date.now()}`
 
     const values = [
-      [id, loan.memberId, loan.memberName, loan.amount, loan.currency, loan.status, loan.createdAt, loan.notes || ""],
+      [id, loan.memberId, loan.memberName, loan.status, loan.currency, loan.amount, loan.createdAt, loan.notes || ""],
     ]
     console.log("Adding loan with values:", values)
 

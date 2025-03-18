@@ -12,30 +12,31 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(request: Request) {
   try {
-    const { id } = await params; // Await the params Promise
     const body = await request.json()
     const { memberId, memberName, amount, currency, status, createdAt, notes } = body
 
+    // Validate required fields
     if (!memberId || !amount || !currency || !status || !createdAt) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    const newLoan = await addLoan(id, {
+    // Add the new loan
+    const newLoan = await addLoan({
       memberId,
       memberName,
-      amount: Number.parseFloat(amount),
-      currency,
       status,
+      currency,
+      amount: Number.parseFloat(amount),
       createdAt,
       notes: notes || "",
     })
 
-    return NextResponse.json(updatedLoan)
+    return NextResponse.json(newLoan, { status: 201 })
   } catch (error) {
-    console.error("Error updating loan:", error)
-    return NextResponse.json({ error: "Failed to update loan" }, { status: 500 })
+    console.error("Error adding loan:", error)
+    return NextResponse.json({ error: "Failed to add loan" }, { status: 500 })
   }
 }
 

@@ -27,6 +27,7 @@ import { cn, formatDate } from "@/lib/utils"
 import { useMembers } from "@/hooks/use-members"
 import { useOptimistic } from "@/lib/optimistic-context"
 import { addLoan } from "@/lib/loan-tracker-service"
+import { format } from "date-fns"
 
 const formSchema = z.object({
   memberId: z.string({
@@ -71,16 +72,16 @@ export function AddLoanButton() {
       if (!selectedMember) {
         throw new Error("Member not found")
       }
-
+      const formattedCreatedAt = format(values.createdAt, "dd/MM/yyyy HH:mm:ss")
       // Create the new loan object
       const newLoan = {
         id: `L${Date.now()}`,
         memberId: values.memberId,
         memberName: selectedMember.name,
-        amount: Number.parseFloat(values.amount),
-        currency: values.currency,
         status: values.status as "Loan" | "Return",
-        createdAt: values.createdAt.toISOString(),
+        currency: values.currency,
+        amount: Number.parseFloat(values.amount),
+        createdAt: formattedCreatedAt,
         notes: values.notes || "",
       }
 
@@ -104,9 +105,7 @@ export function AddLoanButton() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ...values,
-          memberName: selectedMember.name,
-          date: values.createdAt.toISOString(),
+          ...newLoan
         }),
       })
 
