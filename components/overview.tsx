@@ -1,7 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts"
+import { LoadingCountdown } from "@/components/loading-countdown"
+import { useAppLoans } from "@/hooks/user-app-loans"
 
 type ChartData = {
   name: string
@@ -10,60 +12,54 @@ type ChartData = {
 }
 
 export function Overview() {
-  const [data, setData] = useState<ChartData[]>([])
-  const [loading, setLoading] = useState(true)
+  const { loans, isLoading, isError } = useAppLoans()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/loan-tracker/loans")
-        const loans = await response.json()
-        console.log(loans)
-        // Group by month
-        const monthlyData: Record<string, { loaned: number; returned: number }> = {}
+  // Process data for chart
+  const data = useMemo(() => {
+    if (!loans || loans.length === 0) return []
 
-        loans.forEach((loan: any) => {
-          const [day, month, year] = loan.createdAt.split(" ")[0].split("/")
-          const createdAt = new Date(`${year}-${month}-${day}`)
-          const monthYear = `${createdAt.toLocaleString("default", { month: "short" })} ${createdAt.getFullYear()}`
+    // Group by month
+    const monthlyData: Record<string, { loaned: number; returned: number }> = {}
 
-          if (!monthlyData[monthYear]) {
-            monthlyData[monthYear] = { loaned: 0, returned: 0 }
-          }
+    loans.forEach((loan) => {
+      const date = new Date(loan.createdAt)
+      const monthYear = `${date.toLocaleString("default", { month: "short" })} ${date.getFullYear()}`
 
-          if (loan.status === "Loan" && loan.currency === "BDT") {
-            monthlyData[monthYear].loaned += loan.amount
-          } else if (loan.status === "Return" && loan.currency === "BDT") {
-            monthlyData[monthYear].returned += loan.amount
-          }
-        })
-
-        // Convert to array and sort by createdAt
-        const chartData = Object.entries(monthlyData)
-          .map(([name, values]) => ({
-            name,
-            ...values,
-          }))
-          .sort((a, b) => {
-            const [monthA, yearA] = a.name.split(" ")
-            const [monthB, yearB] = b.name.split(" ")
-            return new Date(`${monthA} 1, ${yearA}`).getTime() - new Date(`${monthB} 1, ${yearB}`).getTime()
-          })
-          .slice(-6) // Last 6 months
-
-        setData(chartData)
-      } catch (error) {
-        console.error("Error fetching chart data:", error)
-      } finally {
-        setLoading(false)
+      if (!monthlyData[monthYear]) {
+        monthlyData[monthYear] = { loaned: 0, returned: 0 }
       }
-    }
 
-    fetchData()
-  }, [])
+      if (loan.status === "Loan" && loan.currency === "BDT") {
+        monthlyData[monthYear].loaned += loan.amount
+      } else if (loan.status === "Return" && loan.currency === "BDT") {
+        monthlyData[monthYear].returned += loan.amount
+      }
+    })
 
-  if (loading) {
-    return <div className="h-[300px] flex items-center justify-center">Loading chart data...</div>
+    // Convert to array and sort by date
+    return Object.entries(monthlyData)
+      .map(([name, values]) => ({
+        name,
+        ...values,
+      }))
+      .sort((a, b) => {
+        const [monthA, yearA] = a.name.split(" ")
+        const [monthB, yearB] = b.name.split(" ")
+        return new Date(`${monthA} 1, ${yearA}`).getTime() - new Date(`${monthB} 1, ${yearB}`).getTime()
+      })
+      .slice(-6) // Last 6 months
+  }, [loans])
+
+  if (isLoading) {
+    return (
+      <div className="h-[300px] flex items-center justify-center">
+        <LoadingCountdown message="Loading chart data" isLoading={isLoading} />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return <div className="h-[300px] flex items-center justify-center">Error loading chart data</div>
   }
 
   if (data.length === 0) {
@@ -71,7 +67,7 @@ export function Overview() {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <ResponsiveContainer width="100%" height={350}>
       <BarChart data={data}>
         <XAxis
           dataKey="name"
