@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { formatCurrency, formatDate, cn } from "@/lib/utils"
 import { CalendarIcon, FilterX } from "lucide-react"
 import type { Loan } from "@/lib/loan-tracker-service"
+import { LoadingCountdown } from "@/components/loading-countdown"
+
 
 export function MemberTransactionsTable({ memberId }: { memberId: string }) {
   const [loans, setLoans] = useState<Loan[]>([])
@@ -72,7 +74,7 @@ export function MemberTransactionsTable({ memberId }: { memberId: string }) {
   }
 
   if (loading) {
-    return <div className="text-center p-4">Loading transactions...</div>
+    return <LoadingCountdown message="Loading member transactions" isLoading={loading} />
   }
 
   return (

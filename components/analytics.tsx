@@ -18,93 +18,106 @@ import {
   Tooltip,
   Legend,
 } from "recharts"
-import { formatCurrency } from "@/lib/utils"
+import type { Loan } from "@/lib/loan-tracker-service"
+import { LoadingCountdown } from "@/components/loading-countdown"
 
-export function MoneyManagerAnalytics() {
-  const [stats, setStats] = useState<any>(null)
+export function AnalyticsTab() {
+  const [loans, setLoans] = useState<Loan[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState("categories")
+  const [activeTab, setActiveTab] = useState("monthly")
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchLoans = async () => {
       try {
-        const response = await fetch("/api/money-manager/statistics")
+        const response = await fetch("/api/loan-tracker/loans")
         const data = await response.json()
-        setStats(data)
+        setLoans(data)
       } catch (error) {
-        console.error("Error fetching statistics:", error)
+        console.error("Error fetching loans:", error)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchStats()
+    fetchLoans()
   }, [])
 
   if (loading) {
-    return <div className="flex justify-center items-center p-8">Loading analytics data...</div>
+    return (
+      <div className="flex justify-center items-center p-8">
+        <LoadingCountdown message="Loading analytics data" isLoading={loading} />
+      </div>
+    )
   }
-
-  if (!stats) {
-    return <div className="flex justify-center items-center p-8">Failed to load analytics data</div>
-  }
-
-  // Prepare data for category chart
-  const categoryData = stats.categoryStats.map((cat: any) => ({
-    name: cat.categoryname,
-    value: cat.total,
-    status: cat.categoryType,
-  }))
-
-  // Prepare data for account chart
-  const accountData = stats.accountStats.map((acc: any) => ({
-    name: acc.accountName,
-    income: acc.income,
-    expense: acc.expense,
-    balance: acc.balance,
-  }))
 
   // Prepare data for monthly chart
-  const monthlyData = stats.monthlyStats.map((month: any) => ({
-    name: month.month,
-    income: month.income,
-    expense: month.expense,
-    balance: month.income - month.expense,
-  }))
+  const monthlyData = prepareMonthlyData(loans)
+
+  // Prepare data for currency distribution
+  const currencyData = prepareCurrencyData(loans)
+
+  // Prepare data for transaction types
+  const typeData = prepareTypeData(loans)
 
   return (
     <div className="space-y-4">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="w-full flex justify-start overflow-x-auto">
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="accounts">Accounts</TabsTrigger>
           <TabsTrigger value="monthly">Monthly Trends</TabsTrigger>
+          <TabsTrigger value="currency">Currency Distribution</TabsTrigger>
+          <TabsTrigger value="type">Transaction Types</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="categories" className="space-y-4">
+        <TabsContent value="monthly" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Expense by Category</CardTitle>
-              <CardDescription>Breakdown of expenses by category</CardDescription>
+              <CardTitle>Monthly Transaction Trends</CardTitle>
+              <CardDescription>Loan and return amounts by month</CardDescription>
             </CardHeader>
-            <CardContent className="h-[400px]">
+            <CardContent className="h-[300px] md:h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={monthlyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis tickFormatter={(value) => `৳${value}`} />
+                  <Tooltip
+                    formatter={(value: number) => [`৳${value.toLocaleString()}`, ""]}
+                    labelFormatter={(label) => `Month: ${label}`}
+                  />
+                  <Legend />
+                  <Line type="monotone" dataKey="loaned" name="Loans" stroke="#ef4444" activeDot={{ r: 8 }} />
+                  <Line type="monotone" dataKey="returned" name="Returns" stroke="#22c55e" />
+                  <Line type="monotone" dataKey="balance" name="Balance" stroke="#3b82f6" strokeDasharray="5 5" />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="currency" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Currency Distribution</CardTitle>
+              <CardDescription>Breakdown of loans by currency</CardDescription>
+            </CardHeader>
+            <CardContent className="h-[300px] md:h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={categoryData.filter((cat: any) => cat.status === "expense")}
+                    data={currencyData}
                     cx="50%"
                     cy="50%"
                     labelLine={true}
-                    outerRadius={150}
+                    outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
                     label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                   >
-                    {categoryData.map((entry: any, index: number) => (
+                    {currencyData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => [formatCurrency(value, "BDT"), ""]} />
+                  <Tooltip formatter={(value) => [`${value} transactions`, ""]} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -112,50 +125,22 @@ export function MoneyManagerAnalytics() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="accounts" className="space-y-4">
+        <TabsContent value="type" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Account balance</CardTitle>
-              <CardDescription>Income and expenses by account</CardDescription>
+              <CardTitle>Transaction Types</CardTitle>
+              <CardDescription>Comparison of loans vs returns</CardDescription>
             </CardHeader>
-            <CardContent className="h-[400px]">
+            <CardContent className="h-[300px] md:h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={accountData}>
+                <BarChart data={typeData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis tickFormatter={(value) => `৳${value}`} />
-                  <Tooltip formatter={(value: number) => [formatCurrency(value, "BDT"), ""]} />
+                  <YAxis />
+                  <Tooltip formatter={(value) => [`${value} transactions`, ""]} />
                   <Legend />
-                  <Bar dataKey="income" name="Income" fill="#22c55e" />
-                  <Bar dataKey="expense" name="Expense" fill="#ef4444" />
-                  <Bar dataKey="balance" name="balance" fill="#3b82f6" />
+                  <Bar dataKey="value" fill="#8884d8" />
                 </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="monthly" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Monthly Trends</CardTitle>
-              <CardDescription>Income and expense trends over time</CardDescription>
-            </CardHeader>
-            <CardContent className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis tickFormatter={(value) => `৳${value}`} />
-                  <Tooltip
-                    formatter={(value: number) => [formatCurrency(value, "BDT"), ""]}
-                    labelFormatter={(label) => `Month: ${label}`}
-                  />
-                  <Legend />
-                  <Line type="monotone" dataKey="income" name="Income" stroke="#22c55e" activeDot={{ r: 8 }} />
-                  <Line type="monotone" dataKey="expense" name="Expense" stroke="#ef4444" />
-                  <Line type="monotone" dataKey="balance" name="balance" stroke="#3b82f6" strokeDasharray="5 5" />
-                </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
@@ -165,6 +150,75 @@ export function MoneyManagerAnalytics() {
   )
 }
 
+// Helper functions to prepare data
+function prepareMonthlyData(loans: Loan[]) {
+  const monthlyData: Record<string, { loaned: number; returned: number; balance: number }> = {}
+
+  // Only consider BDT for simplicity
+  const bdtLoans = loans.filter((loan) => loan.currency === "BDT")
+
+  bdtLoans.forEach((loan) => {
+    const date = new Date(loan.createdAt)
+    const monthYear = `${date.toLocaleString("default", { month: "short" })} ${date.getFullYear()}`
+
+    if (!monthlyData[monthYear]) {
+      monthlyData[monthYear] = { loaned: 0, returned: 0, balance: 0 }
+    }
+
+    if (loan.status === "Loan") {
+      monthlyData[monthYear].loaned += loan.amount
+    } else {
+      monthlyData[monthYear].returned += loan.amount
+    }
+  })
+
+  // Calculate running balance
+  let runningBalance = 0
+  const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
+    const [monthA, yearA] = a.split(" ")
+    const [monthB, yearB] = b.split(" ")
+    return new Date(`${monthA} 1, ${yearA}`).getTime() - new Date(`${monthB} 1, ${yearB}`).getTime()
+  })
+
+  sortedMonths.forEach((month) => {
+    runningBalance += monthlyData[month].loaned - monthlyData[month].returned
+    monthlyData[month].balance = runningBalance
+  })
+
+  return sortedMonths.map((month) => ({
+    name: month,
+    loaned: monthlyData[month].loaned,
+    returned: monthlyData[month].returned,
+    balance: monthlyData[month].balance,
+  }))
+}
+
+function prepareCurrencyData(loans: Loan[]) {
+  const currencyCounts: Record<string, number> = {}
+
+  loans.forEach((loan) => {
+    if (!currencyCounts[loan.currency]) {
+      currencyCounts[loan.currency] = 0
+    }
+    currencyCounts[loan.currency]++
+  })
+
+  return Object.entries(currencyCounts).map(([name, value]) => ({
+    name,
+    value,
+  }))
+}
+
+function prepareTypeData(loans: Loan[]) {
+  const loanCount = loans.filter((loan) => loan.status === "Loan").length
+  const returnCount = loans.filter((loan) => loan.status === "Return").length
+
+  return [
+    { name: "Loans", value: loanCount },
+    { name: "Returns", value: returnCount },
+  ]
+}
+
 // Colors for pie chart
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82ca9d", "#ffc658", "#8dd1e1"]
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"]
 
