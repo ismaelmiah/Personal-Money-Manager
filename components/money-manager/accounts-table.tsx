@@ -1,12 +1,18 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { getAccounts } from "@/lib/money-manager-service"
+// import { getAccounts } from "@/lib/money-manager-service"
 import { formatCurrency, formatDate } from "@/lib/utils"
+import { LoadingCountdown } from "../loading-countdown"
+import { useAccounts } from "@/hooks/use-accounts"
 
 export async function AccountsTable() {
   try {
-    const accounts = await getAccounts()
+    const { accounts, isLoading, isError, mutate } = useAccounts()
+  
+    if (isLoading) {
+      return <LoadingCountdown message="Loading accounts" isLoading={isLoading} />
+    }
 
     if (!accounts || accounts.length === 0) {
       return (

@@ -19,6 +19,7 @@ import {
   Legend,
 } from "recharts"
 import { formatCurrency } from "@/lib/utils"
+import { LoadingCountdown } from "@/components/loading-countdown"
 
 export function MoneyManagerAnalytics() {
   const [stats, setStats] = useState<any>(null)
@@ -42,7 +43,11 @@ export function MoneyManagerAnalytics() {
   }, [])
 
   if (loading) {
-    return <div className="flex justify-center items-center p-8">Loading analytics data...</div>
+    return (
+      <div className="flex justify-center items-center p-8">
+        <LoadingCountdown message="Loading analytics data" isLoading={loading} />
+      </div>
+    )
   }
 
   if (!stats) {
@@ -51,9 +56,9 @@ export function MoneyManagerAnalytics() {
 
   // Prepare data for category chart
   const categoryData = stats.categoryStats.map((cat: any) => ({
-    name: cat.categoryname,
+    name: cat.categoryName,
     value: cat.total,
-    status: cat.categoryType,
+    type: cat.categoryType,
   }))
 
   // Prepare data for account chart
@@ -91,7 +96,7 @@ export function MoneyManagerAnalytics() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={categoryData.filter((cat: any) => cat.status === "expense")}
+                    data={categoryData.filter((cat: any) => cat.type === "expense")}
                     cx="50%"
                     cy="50%"
                     labelLine={true}
@@ -115,7 +120,7 @@ export function MoneyManagerAnalytics() {
         <TabsContent value="accounts" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Account balance</CardTitle>
+              <CardTitle>Account Balance</CardTitle>
               <CardDescription>Income and expenses by account</CardDescription>
             </CardHeader>
             <CardContent className="h-[400px]">
@@ -128,7 +133,7 @@ export function MoneyManagerAnalytics() {
                   <Legend />
                   <Bar dataKey="income" name="Income" fill="#22c55e" />
                   <Bar dataKey="expense" name="Expense" fill="#ef4444" />
-                  <Bar dataKey="balance" name="balance" fill="#3b82f6" />
+                  <Bar dataKey="balance" name="Balance" fill="#3b82f6" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -154,7 +159,7 @@ export function MoneyManagerAnalytics() {
                   <Legend />
                   <Line type="monotone" dataKey="income" name="Income" stroke="#22c55e" activeDot={{ r: 8 }} />
                   <Line type="monotone" dataKey="expense" name="Expense" stroke="#ef4444" />
-                  <Line type="monotone" dataKey="balance" name="balance" stroke="#3b82f6" strokeDasharray="5 5" />
+                  <Line type="monotone" dataKey="balance" name="Balance" stroke="#3b82f6" strokeDasharray="5 5" />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
