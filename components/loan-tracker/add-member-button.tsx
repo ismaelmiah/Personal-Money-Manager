@@ -26,7 +26,7 @@ const formSchema = z.object({
   phone: z.string().optional(),
 })
 
-export function AddmemberButton() {
+export function AddMemberButton() {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()

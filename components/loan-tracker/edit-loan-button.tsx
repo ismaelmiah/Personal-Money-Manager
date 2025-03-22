@@ -24,21 +24,22 @@ import { CalendarIcon, Pencil } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn, formatDate } from "@/lib/utils"
-import { useMembers } from "@/hooks/use-members"
-import type { Loan } from "@/lib/loan-tracker-service"
+import { useAppMembers } from "@/hooks/use-app-members"
+import { Loan } from "@/lib/loan-tracker-service"
+import { useAppLoans } from "@/hooks/user-app-loans"
 
 const formSchema = z.object({
   memberId: z.string({
     required_error: "Please select a member",
   }),
-  amount: z.string().min(1, "amount is required"),
+  amount: z.string().min(1, "Amount is required"),
   currency: z.enum(["BDT", "USD", "GBP"], {
     required_error: "Please select a currency",
   }),
   status: z.enum(["Loan", "Return"], {
     required_error: "Please select a type",
   }),
-  date: z.date({
+  createdAt: z.date({
     required_error: "Please select a date",
   }),
   notes: z.string().optional(),
@@ -54,7 +55,8 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
-  const { members } = useMembers()
+  const { members } = useAppMembers()
+  const { updateLoan } = useAppLoans()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,7 +65,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
       amount: loan.amount.toString(),
       currency: loan.currency as "BDT" | "USD" | "GBP",
       status: loan.status as "Loan" | "Return",
-      date: new Date(loan.createdAt),
+      createdAt: new Date(loan.createdAt),
       notes: loan.notes,
     },
   })
@@ -71,27 +73,22 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      const selectedmember = members.find((m) => m.id === values.memberId)
+      const selectedMember = members.find((m) => m.id === values.memberId)
 
-      if (!selectedmember) {
-        throw new Error("member not found")
+      if (!selectedMember) {
+        throw new Error("Member not found")
       }
 
-      const response = await fetch(`/api/loan-tracker/loans/${loan.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...values,
-          membername: selectedmember.name,
-          date: values.date.toISOString(),
-        }),
+      await updateLoan({
+        id: loan.id,
+        memberId: values.memberId,
+        memberName: selectedMember.name,
+        amount: Number.parseFloat(values.amount),
+        currency: values.currency,
+        status: values.status as "Loan" | "Return",
+        createdAt: values.createdAt.toISOString(),
+        notes: values.notes || "",
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to update loan")
-      }
 
       toast({
         title: "Success",
@@ -100,7 +97,6 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
 
       setOpen(false)
       if (onSuccess) onSuccess()
-      router.refresh()
     } catch (error) {
       console.error("Error updating loan:", error)
       toast({
@@ -133,7 +129,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
               name="memberId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>member</FormLabel>
+                  <FormLabel>Member</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -158,7 +154,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>amount</FormLabel>
+                    <FormLabel>Amount</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" {...field} />
                     </FormControl>
@@ -171,7 +167,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
                 name="currency"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>currency</FormLabel>
+                    <FormLabel>Currency</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -212,7 +208,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
             />
             <FormField
               control={form.control}
-              name="date"
+              name="createdAt"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Date</FormLabel>
@@ -241,7 +237,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>notes</FormLabel>
+                  <FormLabel>Notes</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>

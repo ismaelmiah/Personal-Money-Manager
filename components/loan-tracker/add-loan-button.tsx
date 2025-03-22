@@ -24,10 +24,8 @@ import { CalendarIcon, Plus } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn, formatDate } from "@/lib/utils"
-import { useMembers } from "@/hooks/use-members"
-import { useOptimistic } from "@/lib/optimistic-context"
-import { addLoan } from "@/lib/loan-tracker-service"
-import { format } from "date-fns"
+import { useAppMembers } from "@/hooks/use-app-members"
+import { useAppLoans } from "@/hooks/user-app-loans"
 
 const formSchema = z.object({
   memberId: z.string({
@@ -51,8 +49,8 @@ export function AddLoanButton() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
-  const { members } = useMembers()
-  const { addOptimisticLoan, setOptimisticMembers } = useOptimistic() // Moved hook call outside conditional
+  const { members } = useAppMembers()
+  const { addLoan } = useAppLoans()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -72,49 +70,24 @@ export function AddLoanButton() {
       if (!selectedMember) {
         throw new Error("Member not found")
       }
-      const formattedCreatedAt = format(values.createdAt, "dd/MM/yyyy HH:mm:ss")
-      // Create the new loan object
-      const newLoan = {
-        id: `L${Date.now()}`,
+
+      await addLoan({
         memberId: values.memberId,
         memberName: selectedMember.name,
-        status: values.status as "Loan" | "Return",
-        currency: values.currency,
         amount: Number.parseFloat(values.amount),
-        createdAt: formattedCreatedAt,
+        currency: values.currency,
+        status: values.status as "Loan" | "Return",
+        createdAt: values.createdAt.toISOString(),
         notes: values.notes || "",
-      }
+      })
 
-      // Update optimistic state immediately
-      addOptimisticLoan(newLoan)
-
-      // Show success toast
       toast({
         title: "Success",
         description: `${values.status === "Loan" ? "Loan" : "Return"} added successfully`,
       })
 
-      // Close the dialog and reset form
       setOpen(false)
       form.reset()
-
-      // Make API call in the background
-      const response = await fetch("/api/loan-tracker/loans", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...newLoan
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to create loan")
-      }
-
-      // Refresh the page to update the UI
-      router.refresh()
     } catch (error) {
       console.error("Error adding loan:", error)
       toast({
@@ -127,32 +100,10 @@ export function AddLoanButton() {
     }
   }
 
-  const loadMembers = async () => {
-    // We don't need to fetch members again if we already have them
-    if (members.length > 0) return
-
-    try {
-      const response = await fetch("/api/loan-tracker/members")
-      if (!response.ok) {
-        throw new Error("Failed to fetch members")
-      }
-      const data = await response.json()
-      // Update the optimistic state with the fetched members
-      setOptimisticMembers(data)
-    } catch (error) {
-      console.error("Error loading members:", error)
-      toast({
-        title: "Error",
-        description: "Failed to load members. Please try again.",
-        variant: "destructive",
-      })
-    }
-  }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={loadMembers}>
+        <Button>
           <Plus className="mr-2 h-4 w-4" />
           Add Transaction
         </Button>
@@ -238,8 +189,8 @@ export function AddLoanButton() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="Loan">Loan (Money Out)</SelectItem>
-                      <SelectItem value="Return">Return (Money In)</SelectItem>
+                      <SelectItem value="loan">Loan (Money Out)</SelectItem>
+                      <SelectItem value="return">Return (Money In)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

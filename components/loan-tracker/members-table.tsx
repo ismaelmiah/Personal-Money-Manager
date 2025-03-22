@@ -7,10 +7,12 @@ import { useMembers } from "@/hooks/use-members"
 import { EditmemberButton } from "../money-manager/edit-member-button"
 import { DeletememberButton } from "../money-manager/delete-member-button"
 import { PaginatedTable } from "../paginated-table"
+import { LoadingCountdown } from "../loading-countdown";
+import { useAppMembers } from "@/hooks/use-app-members";
 
 export function MembersTable() {
   const router = useRouter()
-  const { members, isLoading, isError, mutate } = useMembers()
+    const { members, isLoading, isError, mutate, deleteMember } = useAppMembers()
 
   if (isError) {
     return (
@@ -21,11 +23,7 @@ export function MembersTable() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
+    return <LoadingCountdown message="Loading members" isLoading={isLoading} />
   }
 
   if (!members || members.length === 0) {
