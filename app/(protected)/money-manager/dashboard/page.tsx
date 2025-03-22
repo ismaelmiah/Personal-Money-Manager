@@ -1,11 +1,11 @@
-import { Suspense } from "react"
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MoneyManagerOverview } from "@/components/money-manager/overview"
 import { RecentTransactions } from "@/components/money-manager/recent-transactions"
 import { MoneyManagerStatsCards } from "@/components/money-manager/stats-cards"
 import { MoneyManagerAnalytics } from "@/components/money-manager/analytics"
-import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function MoneyManagerDashboardPage() {
   return (
@@ -19,9 +19,7 @@ export default function MoneyManagerDashboardPage() {
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
-          <Suspense fallback={<LoadingSpinner />}>
-            <MoneyManagerStatsCards />
-          </Suspense>
+          <MoneyManagerStatsCards />
           <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
             <Card className="lg:col-span-4">
               <CardHeader>
@@ -29,9 +27,7 @@ export default function MoneyManagerDashboardPage() {
                 <CardDescription>View your income and expense trends over time.</CardDescription>
               </CardHeader>
               <CardContent className="pl-2">
-                <Suspense fallback={<LoadingSpinner />}>
-                  <MoneyManagerOverview />
-                </Suspense>
+                <MoneyManagerOverview />
               </CardContent>
             </Card>
             <Card className="lg:col-span-3">
@@ -40,17 +36,13 @@ export default function MoneyManagerDashboardPage() {
                 <CardDescription>Your most recent financial transactions.</CardDescription>
               </CardHeader>
               <CardContent>
-                <Suspense fallback={<LoadingSpinner />}>
-                  <RecentTransactions />
-                </Suspense>
+                <RecentTransactions />
               </CardContent>
             </Card>
           </div>
         </TabsContent>
         <TabsContent value="analytics" className="space-y-4">
-          <Suspense fallback={<LoadingSpinner />}>
-            <MoneyManagerAnalytics />
-          </Suspense>
+          <MoneyManagerAnalytics />
         </TabsContent>
       </Tabs>
     </div>

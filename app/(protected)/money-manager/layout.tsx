@@ -1,29 +1,7 @@
-import type React from "react"
-import { redirect } from "next/navigation"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
-import { MoneyManagerSideNav } from "@/components/money-manager/side-nav"
-import { MobileNav } from "@/components/mobile-nav"
+import { MemberDetailsPageClient } from "./layout.client"
 
-export default async function MoneyManagerLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const session = await getServerSession(authOptions)
-
-  if (!session) {
-    redirect("/auth/signin")
-  }
-
-  return (
-      <div className="flex min-h-screen flex-col">
-        <MobileNav platform="money-manager" session={session} />
-        <div className="flex flex-1">
-          <MoneyManagerSideNav session={session} />
-          <main className="flex-1 overflow-x-hidden">{children}</main>
-        </div>
-      </div>
-  )
+export default async function MemberDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params; // Destructure id from params
+  // Pass the `id` to the client component
+  return <MemberDetailsPageClient id={id} />
 }
-

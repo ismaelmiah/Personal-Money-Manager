@@ -1,6 +1,6 @@
-import { Suspense } from "react"
+"use client"
+
 import { MoneyManagerAnalytics } from "@/components/money-manager/analytics"
-import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function ReportsPage() {
   return (
@@ -8,9 +8,7 @@ export default function ReportsPage() {
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Reports</h2>
       </div>
-      <Suspense fallback={<LoadingSpinner />}>
-        <MoneyManagerAnalytics />
-      </Suspense>
+      <MoneyManagerAnalytics />
     </div>
   )
 }

@@ -1,7 +1,7 @@
-import { Suspense } from "react"
+"use client"
+
 import { TransactionsTable } from "@/components/money-manager/transactions-table"
 import { AddTransactionButton } from "@/components/money-manager/add-transaction-button"
-import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function TransactionsPage() {
   return (
@@ -10,9 +10,7 @@ export default function TransactionsPage() {
         <h2 className="text-3xl font-bold tracking-tight">Transactions</h2>
         <AddTransactionButton />
       </div>
-      <Suspense fallback={<LoadingSpinner />}>
-        <TransactionsTable />
-      </Suspense>
+      <TransactionsTable />
     </div>
   )
 }

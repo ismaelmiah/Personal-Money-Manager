@@ -1,7 +1,7 @@
-import { Suspense } from "react"
+"use client"
+
 import { AccountsTable } from "@/components/money-manager/accounts-table"
 import { AddAccountButton } from "@/components/money-manager/add-account-button"
-import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function AccountsPage() {
   return (
@@ -10,9 +10,7 @@ export default function AccountsPage() {
         <h2 className="text-3xl font-bold tracking-tight">Accounts</h2>
         <AddAccountButton />
       </div>
-      <Suspense fallback={<LoadingSpinner />}>
-        <AccountsTable />
-      </Suspense>
+      <AccountsTable />
     </div>
   )
 }

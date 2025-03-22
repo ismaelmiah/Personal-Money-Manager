@@ -1,7 +1,7 @@
-import { Suspense } from "react"
+"use client"
+
 import { CategoriesTable } from "@/components/money-manager/categories-table"
 import { AddCategoryButton } from "@/components/money-manager/add-category-button"
-import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function CategoriesPage() {
   return (
@@ -10,9 +10,7 @@ export default function CategoriesPage() {
         <h2 className="text-3xl font-bold tracking-tight">Categories</h2>
         <AddCategoryButton />
       </div>
-      <Suspense fallback={<LoadingSpinner />}>
-        <CategoriesTable />
-      </Suspense>
+      <CategoriesTable />
     </div>
   )
 }
