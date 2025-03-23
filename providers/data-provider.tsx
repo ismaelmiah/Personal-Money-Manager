@@ -120,18 +120,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       const [
         loansResponse,
         membersResponse,
+        statisticsResponse,
         accountsResponse,
         categoriesResponse,
         transactionsResponse,
-        statisticsResponse,
         moneyManagerStatisticsResponse,
       ] = await Promise.all([
         fetch("/api/loan-tracker/loans"),
         fetch("/api/loan-tracker/members"),
+        fetch("/api/loan-tracker/statistics"),
         fetch("/api/money-manager/accounts"),
         fetch("/api/money-manager/categories"),
         fetch("/api/money-manager/transactions"),
-        fetch("/api/loan-tracker/statistics"),
         fetch("/api/money-manager/statistics"),
       ])
 
@@ -149,14 +149,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Parse all responses
-      const [loans, members, accounts, categories, transactions, statistics, moneyManagerStatistics] =
+      const [loans, members, statistics, accounts, categories, transactions, moneyManagerStatistics] =
         await Promise.all([
           loansResponse.json(),
           membersResponse.json(),
+          statisticsResponse.json(),
           accountsResponse.json(),
           categoriesResponse.json(),
           transactionsResponse.json(),
-          statisticsResponse.json(),
           moneyManagerStatisticsResponse.json(),
         ])
 
@@ -164,10 +164,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       setData({
         loans,
         members,
+        statistics,
         accounts,
         categories,
         transactions,
-        statistics,
         moneyManagerStatistics,
         isLoading: false,
         isError: false,

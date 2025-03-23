@@ -3,13 +3,13 @@
 import { useAppData } from "@/providers/data-provider"
 
 export function useAppMembers() {
-  const { members, isLoading, isError, refreshData, addMember, updateMember, deleteMember } = useAppData()
+  const { members, isLoading, isError, refreshMembers, addMember, updateMember, deleteMember } = useAppData()
 
   return {
     members,
     isLoading,
     isError,
-    mutate: refreshData,
+    refreshMembers: refreshMembers,
     addMember,
     updateMember,
     deleteMember,

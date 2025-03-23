@@ -3,13 +3,15 @@
 import { useAppData } from "@/providers/data-provider"
 
 export function useAppLoans() {
-  const { loans, isLoading, isError, refreshData, addLoan, updateLoan, deleteLoan } = useAppData()
+  const { loans, isLoading, isError, refreshLoans, refreshMembers, refreshStatistics, addLoan, updateLoan, deleteLoan } = useAppData()
 
   return {
     loans,
     isLoading,
     isError,
-    mutate: refreshData,
+    refreshLoans: refreshLoans,
+    refreshMembers: refreshMembers,
+    refreshStatistics: refreshStatistics,
     addLoan,
     updateLoan,
     deleteLoan,

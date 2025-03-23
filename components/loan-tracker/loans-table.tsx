@@ -12,7 +12,7 @@ import { PaginatedTable } from "../paginated-table"
 
 export function LoansTable() {
   const router = useRouter()
-  const { loans, isLoading, isError, mutate, deleteLoan } = useAppLoans()
+  const { loans, isLoading, isError, refreshLoans, deleteLoan } = useAppLoans()
 
   if (isError) {
     return (
@@ -25,7 +25,7 @@ export function LoansTable() {
   const handleDeleteLoan = async (id: string) => {
     try {
       await deleteLoan(id)
-      mutate()
+      refreshLoans()
     } catch (error) {
       console.error("Error deleting loan:", error)
     }
@@ -63,7 +63,7 @@ export function LoansTable() {
       header: "Actions",
       accessorKey: (row:any) => (
         <div className="flex space-x-2">
-          <EditLoanButton loan={row} onSuccess={() => mutate()} />
+          <EditLoanButton loan={row} onSuccess={() => refreshLoans()} />
           <DeleteLoanButton loanId={row.id} onSuccess={() => handleDeleteLoan(row.id)} />
         </div>
       ),

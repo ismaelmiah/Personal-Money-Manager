@@ -12,7 +12,7 @@ import { useAppMembers } from "@/hooks/use-app-members";
 
 export function MembersTable() {
   const router = useRouter()
-    const { members, isLoading, isError, mutate, deleteMember } = useAppMembers()
+    const { members, isLoading, isError, refreshMembers, deleteMember } = useAppMembers()
 
   if (isError) {
     return (
@@ -61,8 +61,8 @@ export function MembersTable() {
       header: "Actions",
       accessorKey: (row: any) => (
         <div className="flex space-x-2">
-          <EditmemberButton member={row} onSuccess={() => mutate()} />
-          <DeletememberButton memberid={row.id} onSuccess={() => mutate()} />
+          <EditmemberButton member={row} onSuccess={() => refreshMembers()} />
+          <DeletememberButton memberid={row.id} onSuccess={() => refreshMembers()} />
         </div>
       ),
       className: "w-[100px]",

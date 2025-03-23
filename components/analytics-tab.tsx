@@ -19,29 +19,13 @@ import {
   Legend,
 } from "recharts"
 import type { Loan } from "@/lib/loan-tracker-service"
+import { useAppLoans } from "@/hooks/user-app-loans"
 
 export function AnalyticsTab() {
-  const [loans, setLoans] = useState<Loan[]>([])
-  const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("monthly")
+  const { loans, isLoading } = useAppLoans()
 
-  useEffect(() => {
-    const fetchLoans = async () => {
-      try {
-        const response = await fetch("/api/loan-tracker/loans")
-        const data = await response.json()
-        setLoans(data)
-      } catch (error) {
-        console.error("Error fetching loans:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchLoans()
-  }, [])
-
-  if (loading) {
+  if (isLoading) {
     return <div className="flex justify-center items-center p-8">Loading analytics data...</div>
   }
 
