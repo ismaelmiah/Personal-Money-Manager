@@ -308,7 +308,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         // Optimistically update the UI
         setData((prev) => ({
           ...prev,
-          loans: [...prev.loans, tempLoan],
+          loans: [tempLoan, ...prev.loans],
         }))
 
         // Make the API call

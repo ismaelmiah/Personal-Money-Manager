@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -26,12 +25,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn, formatDate } from "@/lib/utils"
 import { useAppMembers } from "@/hooks/use-app-members"
 import { useAppLoans } from "@/hooks/user-app-loans"
+import { format } from "date-fns"; 
 
 const formSchema = z.object({
   memberId: z.string({
     required_error: "Please select a member",
   }),
-  amount: z.string().min(1, "Amount is required"),
+  amount: z.string().min(0, "Amount is required"),
   currency: z.enum(["BDT", "USD", "GBP"], {
     required_error: "Please select a currency",
   }),
@@ -47,7 +47,6 @@ const formSchema = z.object({
 export function AddLoanButton() {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
   const { toast } = useToast()
   const { members } = useAppMembers()
   const { addLoan } = useAppLoans()
@@ -55,6 +54,8 @@ export function AddLoanButton() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      memberId: "",
+      amount: "",
       currency: "BDT",
       status: "Loan",
       createdAt: new Date(),
@@ -70,6 +71,8 @@ export function AddLoanButton() {
       if (!selectedMember) {
         throw new Error("Member not found")
       }
+      
+      const formattedCreatedAt = format(values.createdAt, "dd/MM/yyyy HH:mm:ss");
 
       await addLoan({
         memberId: values.memberId,
@@ -77,7 +80,7 @@ export function AddLoanButton() {
         amount: Number.parseFloat(values.amount),
         currency: values.currency,
         status: values.status as "Loan" | "Return",
-        createdAt: values.createdAt.toISOString(),
+        createdAt: formattedCreatedAt,
         notes: values.notes || "",
       })
 
@@ -189,8 +192,8 @@ export function AddLoanButton() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="loan">Loan (Money Out)</SelectItem>
-                      <SelectItem value="return">Return (Money In)</SelectItem>
+                      <SelectItem value="Loan">Loan (Money Out)</SelectItem>
+                      <SelectItem value="Return">Return (Money In)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

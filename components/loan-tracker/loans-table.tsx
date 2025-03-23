@@ -31,6 +31,8 @@ export function LoansTable() {
     }
   }
 
+  const sortedLoans = loans
+
   const columns = [
     {
       header: "Date",
@@ -82,11 +84,11 @@ export function LoansTable() {
           </div>
         ) : (
           <PaginatedTable
-            data={loans || []}
+            data={sortedLoans}
             columns={columns}
             searchPlaceholder="Search loans..."
             onRowClick={(row :any) => router.push(`/loan-tracker/members/${row.memberId}`)}
-            maxHeight="calc(100vh - 250px)" // Adjust based on your layout
+            maxHeight="calc(100vh - 250px)"
           />
         ))}
     </>

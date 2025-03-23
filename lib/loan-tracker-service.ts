@@ -1,6 +1,7 @@
 import { google } from "googleapis"
 import { JWT } from "google-auth-library"
 import { id } from "date-fns/locale"
+import { parse } from "date-fns";
 
 // Types
 export type Member = {
@@ -144,21 +145,30 @@ export async function getmembers(): Promise<Member[]> {
 // Get all loans with improved error handling
 export async function getLoans(): Promise<Loan[]> {
   try {
-    const data = await getSpreadsheetData("Loans!A2:H")
+    const data = await getSpreadsheetData("Loans!A2:H");
 
-    return data.map((row: any[]) => ({
+    const loans = data.map((row: any[]) => ({
       id: String(row[0] || ""),
       memberId: String(row[1] || ""),
       memberName: String(row[2] || ""),
       status: row[3] === "Loan" || row[3] === "Return" ? row[3] : "Loan",
-      currency: (row[4] as Currency || "BDT"),
+      currency: (row[4] as Currency) || "BDT",
       amount: typeof row[5] === "number" ? row[5] : Number.parseFloat(row[5]) || 0,
       createdAt: String(row[6] || new Date().toISOString()),
       notes: String(row[7] || ""),
-    }))
+    }));
+
+    // Parse and sort loans by createdAt in descending order
+    loans.sort((a, b) => {
+      const dateA = parse(a.createdAt, "dd/MM/yyyy HH:mm:ss", new Date());
+      const dateB = parse(b.createdAt, "dd/MM/yyyy HH:mm:ss", new Date());
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    return loans;
   } catch (error) {
-    console.error("Error in getLoans:", error)
-    return []
+    console.error("Error in getLoans:", error);
+    return [];
   }
 }
 
@@ -207,6 +217,7 @@ export async function deleteLoan(id: string): Promise<void> {
     // Calculate the row in the spreadsheet (add 2 for header row and 0-indexing)
     const rowIndex = loanIndex + 2
 
+    console.log(`Deleting loan with ID ${id} at row index ${rowIndex}`)
     // Delete the loan by clearing the row
     await updateSpreadsheetData(`Loans!A${rowIndex}:H${rowIndex}`, [[""]])
 
