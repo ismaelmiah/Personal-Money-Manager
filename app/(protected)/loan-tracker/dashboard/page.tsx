@@ -1,11 +1,11 @@
-import { Suspense } from "react"
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Overview } from "@/components/overview"
 import { RecentLoans } from "@/components/recent-loans"
 import { StatsCards } from "@/components/stats-cards"
 import { AnalyticsTab } from "@/components/analytics-tab"
-import { LoadingSpinner } from "@/components/loading-spinner"
 
 export default function LoanTrackerDashboardPage() {
   return (
@@ -19,9 +19,7 @@ export default function LoanTrackerDashboardPage() {
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
-          <Suspense fallback={<LoadingSpinner />}>
-            <StatsCards />
-          </Suspense>
+          <StatsCards />
           <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
             <Card className="lg:col-span-4">
               <CardHeader>
@@ -29,9 +27,7 @@ export default function LoanTrackerDashboardPage() {
                 <CardDescription>View your loan and repayment trends over time.</CardDescription>
               </CardHeader>
               <CardContent className="pl-2">
-                <Suspense fallback={<LoadingSpinner />}>
-                  <Overview />
-                </Suspense>
+                <Overview />
               </CardContent>
             </Card>
             <Card className="lg:col-span-3">
@@ -40,17 +36,13 @@ export default function LoanTrackerDashboardPage() {
                 <CardDescription>Your most recent loan transactions.</CardDescription>
               </CardHeader>
               <CardContent>
-                <Suspense fallback={<LoadingSpinner />}>
-                  <RecentLoans />
-                </Suspense>
+                <RecentLoans />
               </CardContent>
             </Card>
           </div>
         </TabsContent>
         <TabsContent value="analytics" className="space-y-4">
-          <Suspense fallback={<LoadingSpinner />}>
-            <AnalyticsTab />
-          </Suspense>
+          <AnalyticsTab />
         </TabsContent>
       </Tabs>
     </div>
