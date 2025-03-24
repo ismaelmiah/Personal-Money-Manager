@@ -1,7 +1,5 @@
 import { google } from "googleapis"
 import { JWT } from "google-auth-library"
-import { id } from "date-fns/locale"
-import { parse } from "date-fns";
 
 // Types
 export type Member = {
@@ -116,7 +114,7 @@ export async function updateSpreadsheetData(range: string, values: any[][]) {
         values,
       },
     })
-
+    
     return response.data
   } catch (error) {
     console.error("Error updating spreadsheet:", error)
@@ -157,13 +155,6 @@ export async function getLoans(): Promise<Loan[]> {
       createdAt: String(row[6] || new Date().toISOString()),
       notes: String(row[7] || ""),
     }));
-
-    // Parse and sort loans by createdAt in descending order
-    loans.sort((a, b) => {
-      const dateA = parse(a.createdAt, "dd/MM/yyyy HH:mm:ss", new Date());
-      const dateB = parse(b.createdAt, "dd/MM/yyyy HH:mm:ss", new Date());
-      return dateB.getTime() - dateA.getTime();
-    });
 
     return loans;
   } catch (error) {
@@ -218,8 +209,10 @@ export async function deleteLoan(id: string): Promise<void> {
     const rowIndex = loanIndex + 2
 
     console.log(`Deleting loan with ID ${id} at row index ${rowIndex}`)
+
+    const range = `Loans!A${rowIndex}:H${rowIndex}`
     // Delete the loan by clearing the row
-    await updateSpreadsheetData(`Loans!A${rowIndex}:H${rowIndex}`, [[""]])
+    await updateSpreadsheetData(range, [["", "", "", "", "", "", "", ""]])
 
     // Note: This doesn't actually delete the row, just clears it
     // For a proper delete, you would need to use the batchUpdate method with deleteRange
