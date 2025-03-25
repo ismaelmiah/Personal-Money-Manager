@@ -5,6 +5,8 @@ import { createContext, useContext, useState, useEffect, useCallback } from "rea
 import type { Loan, Member } from "@/lib/loan-tracker-service"
 import type { Account, Category, Transaction } from "@/lib/money-manager-service"
 import { useToast } from "@/components/ui/use-toast"
+import { parse } from "date-fns";
+
 
 // Define the shape of our application data
 interface AppData {
@@ -187,19 +189,27 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   // Individual refresh functions for specific data types
   const refreshLoans = useCallback(async () => {
     try {
-      const response = await fetch("/api/loan-tracker/loans")
-      if (!response.ok) throw new Error("Failed to fetch loans")
-      const loans = await response.json()
-      setData((prev) => ({ ...prev, loans, lastFetched: new Date() }))
+      const response = await fetch("/api/loan-tracker/loans");
+      if (!response.ok) throw new Error("Failed to fetch loans");
+      const loans = await response.json();
+
+      // Parse and sort loans by createdAt in descending order
+      const sortedLoans = loans.sort((a: Loan, b: Loan) => {
+        const dateA = parse(a.createdAt, "dd/MM/yyyy HH:mm:ss", new Date());
+        const dateB = parse(b.createdAt, "dd/MM/yyyy HH:mm:ss", new Date());
+        return dateB.getTime() - dateA.getTime();
+      });
+
+      setData((prev) => ({ ...prev, loans: sortedLoans, lastFetched: new Date() }));
     } catch (error) {
-      console.error("Error fetching loans:", error)
+      console.error("Error fetching loans:", error);
       toast({
         title: "Error",
         description: "Failed to fetch loans. Please try again.",
         variant: "destructive",
-      })
+      });
     }
-  }, [toast])
+  }, [toast]);
 
   const refreshMembers = useCallback(async () => {
     try {
