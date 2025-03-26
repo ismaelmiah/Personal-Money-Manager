@@ -16,6 +16,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface PaginatedTableProps<T> {
   data: T[]
@@ -26,7 +27,7 @@ interface PaginatedTableProps<T> {
     searchable?: boolean
   }[]
   searchPlaceholder?: string
-  onRowClick?: (row: T) => void
+  onRowClick?: (row: any, e: React.MouseEvent) => void
   maxHeight?: string
 }
 
@@ -183,11 +184,11 @@ export function PaginatedTable<T extends { id: string }>({
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedData.map((row) => (
+                  paginatedData.map((row, index) => (
                     <TableRow
-                      key={row.id}
-                      className={onRowClick ? "cursor-pointer hover:bg-muted/50" : undefined}
-                      onClick={onRowClick ? () => onRowClick(row) : undefined}
+                      key={index}
+                      className={cn("cursor-pointer hover:bg-muted/50", onRowClick ? "cursor-pointer" : "")}
+                      onClick={onRowClick ? (e) => onRowClick(row, e) : undefined}
                     >
                       {columns.map((column, cellIndex) => {
                         const key = column.accessorKey
