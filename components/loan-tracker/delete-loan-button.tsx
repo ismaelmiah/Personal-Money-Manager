@@ -39,6 +39,7 @@ export function DeleteLoanButton({ loanId, onSuccess }: DeleteLoanButtonProps) {
       })
 
       setOpen(false)
+      // Call onSuccess without executing another delete operation
       if (onSuccess) onSuccess()
     } catch (error) {
       console.error("Error deleting loan:", error)
@@ -77,4 +78,3 @@ export function DeleteLoanButton({ loanId, onSuccess }: DeleteLoanButtonProps) {
     </AlertDialog>
   )
 }
-
