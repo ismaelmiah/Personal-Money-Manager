@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -19,12 +20,13 @@ import { useToast } from "@/components/ui/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { CalendarIcon, Plus } from "lucide-react"
+import { CalendarIcon, Plus, ArrowUpCircle, ArrowDownCircle } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn, formatDate } from "@/lib/utils"
 import { useAppMembers } from "@/hooks/use-app-members"
 import { useAppLoans } from "@/hooks/user-app-loans"
+import { MemberCombobox } from "./member-combobox"
 import { format } from "date-fns"; 
 
 const formSchema = z.object({
@@ -43,10 +45,10 @@ const formSchema = z.object({
   }),
   notes: z.string().optional(),
 })
-
 export function AddLoanButton() {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
   const { toast } = useToast()
   const { members } = useAppMembers()
   const { addLoan } = useAppLoans()
@@ -71,7 +73,7 @@ export function AddLoanButton() {
       if (!selectedMember) {
         throw new Error("Member not found")
       }
-      
+
       const formattedCreatedAt = format(values.createdAt, "dd/MM/yyyy HH:mm:ss");
 
       await addLoan({
@@ -88,7 +90,6 @@ export function AddLoanButton() {
         title: "Success",
         description: `${values.status === "Loan" ? "Loan" : "Return"} added successfully`,
       })
-
       setOpen(false)
       form.reset()
     } catch (error) {
@@ -102,6 +103,8 @@ export function AddLoanButton() {
       setLoading(false)
     }
   }
+
+  const transactionType = form.watch("status")
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -124,20 +127,7 @@ export function AddLoanButton() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Member</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a member" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {members.map((member) => (
-                        <SelectItem key={member.id} value={member.id}>
-                          {member.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <MemberCombobox members={members} value={field.value} onChange={field.onChange} disabled={loading} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -150,7 +140,7 @@ export function AddLoanButton() {
                   <FormItem>
                     <FormLabel>Amount</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.01" {...field} />
+                      <Input type="number" step="0.01" {...field} disabled={loading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -162,7 +152,7 @@ export function AddLoanButton() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Currency</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={loading}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select currency" />
@@ -185,17 +175,28 @@ export function AddLoanButton() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Transaction Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Loan">Loan (Money Out)</SelectItem>
-                      <SelectItem value="Return">Return (Money In)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-4">
+                    <Button
+                      type="button"
+                      variant={field.value === "Loan" ? "default" : "outline"}
+                      className={cn("flex-1 gap-2", field.value === "Loan" && "bg-red-600 hover:bg-red-700")}
+                      onClick={() => field.onChange("Loan")}
+                      disabled={loading}
+                    >
+                      <ArrowUpCircle className="h-4 w-4" />
+                      Loan (Out)
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={field.value === "Return" ? "default" : "outline"}
+                      className={cn("flex-1 gap-2", field.value === "Return" && "bg-green-600 hover:bg-green-700")}
+                      onClick={() => field.onChange("Return")}
+                      disabled={loading}
+                    >
+                      <ArrowDownCircle className="h-4 w-4" />
+                      Return (In)
+                    </Button>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -212,6 +213,7 @@ export function AddLoanButton() {
                         <Button
                           variant={"outline"}
                           className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
+                          disabled={loading}
                         >
                           {field.value ? formatDate(field.value.toISOString()) : <span>Pick a date</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -233,7 +235,7 @@ export function AddLoanButton() {
                 <FormItem>
                   <FormLabel>Notes</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <Textarea {...field} disabled={loading} />
                   </FormControl>
                   <FormDescription>Any additional details about this transaction.</FormDescription>
                   <FormMessage />
@@ -251,4 +253,3 @@ export function AddLoanButton() {
     </Dialog>
   )
 }
-

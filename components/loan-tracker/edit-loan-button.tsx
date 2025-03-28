@@ -20,13 +20,14 @@ import { useToast } from "@/components/ui/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { CalendarIcon, Pencil } from "lucide-react"
+import { CalendarIcon, Pencil, ArrowUpCircle, ArrowDownCircle } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn, formatDate } from "@/lib/utils"
 import { useAppMembers } from "@/hooks/use-app-members"
-import { Loan } from "@/lib/loan-tracker-service"
 import { useAppLoans } from "@/hooks/user-app-loans"
+import { Loan } from "@/lib/loan-tracker-service"
+import { MemberCombobox } from "./member-combobox"
 
 const formSchema = z.object({
   memberId: z.string({
@@ -94,7 +95,6 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
         title: "Success",
         description: `${values.status === "Loan" ? "Loan" : "Return"} updated successfully`,
       })
-
       setOpen(false)
       if (onSuccess) onSuccess()
     } catch (error) {
@@ -108,6 +108,8 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
       setLoading(false)
     }
   }
+
+  const transactionType = form.watch("status")
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -130,20 +132,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Member</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a member" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {members.map((member) => (
-                        <SelectItem key={member.id} value={member.id}>
-                          {member.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <MemberCombobox members={members} value={field.value} onChange={field.onChange} disabled={loading} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -156,7 +145,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
                   <FormItem>
                     <FormLabel>Amount</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.01" {...field} />
+                      <Input type="number" step="0.01" {...field} disabled={loading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -168,7 +157,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Currency</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={loading}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select currency" />
@@ -191,17 +180,28 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Transaction Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="loan">Loan (Money Out)</SelectItem>
-                      <SelectItem value="return">Return (Money In)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-4">
+                    <Button
+                      type="button"
+                      variant={field.value === "Loan" ? "default" : "outline"}
+                      className={cn("flex-1 gap-2", field.value === "Loan" && "bg-red-600 hover:bg-red-700")}
+                      onClick={() => field.onChange("Loan")}
+                      disabled={loading}
+                    >
+                      <ArrowUpCircle className="h-4 w-4" />
+                      Loan (Out)
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={field.value === "Return" ? "default" : "outline"}
+                      className={cn("flex-1 gap-2", field.value === "Return" && "bg-green-600 hover:bg-green-700")}
+                      onClick={() => field.onChange("Return")}
+                      disabled={loading}
+                    >
+                      <ArrowDownCircle className="h-4 w-4" />
+                      Return (In)
+                    </Button>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -218,6 +218,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
                         <Button
                           variant={"outline"}
                           className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
+                          disabled={loading}
                         >
                           {field.value ? formatDate(field.value.toISOString()) : <span>Pick a date</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -239,7 +240,7 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
                 <FormItem>
                   <FormLabel>Notes</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <Textarea {...field} disabled={loading} />
                   </FormControl>
                   <FormDescription>Any additional details about this transaction.</FormDescription>
                   <FormMessage />
@@ -257,4 +258,3 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
     </Dialog>
   )
 }
-
