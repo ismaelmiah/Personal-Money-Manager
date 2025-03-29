@@ -26,8 +26,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn, formatDate } from "@/lib/utils"
 import { useAppMembers } from "@/hooks/use-app-members"
 import { useAppLoans } from "@/hooks/user-app-loans"
-import { MemberCombobox } from "./member-combobox"
-import { format } from "date-fns"; 
+import { format } from "date-fns";
 
 const formSchema = z.object({
   memberId: z.string({
@@ -48,6 +47,7 @@ const formSchema = z.object({
 export function AddLoanButton() {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
   const router = useRouter()
   const { toast } = useToast()
   const { members } = useAppMembers()
@@ -64,6 +64,10 @@ export function AddLoanButton() {
       notes: "",
     },
   })
+
+  const filteredMembers = members.filter((member) =>
+    member.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -105,7 +109,7 @@ export function AddLoanButton() {
   }
 
   const transactionType = form.watch("status")
-
+console.log('members: ', searchQuery);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -127,7 +131,38 @@ export function AddLoanButton() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Member</FormLabel>
-                  <MemberCombobox members={members} value={field.value} onChange={field.onChange} disabled={loading} />
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a member" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <div className="sticky top-0 bg-white z-10 p-2">
+                        <Input
+                          type="text"
+                          placeholder="Search members..."
+                          value={searchQuery}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            setSearchQuery(e.target.value);
+                          }}
+                          className="mb-2"
+                        />
+                      </div>
+                      {/* Filtered Members */}
+                      <div className="max-h-60 overflow-y-auto">
+                        {filteredMembers.map((member) => (
+                          <SelectItem key={member.id} value={member.id}>
+                            {member.name}
+                          </SelectItem>
+                        ))}
+                      </div>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

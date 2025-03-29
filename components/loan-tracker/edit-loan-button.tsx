@@ -27,7 +27,6 @@ import { cn, formatDate } from "@/lib/utils"
 import { useAppMembers } from "@/hooks/use-app-members"
 import { useAppLoans } from "@/hooks/user-app-loans"
 import { Loan } from "@/lib/loan-tracker-service"
-import { MemberCombobox } from "./member-combobox"
 
 const formSchema = z.object({
   memberId: z.string({
@@ -132,7 +131,20 @@ export function EditLoanButton({ loan, onSuccess }: EditLoanButtonProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Member</FormLabel>
-                  <MemberCombobox members={members} value={field.value} onChange={field.onChange} disabled={loading} />
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a member" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {members.map((member) => (
+                        <SelectItem key={member.id} value={member.id}>
+                          {member.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
