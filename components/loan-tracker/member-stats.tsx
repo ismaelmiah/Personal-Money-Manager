@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { formatCurrency } from "@/lib/utils"
 import { useAppStatistics } from "@/hooks/use-app-statistics"
 import { LoadingCountdown } from "@/components/loading-countdown"
+import { PaginatedTable } from "../paginated-table"
 
 export function MemberStats() {
   const { statistics, isLoading, isError } = useAppStatistics()
@@ -15,12 +16,45 @@ export function MemberStats() {
   // Ensure statistics and memberStats exist
   const memberStats = statistics?.memberStats || []
 
+  const columns = [
+    {
+      header: "Member",
+      accessorKey: (row: any) => row.memberName,
+      className: "font-medium",
+      searchable: true,
+    },
+    {
+      header: "Loaned",
+      accessorKey: (row: any) => formatCurrency(row.totalLoaned?.BDT || 0, "BDT"),
+      className: "hidden sm:table-cell truncate max-w-[200px]",
+      searchable: true,
+    },
+    {
+      header: "Returned",
+      accessorKey: (row: any) => formatCurrency(row.totalReturned?.BDT || 0, "BDT"),
+      className: "hidden md:table-cell",
+      searchable: true,
+    },
+    {
+      header: "Balance",
+      accessorKey: (row: any) => (formatCurrency((row.totalLoaned?.BDT || 0) - (row.totalReturned?.BDT || 0), "BDT")),
+      className: "hidden md:table-cell",
+      searchable: true,
+    }
+  ]
+
   return (
     <>
       <LoadingCountdown message="Loading member statistics" isLoading={isLoading} />
 
       {!isLoading && (
         <div className="rounded-md border">
+          <PaginatedTable
+            data={memberStats}
+            columns={columns}
+            defaultPageSize={5}
+          />
+          {/* 
           <Table>
             <TableHeader>
               <TableRow>
@@ -56,7 +90,7 @@ export function MemberStats() {
                 ))
               )}
             </TableBody>
-          </Table>
+          </Table> */}
         </div>
       )}
     </>

@@ -28,7 +28,8 @@ interface PaginatedTableProps<T> {
   }[]
   searchPlaceholder?: string
   onRowClick?: (row: any, e: React.MouseEvent) => void
-  maxHeight?: string
+  maxHeight?: string,
+  defaultPageSize?: number
 }
 
 export function PaginatedTable<T extends { id: string }>({
@@ -37,9 +38,10 @@ export function PaginatedTable<T extends { id: string }>({
   searchPlaceholder = "Search...",
   onRowClick,
   maxHeight,
+  defaultPageSize = 10,
 }: PaginatedTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(defaultPageSize)
   const [searchQuery, setSearchQuery] = useState("")
   const [tableHeight, setTableHeight] = useState<string | undefined>(maxHeight)
 
