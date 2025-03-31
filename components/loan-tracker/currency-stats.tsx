@@ -21,27 +21,38 @@ export function CurrencyStats() {
       <LoadingCountdown message="Loading currency statistics" isLoading={isLoading} />
 
       {!isLoading && (
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="flex flex-col gap-4 p-4 pt-6">
           {currencies.map((currency) => {
             // Ensure the currency data exists
             const currencyData = currencyStats[currency] || { totalLoaned: 0, totalReturned: 0 }
 
             return (
-              <Card key={currency}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{currency}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {formatCurrency(currencyData.totalLoaned - currencyData.totalReturned, currency)}
+              <div key={currency} className="flex flex-col p-4 border rounded-md shadow-sm">
+                <h3 className="text-lg font-semibold">{currency}</h3>
+                <div className="text-2xl font-bold">
+                  {formatCurrency(currencyData.totalLoaned - currencyData.totalReturned, currency)}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Loaned: {formatCurrency(currencyData.totalLoaned, currency)}
-                    <br />
-                    Returned: {formatCurrency(currencyData.totalReturned, currency)}
-                  </p>
-                </CardContent>
-              </Card>
+                <p className="text-xs text-muted-foreground">
+                  Loaned: {formatCurrency(currencyData.totalLoaned, currency)}
+                  <br />
+                  Returned: {formatCurrency(currencyData.totalReturned, currency)}
+                </p>
+              </div>
+              // <Card key={currency}>
+              //   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              //     <CardTitle className="text-sm font-medium">{currency}</CardTitle>
+              //   </CardHeader>
+              //   <CardContent>
+              //     <div className="text-2xl font-bold">
+              //       {formatCurrency(currencyData.totalLoaned - currencyData.totalReturned, currency)}
+              //     </div>
+              //     <p className="text-xs text-muted-foreground">
+              //       Loaned: {formatCurrency(currencyData.totalLoaned, currency)}
+              //       <br />
+              //       Returned: {formatCurrency(currencyData.totalReturned, currency)}
+              //     </p>
+              //   </CardContent>
+              // </Card>
             )
           })}
         </div>
