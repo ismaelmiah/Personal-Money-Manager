@@ -48,7 +48,7 @@ export function MemberStats() {
       <LoadingCountdown message="Loading member statistics" isLoading={isLoading} />
 
       {!isLoading && (
-        <div className="rounded-md border">
+        <div className="rounded-md">
           <PaginatedTable
             data={memberStats}
             columns={columns}
