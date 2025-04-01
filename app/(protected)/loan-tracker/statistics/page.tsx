@@ -18,17 +18,11 @@ export default function StatisticsPage() {
             <MemberStats />
           </Suspense>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Currency Statistics</CardTitle>
-            <CardDescription>Loans and returns by currency</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Suspense fallback={<LoadingSpinner />}>
-              <CurrencyStats />
-            </Suspense>
-          </CardContent>
-        </Card>
+        <div>
+          <Suspense fallback={<LoadingSpinner />}>
+            <CurrencyStats />
+          </Suspense>
+        </div>
       </div>
     </div>
   )
