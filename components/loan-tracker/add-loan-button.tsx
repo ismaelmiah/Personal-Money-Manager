@@ -65,6 +65,15 @@ export function AddLoanButton() {
     },
   })
 
+  // Sort members alphanumerically by name
+members.sort((a, b) => {
+  const nameA = a.name.toLowerCase();
+  const nameB = b.name.toLowerCase();
+  if (nameA < nameB) return -1; // Sort `a` before `b`
+  if (nameA > nameB) return 1;  // Sort `b` before `a`
+  return 0; // Names are equal
+});
+
   const filteredMembers = members.filter((member) =>
     member.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -153,7 +162,6 @@ console.log('members: ', searchQuery);
                           className="mb-2"
                         />
                       </div>
-                      {/* Filtered Members */}
                       <div className="max-h-60 overflow-y-auto">
                         {filteredMembers.map((member) => (
                           <SelectItem key={member.id} value={member.id}>

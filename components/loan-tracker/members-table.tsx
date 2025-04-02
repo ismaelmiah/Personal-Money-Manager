@@ -12,7 +12,7 @@ import { useAppMembers } from "@/hooks/use-app-members";
 
 export function MembersTable() {
   const router = useRouter()
-    const { members, isLoading, isError, refreshMembers, deleteMember } = useAppMembers()
+  const { members, isLoading, isError, refreshMembers, deleteMember } = useAppMembers()
 
   if (isError) {
     return (
@@ -69,12 +69,22 @@ export function MembersTable() {
     },
   ]
 
+
+  // Sort members alphanumerically by name
+  members.sort((a, b) => {
+    const nameA = a.name.toLowerCase();
+    const nameB = b.name.toLowerCase();
+    if (nameA < nameB) return -1; // Sort `a` before `b`
+    if (nameA > nameB) return 1;  // Sort `b` before `a`
+    return 0; // Names are equal
+  });
+
   return (
     <PaginatedTable
       data={members}
       columns={columns}
       searchPlaceholder="Search members..."
-      onRowClick={(row:any) => router.push(`/loan-tracker/members/${row.id}`)}
+      onRowClick={(row: any) => router.push(`/loan-tracker/members/${row.id}`)}
     />
   )
 }
