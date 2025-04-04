@@ -1,5 +1,4 @@
 import Sidebar from '@/app/components/layout/Sidebar';
-import AuthButton from '@/app/components/AuthButton';
 
 import { getRows } from '../lib/sheets';
 import { Ledger, Member } from '../types';
@@ -30,26 +29,13 @@ export default async function LedgerLayout({
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <div>
-        {/* Static sidebar for desktop */}
-        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+      <div className="flex">
+        <div className="hidden lg:flex h-screen lg:w-72 lg:flex-col">
           <Sidebar />
         </div>
-
-        {/* Main content area */}
-        <div className="lg:pl-72">
-          <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-            {/* You can add a mobile menu button here later */}
-            <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
-              Loan Tracking Platform
-            </div>
-            <AuthButton />
-          </div>
-
-          <main className="py-10">
-            <div className="px-4 sm:px-6 lg:px-8">{children}</div>
-          </main>
-        </div>
+        <main>
+          <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+        </main>
       </div>
     </HydrationBoundary>
   );
