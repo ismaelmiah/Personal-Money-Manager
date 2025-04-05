@@ -55,18 +55,27 @@ export default function DataTable<T extends DataItem>({ data, columns }: DataTab
 
   return (
     <div className="w-full">
-      {/* Filter Input */}
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Search table..."
-          value={filter}
-          onChange={(e) => {
-            setFilter(e.target.value);
-            setCurrentPage(1); // Reset to first page on new search
-          }}
-          className="p-2 border rounded-md w-full sm:w-auto"
-        />
+      <div className="flex justify-between items-start mb-2">
+        <h1 className="text-3xl font-bold">Ledger</h1>
+        <div className="flex items-center gap-4">
+          <input
+            type="text"
+            placeholder="Search table..."
+            value={filter}
+            onChange={(e) => {
+              setFilter(e.target.value);
+              setCurrentPage(1); // Reset to first page on new search
+            }}
+            className="p-2 border rounded-md w-full sm:w-auto"
+          />
+          <button
+            // onClick={() => setIsModalOpen(true)}
+            className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700"
+          >
+            Add Record
+          </button>
+
+        </div>
       </div>
 
       {/* Table */}

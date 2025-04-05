@@ -2,6 +2,8 @@ import { getRows } from '../../lib/sheets';
 import { Ledger, Member } from '../../types';
 import Link from 'next/link';
 
+import { parse } from 'date-fns';
+
 // Analytics Card Component
 const StatCard = ({ title, value, subtext }: { title: string; value: string; subtext?: string }) => (
   <div className="bg-white p-6 rounded-lg shadow">
@@ -21,7 +23,7 @@ export default async function LedgerDashboardPage() {
   const totalLoaned = ledgers
     .filter(l => l.Type === 'Loan')
     .reduce((sum, l) => sum + l['Equivalent to BDT'], 0);
-  
+
   const totalReturned = ledgers
     .filter(l => l.Type === 'Return')
     .reduce((sum, l) => sum + l['Equivalent to BDT'], 0);
@@ -31,7 +33,11 @@ export default async function LedgerDashboardPage() {
   const activeLoansCount = members.filter(m => m['Current Loan'] > 0).length;
 
   const latestLedgers = [...ledgers]
-    .sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime())
+    .sort(
+      (a: Ledger, b: Ledger) =>
+        parse(b.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).getTime() -
+        parse(a.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).getTime()
+    )
     .slice(0, 5);
   // --- End analytics ---
 
