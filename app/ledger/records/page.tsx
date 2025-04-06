@@ -47,7 +47,7 @@ export default function LedgerPage() {
   return (
     <>
       <div className="mt-6">
-        <DataTable data={ledgers || []} columns={columns} />
+        <DataTable data={ledgers || []} columns={columns} title='Ledger' setIsModalOpen={setIsModalOpen}/>
       </div>
 
       <Modal

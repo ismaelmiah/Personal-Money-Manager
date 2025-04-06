@@ -17,9 +17,11 @@ export type Column<T extends DataItem> = {
 type DataTableProps<T extends DataItem> = {
   data: T[];
   columns: Column<T>[];
+  title: string;
+  setIsModalOpen: (isOpen: boolean) => void;
 };
 
-export default function DataTable<T extends DataItem>({ data, columns }: DataTableProps<T>) {
+export default function DataTable<T extends DataItem>({ data, columns, title, setIsModalOpen }: DataTableProps<T>) {
   const [filter, setFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -56,7 +58,7 @@ export default function DataTable<T extends DataItem>({ data, columns }: DataTab
   return (
     <div className="w-full">
       <div className="flex justify-between items-start mb-2">
-        <h1 className="text-3xl font-bold">Ledger</h1>
+        <h1 className="text-3xl font-bold">{title}</h1>
         <div className="flex items-center gap-4">
           <input
             type="text"
@@ -69,10 +71,10 @@ export default function DataTable<T extends DataItem>({ data, columns }: DataTab
             className="p-2 border rounded-md w-full sm:w-auto"
           />
           <button
-            // onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsModalOpen(true)}
             className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700"
           >
-            Add Record
+            Add New
           </button>
 
         </div>

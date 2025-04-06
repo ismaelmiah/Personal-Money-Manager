@@ -2,12 +2,10 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import AuthButton from '../components/AuthButton';
 import Modal from '../components/Modal'; // Import Modal
 import AddMemberForm from '../components/members/AddMemberForm'; // Import the new form
 import { Member } from '../types';
 import { parse } from 'date-fns';
-import Link from 'next/link';
 import DataTable, { Column } from '../components/DataTable';
 
 // Main Page Component
@@ -31,21 +29,8 @@ export default function MembersPage() {
 
   return (
     <>
-      <main className="p-8">
-        <div className="flex justify-between items-start mb-8">
-          <h1 className="text-3xl font-bold">Members</h1>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
-          >
-            Add New Member
-          </button>
-        </div>
-
-        {/* Table remains the same */}
-        <div className="overflow-x-auto">
-          <DataTable data={members || []} columns={columns} />
-        </div>
+      <main className='mt-6'>
+          <DataTable data={members || []} columns={columns} title='Members' setIsModalOpen={setIsModalOpen}/>
       </main>
 
       {/* MODAL IMPLEMENTATION */}
