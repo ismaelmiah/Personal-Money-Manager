@@ -7,6 +7,7 @@ import AddMemberForm from '../components/members/AddMemberForm'; // Import the n
 import { Member } from '../types';
 import { parse } from 'date-fns';
 import DataTable, { Column } from '../components/DataTable';
+import Link from 'next/link';
 
 // Main Page Component
 export default function MembersPage() {
@@ -14,14 +15,22 @@ export default function MembersPage() {
 
   const { data: members, isLoading, isError } = useQuery<Member[]>({
     queryKey: ['members'],
-    queryFn: () => fetch('/api/members').then((res) => res.json()),
+    queryFn: () => fetch('/api/members').then((res) => res.json()).then(data => data.sort((a: Member, b: Member) => a.Name.localeCompare(b.Name))),
   });
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading members.</div>;
 
   const columns: Column<Member>[] = [
-    { header: 'Name', accessorKey: 'Name' },
+    {
+      header: 'Name', accessorKey: 'Name', cell: (info) => (
+        <Link href={`/members/${info.Id}`} className='text-blue-600 font-semibold hover:underline'>
+          {info.Name}
+        </Link>
+      )
+    },
+    { header: 'Phone', accessorKey: 'Phone' },
+    { header: 'Relationship', accessorKey: 'Relationship' },
     { header: 'Current Loan', accessorKey: 'Current Loan' },
     { header: 'Total Returned', accessorKey: 'Total Returned' },
     { header: 'Date Joined', accessorKey: 'CreatedAt', cell: (info: { CreatedAt: string }) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString() }
@@ -30,7 +39,7 @@ export default function MembersPage() {
   return (
     <>
       <main className='mt-6'>
-          <DataTable data={members || []} columns={columns} title='Members' setIsModalOpen={setIsModalOpen}/>
+        <DataTable data={members || []} columns={columns} title='Members' setIsModalOpen={setIsModalOpen} />
       </main>
 
       {/* MODAL IMPLEMENTATION */}

@@ -7,6 +7,7 @@ import { parse } from 'date-fns';
 import Modal from '../../components/Modal';
 import AddLedgerForm from '../../components/ledger/AddLedgerForm';
 import DataTable, { Column } from '../../components/DataTable';
+import Link from 'next/link';
 
 export default function LedgerPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,12 +28,20 @@ export default function LedgerPage() {
 
   const columns: Column<Ledger>[] = [
     { header: 'Date', accessorKey: 'CreatedAt', cell: (info) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString() },
-    { header: 'Member', accessorKey: 'MemberName' },
-    { header: 'Type', accessorKey: 'Type', cell: (info) => (
-      <span className={info.Type === 'Loan' ? 'rounded-full bg-red-600 text-white px-2 py-[2px]' : 'rounded-full bg-green-700 text-white px-2 py-[2px]'}>
-        {info.Type}
-      </span>
-    ) },
+    {
+      header: 'Member', accessorKey: 'MemberName', cell: (info) => (
+        <Link href={`/members/${info.MemberId}`} className='text-blue-600 font-semibold hover:underline'>
+          {info.MemberName}
+        </Link>
+      )
+    },
+    {
+      header: 'Type', accessorKey: 'Type', cell: (info) => (
+        <span className={info.Type === 'Loan' ? 'rounded-full bg-red-600 text-white px-2 py-[2px]' : 'rounded-full bg-green-700 text-white px-2 py-[2px]'}>
+          {info.Type}
+        </span>
+      )
+    },
     {
       header: 'Amount', accessorKey: 'Amount', cell: (info) => (
         <span className={info.Type === 'Loan' ? 'text-red-700' : 'text-green-700'}>
@@ -41,13 +50,24 @@ export default function LedgerPage() {
       )
     },
     { header: 'Notes', accessorKey: 'Notes' },
-    { header: 'BDT Equivalent', accessorKey: 'Equivalent to BDT', cell: (info) => info['Equivalent to BDT'].toLocaleString() },
+    {
+      header: 'Actions', cell: (info) => (
+        <div className='flex gap-2'>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className='text-green-600 hover:underline'
+          >
+            Edit
+          </button>
+        </div>
+      )
+    }
   ];
 
   return (
     <>
       <div className="mt-6">
-        <DataTable data={ledgers || []} columns={columns} title='Ledger' setIsModalOpen={setIsModalOpen}/>
+        <DataTable data={ledgers || []} columns={columns} title='Ledger' setIsModalOpen={setIsModalOpen} />
       </div>
 
       <Modal
