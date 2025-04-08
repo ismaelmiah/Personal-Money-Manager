@@ -1,11 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Ledger, Member } from '../../types';
+import { Ledger, LedgerType, Member } from '../../types';
 import { format } from 'date-fns';
 
 type LedgerFormData = Omit<Ledger, 'Id' | 'MemberName'>;
+// Reusable styling for our new buttons
+const typeButtonClasses = (isActive: boolean) =>
+  `w-full p-3 text-sm font-semibold rounded-lg border-2 transition-colors ${isActive
+    ? 'bg-blue-600 border-blue-600 text-white shadow-md'
+    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+  }`;
 
 export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) {
   const queryClient = useQueryClient();
@@ -20,6 +26,18 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
     Type: 'Loan', // Default type
     Currency: 'BDT', // Default currency
   });
+  const [memberSearch, setMemberSearch] = useState(''); // State for the member search input
+  const [selectedMemberName, setSelectedMemberName] = useState(''); // State to hold the name for display
+
+  // --- Derived State for Search ---
+  const filteredMembers = useMemo(() => {
+    if (!members) return [];
+    if (!memberSearch) return members;
+    return members.filter(member =>
+      member.Name.toLowerCase().includes(memberSearch.toLowerCase())
+    );
+  }, [members, memberSearch]);
+
 
   const addLedgerMutation = useMutation<Ledger, Error, LedgerFormData & { MemberName: string }>({
     mutationFn: async (newLedgerData) => {
@@ -49,8 +67,8 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
     e.preventDefault();
     const selectedMember = members?.find(m => m.Id === formData.MemberId);
     if (!selectedMember || !formData.Amount) {
-        alert("Please select a member and enter an amount.");
-        return;
+      alert("Please select a member and enter an amount.");
+      return;
     }
     const createdAt = format(new Date(), 'dd/MM/yyyy HH:mm:ss');
     addLedgerMutation.mutate({
@@ -60,31 +78,86 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
     });
   };
 
+  // --- Event Handlers ---
+  const handleTypeSelect = (type: LedgerType) => {
+    setFormData(prev => ({ ...prev, Type: type }));
+  };
+
+  const handleMemberSelect = (member: Member) => {
+    setFormData(prev => ({ ...prev, MemberId: member.Id }));
+    setSelectedMemberName(member.Name);
+    setMemberSearch(member.Name); // Fill input with selected name
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* 1. Member Search and Selection */}
+      <div className="relative">
+        <label htmlFor="memberSearch" className="block text-sm font-medium text-gray-700 mb-1">Member</label>
+        <input
+          id="memberSearch"
+          type="text"
+          value={memberSearch}
+          onChange={(e) => {
+            setMemberSearch(e.target.value);
+            // Clear selection if user types something new
+            if (e.target.value !== selectedMemberName) {
+              setFormData(prev => ({ ...prev, MemberId: undefined }));
+              setSelectedMemberName('');
+            }
+          }}
+          placeholder={isLoadingMembers ? "Loading members..." : "Search for a member..."}
+          className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+          autoComplete="off"
+        />
+        {memberSearch && filteredMembers.length > 0 && !formData.MemberId && (
+          <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+            {filteredMembers.map(member => (
+              <li
+                key={member.Id}
+                onClick={() => handleMemberSelect(member)}
+                className="p-2 cursor-pointer hover:bg-blue-50"
+              >
+                {member.Name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* 2. Button-style Type Selector */}
       <div>
-        <label htmlFor="MemberId" className="block text-sm font-medium text-gray-700">Member</label>
-        <select name="MemberId" id="MemberId" onChange={handleChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-          <option value="">{isLoadingMembers ? 'Loading...' : 'Select a member'}</option>
-          {members?.map(member => <option key={member.Id} value={member.Id}>{member.Name}</option>)}
-        </select>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Type of Record</label>
+        <div className="grid grid-cols-2 gap-4">
+          <button type="button" onClick={() => handleTypeSelect('Loan')} className={typeButtonClasses(formData.Type === 'Loan')}>
+            Loan (I Gave)
+          </button>
+          <button type="button" onClick={() => handleTypeSelect('Return')} className={typeButtonClasses(formData.Type === 'Return')}>
+            Return (I Received)
+          </button>
+        </div>
+      </div>
+
+      {/* Amount, Currency, Notes ... same as before but with better styling */}
+      <div className="flex gap-4">
+        <div className="flex-grow">
+          <label htmlFor="Amount" className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+          <input type="number" step="0.01" name="Amount" id="Amount" onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+        </div>
+        <div>
+          <label htmlFor="Currency" className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+          <input type="text" title='currency' name="Currency" value={formData.Currency} onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+        </div>
       </div>
       <div>
-        <label htmlFor="Type" className="block text-sm font-medium text-gray-700">Type</label>
-        <select name="Type" id="Type" value={formData.Type} onChange={handleChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-          <option value="Loan">Loan (I gave)</option>
-          <option value="Return">Return (I received)</option>
-        </select>
+        <label htmlFor="Notes" className="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+        <textarea name="Notes" id="Notes" onChange={handleChange} rows={3} className="w-full p-2 border border-gray-300 rounded-md shadow-sm"></textarea>
       </div>
-      <div>
-        <label htmlFor="Amount" className="block text-sm font-medium text-gray-700">Amount</label>
-        <input type="number" name="Amount" id="Amount" onChange={handleChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-      </div>
-      {/* Add other fields like Currency, Equivalent to BDT, Notes as needed */}
-      <div className="mt-6 flex justify-end gap-4">
-        <button type="button" onClick={onSuccess} className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700">Cancel</button>
-        <button type="submit" disabled={addLedgerMutation.isPending} className="rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700 disabled:bg-gray-400">
-          {addLedgerMutation.isPending ? 'Saving...' : 'Save Record'}
+
+      {/* Submit Button */}
+      <div className="pt-4 border-t border-gray-200">
+        <button type="submit" disabled={addLedgerMutation.isPending} className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-blue-700 disabled:bg-gray-400 transition-all">
+          {addLedgerMutation.isPending ? 'Saving...' : 'Add Record to Ledger'}
         </button>
       </div>
     </form>
