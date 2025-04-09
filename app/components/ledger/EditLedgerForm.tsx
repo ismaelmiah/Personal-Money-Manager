@@ -8,12 +8,12 @@ import { format } from 'date-fns';
 type LedgerFormData = Omit<Ledger, 'Id' | 'MemberName'>;
 // Reusable styling for our new buttons
 const typeButtonClasses = (isActive: boolean) =>
-  `hover:cursor-pointer w-full p-3 text-sm font-semibold rounded-lg border-2 transition-colors ${isActive
+  `w-full p-3 text-sm font-semibold rounded-lg border-2 transition-colors ${isActive
     ? 'bg-sky-600 border-blue-600 text-white shadow-md'
     : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
   }`;
 
-export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) {
+export default function EditLedgerForm({ onSuccess }: { onSuccess: () => void }) {
   const queryClient = useQueryClient();
 
   // Fetch members to populate the dropdown
@@ -26,6 +26,7 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
     Type: 'Loan', // Default type
     Currency: 'BDT', // Default currency
   });
+  
   const [memberSearch, setMemberSearch] = useState(''); // State for the member search input
   const [selectedMemberName, setSelectedMemberName] = useState(''); // State to hold the name for display
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -157,20 +158,9 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
           <label htmlFor="Amount" className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
           <input type="number" step="0.01" name="Amount" id="Amount" placeholder='Amount' onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded-md shadow-sm" />
         </div>
-        <div className="w-1/3">
+        <div>
           <label htmlFor="Currency" className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-          <select
-            name="Currency"
-            id="Currency"
-            value={formData.Currency}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
-          >
-            <option value="BDT">BDT</option>
-            <option value="GBP">GBP</option>
-            <option value="USD">USD</option>
-          </select>
+          <input type="text" title='currency' name="Currency" placeholder='Currency' value={formData.Currency} onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded-md shadow-sm" />
         </div>
       </div>
       <div>
@@ -180,7 +170,7 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
 
       {/* Submit Button */}
       <div className="pt-4 border-t border-gray-200">
-        <button type="submit" disabled={addLedgerMutation.isPending} className="hover:cursor-pointer w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-sky-700 disabled:bg-gray-400 transition-all">
+        <button type="submit" disabled={addLedgerMutation.isPending} className="w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-sky-700 disabled:bg-gray-400 transition-all">
           {addLedgerMutation.isPending ? 'Saving...' : 'Add Record to Ledger'}
         </button>
       </div>
