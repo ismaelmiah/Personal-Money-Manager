@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Ledger, LedgerType, Member } from '../../types';
 import { format } from 'date-fns';
@@ -28,6 +28,8 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
   });
   const [memberSearch, setMemberSearch] = useState(''); // State for the member search input
   const [selectedMemberName, setSelectedMemberName] = useState(''); // State to hold the name for display
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // --- Derived State for Search ---
   const filteredMembers = useMemo(() => {
@@ -97,10 +99,12 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
         <input
           id="memberSearch"
           type="text"
+          ref={inputRef}
           value={memberSearch}
+          onFocus={() => setDropdownOpen(true)}
+          onBlur={() => setTimeout(() => setDropdownOpen(false), 150)} // Delay to allow click
           onChange={(e) => {
             setMemberSearch(e.target.value);
-            // Clear selection if user types something new
             if (e.target.value !== selectedMemberName) {
               setFormData(prev => ({ ...prev, MemberId: undefined }));
               setSelectedMemberName('');
@@ -110,17 +114,26 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
           className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
           autoComplete="off"
         />
-        {memberSearch && filteredMembers.length > 0 && !formData.MemberId && (
-          <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
-            {filteredMembers.map(member => (
+        {dropdownOpen && members && members.length > 0 && !formData.MemberId && (
+          <ul
+            className={`absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg
+              ${memberSearch ? "max-h-40" : "max-h-72"} overflow-y-auto transition-all duration-200`}
+          >
+            {(memberSearch ? filteredMembers : members).map(member => (
               <li
                 key={member.Id}
-                onClick={() => handleMemberSelect(member)}
+                onMouseDown={() => { // Use onMouseDown to select before blur
+                  handleMemberSelect(member);
+                  setDropdownOpen(false);
+                }}
                 className="p-2 cursor-pointer hover:bg-blue-50"
               >
                 {member.Name}
               </li>
             ))}
+            {(memberSearch ? filteredMembers : members).length === 0 && (
+              <li className="p-2 text-gray-400">No members found</li>
+            )}
           </ul>
         )}
       </div>

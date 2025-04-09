@@ -3,21 +3,33 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { usePlatformStore } from '@/app/store/platformStore';
-import { useSyncStore } from '@/app/store/syncStore'; // <-- Import sync store
+import { useSyncStore } from '@/app/store/syncStore';
 import AuthButton from '../AuthButton';
+import {
+  ChartBarSquareIcon,
+  DocumentTextIcon,
+  UsersIcon,
+  HomeIcon,
+  BanknotesIcon,
+  TagIcon,
+  ArrowRightIcon,
+  ArrowRightOnRectangleIcon
+} from '@heroicons/react/24/outline';
 
-// Define all possible navigation items
+// In app/components/layout/Sidebar.tsx
+// ... other imports
+
 const ledgerNav = [
-  { name: 'Dashboard', href: '/ledger/dashboard' },
-  { name: 'All Records', href: '/ledger/records' },
-  { name: 'Members', href: '/members' },
+  { name: 'Dashboard', href: '/ledger/dashboard', icon: ChartBarSquareIcon },
+  { name: 'All Records', href: '/ledger/records', icon: DocumentTextIcon },
+  { name: 'Members', href: '/members', icon: UsersIcon },
 ];
 
 const expensesNav = [
-  { name: 'Dashboard', href: '/expenses/dashboard' },
-  { name: 'Transactions', href: '/expenses/transactions' },
-  { name: 'Accounts', href: '/expenses/accounts' },
-  { name: 'Categories', href: '/expenses/categories' },
+  { name: 'Dashboard', href: '/expenses/dashboard', icon: HomeIcon },
+  { name: 'Transactions', href: '/expenses/transactions', icon: ArrowRightIcon },
+  { name: 'Accounts', href: '/expenses/accounts', icon: BanknotesIcon },
+  { name: 'Categories', href: '/expenses/categories', icon: TagIcon },
 ];
 
 const navigationItems = {
@@ -52,12 +64,13 @@ export default function Sidebar() {
                   <Link
                     href={item.href}
                     className={classNames(
-                      pathname.startsWith(item.href) // Use startsWith for better active state matching
-                        ? 'bg-gray-800 text-white'
-                        : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                      'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold items-center'
+                      pathname.startsWith(item.href)
+                        ? 'bg-blue-700 text-white' // More distinct active color
+                        : 'text-gray-300 hover:text-white hover:bg-blue-700/50',
+                      'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold items-center transition-colors'
                     )}
                   >
+                    <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                     <span className="flex-1">{item.name}</span>
                     {/* THE SYNC BADGE! */}
                     {item.name === 'Transactions' && pendingCount > 0 && (

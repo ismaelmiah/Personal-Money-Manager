@@ -81,7 +81,7 @@ export default function DataTable<T extends DataItem>({ data, columns, title, se
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white border rounded-lg shadow-sm">
+      <div className="overflow-x-auto bg-white border border-gray-200 rounded-lg shadow-sm">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -89,7 +89,8 @@ export default function DataTable<T extends DataItem>({ data, columns, title, se
                 <th
                   key={column.header}
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  // Slightly bolder and more spaced out headers
+                  className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                 >
                   {column.header}
                 </th>
@@ -98,16 +99,16 @@ export default function DataTable<T extends DataItem>({ data, columns, title, se
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {paginatedData.length > 0 ? (
-              paginatedData.map((item) => (
-                <tr key={item.Id} className="hover:bg-gray-50">
+              paginatedData.map((item, index) => (
+                // Add a subtle zebra stripe effect
+                <tr key={item.Id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
                   {columns.map((column) => (
                     <td key={column.header} className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {column.cell ? column.cell(item) : column.accessorKey ? String(item[column.accessorKey]) : null}
+                       {column.cell ? column.cell(item) : column.accessorKey ? String(item[column.accessorKey]) : null}
                     </td>
                   ))}
                 </tr>
-              ))
-            ) : (
+              ))) : (
               <tr>
                 <td colSpan={columns.length} className="px-6 py-12 text-center text-sm text-gray-500">
                   No records found.
@@ -119,29 +120,23 @@ export default function DataTable<T extends DataItem>({ data, columns, title, se
       </div>
 
       {/* Pagination Controls */}
-      <div className="mt-4 flex justify-between items-center">
-        <span className="text-sm text-gray-700">
-          Showing {Math.min((currentPage - 1) * rowsPerPage + 1, filteredData.length)} to {Math.min(currentPage * rowsPerPage, filteredData.length)} of {filteredData.length} results
-        </span>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 border rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Previous
-          </button>
-          <span className="text-sm">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-          </button>
-        </div>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          // Better button style
+          className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          // Better button style
+          className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

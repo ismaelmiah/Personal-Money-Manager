@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
+    "@heroicons/react": "^2.2.0",
     "@tanstack/react-query": "^5.80.6",
     "date-fns": "^4.1.0",
     "googleapis": "^150.0.1",
