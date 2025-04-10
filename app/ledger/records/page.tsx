@@ -30,7 +30,7 @@ export default function LedgerPage() {
     { header: 'Date', accessorKey: 'CreatedAt', cell: (info) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString() },
     {
       header: 'Member', accessorKey: 'MemberName', cell: (info) => (
-        <Link href={`/members/${info.MemberId}`} className='text-blue-600 font-semibold hover:underline'>
+        <Link href={`/members/${info.MemberId}`} className='text-sky-600 font-semibold hover:underline'>
           {info.MemberName}
         </Link>
       )

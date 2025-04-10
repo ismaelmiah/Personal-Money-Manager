@@ -24,7 +24,7 @@ export default function MembersPage() {
   const columns: Column<Member>[] = [
     {
       header: 'Name', accessorKey: 'Name', cell: (info) => (
-        <Link href={`/members/${info.Id}`} className='text-blue-600 font-semibold hover:underline'>
+        <Link href={`/members/${info.Id}`} className='text-sky-600 font-semibold hover:underline'>
           {info.Name}
         </Link>
       )

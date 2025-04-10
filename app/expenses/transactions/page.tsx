@@ -44,7 +44,7 @@ export default function TransactionsPage() {
         <p className="text-gray-500">No transactions found. Add one to get started!</p>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+          className="mt-4 rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-700"
         >
           Add Transaction
         </button>
@@ -71,7 +71,7 @@ export default function TransactionsPage() {
       header: 'Actions',
       accessorKey: 'Id',
       cell: (info) => (
-        <button onClick={() => setEditingTransaction(info)} className="text-blue-600 hover:underline">
+        <button onClick={() => setEditingTransaction(info)} className="text-sky-600 hover:underline">
           Edit
         </button>
       ),
@@ -84,7 +84,7 @@ export default function TransactionsPage() {
         <h1 className="text-3xl font-bold">Transactions</h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+          className="rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-700"
         >
           Add Transaction
         </button>

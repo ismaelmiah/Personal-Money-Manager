@@ -9,7 +9,7 @@ type LedgerFormData = Omit<Ledger, 'Id' | 'MemberName'>;
 // Reusable styling for our new buttons
 const typeButtonClasses = (isActive: boolean) =>
   `w-full p-3 text-sm font-semibold rounded-lg border-2 transition-colors ${isActive
-    ? 'bg-blue-600 border-blue-600 text-white shadow-md'
+    ? 'bg-sky-600 border-blue-600 text-white shadow-md'
     : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
   }`;
 
@@ -126,7 +126,7 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
                   handleMemberSelect(member);
                   setDropdownOpen(false);
                 }}
-                className="p-2 cursor-pointer hover:bg-blue-50"
+                className="p-2 cursor-pointer hover:bg-sky-50"
               >
                 {member.Name}
               </li>
@@ -155,11 +155,11 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
       <div className="flex gap-4">
         <div className="flex-grow">
           <label htmlFor="Amount" className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-          <input type="number" step="0.01" name="Amount" id="Amount" onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+          <input type="number" step="0.01" name="Amount" id="Amount" placeholder='Amount' onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded-md shadow-sm" />
         </div>
         <div>
           <label htmlFor="Currency" className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-          <input type="text" title='currency' name="Currency" value={formData.Currency} onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+          <input type="text" title='currency' name="Currency" placeholder='Currency' value={formData.Currency} onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded-md shadow-sm" />
         </div>
       </div>
       <div>
@@ -169,7 +169,7 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
 
       {/* Submit Button */}
       <div className="pt-4 border-t border-gray-200">
-        <button type="submit" disabled={addLedgerMutation.isPending} className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-blue-700 disabled:bg-gray-400 transition-all">
+        <button type="submit" disabled={addLedgerMutation.isPending} className="w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-sky-700 disabled:bg-gray-400 transition-all">
           {addLedgerMutation.isPending ? 'Saving...' : 'Add Record to Ledger'}
         </button>
       </div>

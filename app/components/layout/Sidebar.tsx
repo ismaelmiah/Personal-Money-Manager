@@ -65,8 +65,8 @@ export default function Sidebar() {
                     href={item.href}
                     className={classNames(
                       pathname.startsWith(item.href)
-                        ? 'bg-blue-700 text-white' // More distinct active color
-                        : 'text-gray-300 hover:text-white hover:bg-blue-700/50',
+                        ? 'bg-sky-700 text-white' // More distinct active color
+                        : 'text-gray-300 hover:text-white hover:bg-sky-700/50',
                       'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold items-center transition-colors'
                     )}
                   >
@@ -74,7 +74,7 @@ export default function Sidebar() {
                     <span className="flex-1">{item.name}</span>
                     {/* THE SYNC BADGE! */}
                     {item.name === 'Transactions' && pendingCount > 0 && (
-                      <span className="ml-auto whitespace-nowrap rounded-full bg-blue-600 px-2.5 py-1 text-xs font-medium text-white">
+                      <span className="ml-auto whitespace-nowrap rounded-full bg-sky-600 px-2.5 py-1 text-xs font-medium text-white">
                         {pendingCount}
                       </span>
                     )}

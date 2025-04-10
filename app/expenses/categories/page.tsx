@@ -37,7 +37,7 @@ export default function CategoriesPage() {
         <h1 className="text-3xl font-bold">Categories</h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+          className="rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-700"
         >
           Add New Category
         </button>

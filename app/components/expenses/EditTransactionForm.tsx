@@ -111,7 +111,7 @@ export default function EditTransactionForm({ transaction, onSuccess }: EditTran
       
       <div className="mt-6 flex justify-end gap-4">
         <button type="button" onClick={onSuccess} className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700">Cancel</button>
-        <button type="submit" disabled={updateTransactionMutation.isPending || isFormLoading} className="rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400">
+        <button type="submit" disabled={updateTransactionMutation.isPending || isFormLoading} className="rounded-md border border-transparent bg-sky-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-700 disabled:bg-gray-400">
           {updateTransactionMutation.isPending ? 'Updating...' : 'Update Transaction'}
         </button>
       </div>

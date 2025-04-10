@@ -120,7 +120,7 @@ export default function DataTable<T extends DataItem>({ data, columns, title, se
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -129,6 +129,9 @@ export default function DataTable<T extends DataItem>({ data, columns, title, se
         >
           Previous
         </button>
+        <span className="text-sm text-gray-600">
+          Page {currentPage} of {totalPages}
+        </span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
