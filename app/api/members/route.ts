@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getRows, appendRow } from '../../lib/sheets';
+import { getRows, appendRow, updateRow } from '../../lib/sheets';
 import { Member } from '../../types';
 
 // Type for the data from the client form
@@ -38,4 +38,17 @@ export async function POST(request: Request) {
     console.error(error);
     return NextResponse.json({ message: 'Error creating member' }, { status: 500 });
   }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const body: Member = await request.json();
+    const allMembers = await getRows<Member>('Member');
+    const rowIndex = allMembers.findIndex(m => m.Id === body.Id);
+    if (rowIndex === -1) {
+      return NextResponse.json({ message: "Member not found" }, { status: 404 });
+    }
+    await updateRow('Member', rowIndex + 2, body);
+    return NextResponse.json(body, { status: 200 });
+  } catch (error) { /* ... error handling ... */ }
 }
