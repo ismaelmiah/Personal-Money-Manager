@@ -55,7 +55,7 @@ export default function LedgerPage() {
         <div className='flex gap-2'>
           <button
             onClick={() => setIsModalOpen(true)}
-            className='text-green-600 hover:underline'
+            className='text-green-600 hover:underline hover:cursor-pointer'
           >
             Edit
           </button>

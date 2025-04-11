@@ -8,10 +8,12 @@ import { Member } from '../types';
 import { parse } from 'date-fns';
 import DataTable, { Column } from '../components/DataTable';
 import Link from 'next/link';
+import EditMemberForm from '../components/members/EditMemberForm';
 
 // Main Page Component
 export default function MembersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingMember, setEditingMember] = useState<Member | null>(null);
 
   const { data: members, isLoading, isError } = useQuery<Member[]>({
     queryKey: ['members'],
@@ -33,7 +35,15 @@ export default function MembersPage() {
     { header: 'Relationship', accessorKey: 'Relationship' },
     { header: 'Current Loan', accessorKey: 'Current Loan' },
     { header: 'Total Returned', accessorKey: 'Total Returned' },
-    { header: 'Date Joined', accessorKey: 'CreatedAt', cell: (info: { CreatedAt: string }) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString() }
+    { header: 'Date Joined', accessorKey: 'CreatedAt', cell: (info: { CreatedAt: string }) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString() },
+    {
+      header: 'Actions',
+      cell: (info: Member) => (
+        <button onClick={() => setEditingMember(info)} className="text-blue-600 hover:underline hover:cursor-pointer">
+          Edit
+        </button>
+      ),
+    },
   ];
 
   return (
@@ -49,6 +59,11 @@ export default function MembersPage() {
         title="Add New Member"
       >
         <AddMemberForm onSuccess={() => setIsModalOpen(false)} />
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal isOpen={!!editingMember} onClose={() => setEditingMember(null)} title="Edit Member">
+        {editingMember && <EditMemberForm member={editingMember} onSuccess={() => setEditingMember(null)} />}
       </Modal>
     </>
   );
