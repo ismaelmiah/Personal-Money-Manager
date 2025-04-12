@@ -50,11 +50,11 @@ export default function EditMemberForm({ member, onSuccess }: EditMemberFormProp
             </div>
             <div>
                 <label htmlFor="Email" className="block text-sm font-medium text-gray-700">Email</label>
-                <input className="p-2 w-full rounded-md border-gray-300 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" type="email" name="Email" placeholder="Email" id="Email" value={formData.Email} onChange={handleChange} required />
+                <input className="p-2 w-full rounded-md border-gray-300 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" type="email" name="Email" placeholder="Email" id="Email" value={formData.Email} onChange={handleChange} />
             </div>
             <div>
                 <label htmlFor="Relationship" className="block text-sm font-medium text-gray-700">Relationship</label>
-                <input className="p-2 w-full rounded-md border-gray-300 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" type="text" name="Relationship" placeholder="Relationship" id="Relationship" value={formData.Relationship} onChange={handleChange} required />
+                <input className="p-2 w-full rounded-md border-gray-300 border focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" type="text" name="Relationship" placeholder="Relationship" id="Relationship" value={formData.Relationship} onChange={handleChange} />
             </div>
             <div className="mt-6 flex justify-end gap-4">
                 <button type="button" className="hover:cursor-pointer hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200 rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700" onClick={onSuccess}>Cancel</button>
