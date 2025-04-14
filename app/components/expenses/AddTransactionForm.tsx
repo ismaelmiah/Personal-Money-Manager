@@ -32,7 +32,7 @@ export default function AddTransactionForm({ onSuccess }: { onSuccess: () => voi
   });
 
   // --- 3. Mutation to add the transaction ---
-  const addTransactionMutation = useMutation<Transaction, Error, TransactionFormData>({
+  const addTransactionMutation = useMutation<Transaction, unknown, TransactionFormData, { previousTransactions: Transaction[]; tempId: string }>({
     mutationFn: async (newTransactionData) => {
       const response = await fetch('/api/transactions', {
         method: 'POST',
@@ -67,7 +67,7 @@ export default function AddTransactionForm({ onSuccess }: { onSuccess: () => voi
       // 6. Return context with tempId and snapshot
       return { previousTransactions, tempId };
     },
-    onSuccess: (data, variables, context: any) => {
+    onSuccess: (data, _, context) => {
       removePendingTransaction(context.tempId);
 
       // Replace the temporary item with the real one from the server
@@ -82,7 +82,7 @@ export default function AddTransactionForm({ onSuccess }: { onSuccess: () => voi
       // onSuccess();
       // removePendingTransaction(data.Id);
     },
-    onError: (err, variables, context: any) => {
+    onError: (_, __, context) => {
       if (context) {
         removePendingTransaction(context.tempId);
         queryClient.setQueryData(['transactions'], context.previousTransactions);

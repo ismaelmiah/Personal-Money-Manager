@@ -13,7 +13,6 @@ import {
   BanknotesIcon,
   TagIcon,
   ArrowRightIcon,
-  ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
 
 // In app/components/layout/Sidebar.tsx

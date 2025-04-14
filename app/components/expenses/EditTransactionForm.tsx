@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Transaction, Account, Category } from '../../types';
 
@@ -35,7 +35,7 @@ export default function EditTransactionForm({ transaction, onSuccess }: EditTran
   // Initialize form state with the existing transaction data
   const [formData, setFormData] = useState<Transaction>(transaction);
 
-  const updateTransactionMutation = useMutation<Transaction, Error, Transaction>({
+  const updateTransactionMutation = useMutation<Transaction, unknown, Transaction>({
     mutationFn: async (updatedTransaction) => {
       const response = await fetch('/api/transactions', {
         method: 'PUT',
@@ -54,10 +54,10 @@ export default function EditTransactionForm({ transaction, onSuccess }: EditTran
   });
 
   // Filter categories based on selected transaction type
-  const filteredCategories = useMemo(() => {
-    if (!categories) return [];
-    return categories.filter(c => c.Type === formData.Type);
-  }, [categories, formData.Type]);
+  // const filteredCategories = useMemo(() => {
+  //   if (!categories) return [];
+  //   return categories.filter(c => c.Type === formData.Type);
+  // }, [categories, formData.Type]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -74,7 +74,7 @@ export default function EditTransactionForm({ transaction, onSuccess }: EditTran
   };
 
   const isFormLoading = isLoadingAccounts || isLoadingCategories;
-
+console.log(categories);
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* The form JSX is nearly identical to AddTransactionForm */}

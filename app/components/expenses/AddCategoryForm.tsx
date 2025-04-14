@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Category, CategoryType } from '../../types';
+import { Category } from '../../types';
 
 type CategoryFormData = Pick<Category, 'Name' | 'Type' | 'Budget'>;
 
