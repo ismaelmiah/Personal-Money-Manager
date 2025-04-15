@@ -28,7 +28,13 @@ export async function POST(request: Request) {
       CreatedAt: new Date().toISOString(),
     };
     
-    await appendRow('Categories', newCategory);
+    // Convert Category to plain object for appendRow
+    const categoryData = {
+      ...newCategory,
+      CreatedAt: newCategory.CreatedAt // Ensure date is properly serialized
+    };
+    
+    await appendRow('Categories', categoryData);
     
     return NextResponse.json(newCategory, { status: 201 });
   } catch (error) {

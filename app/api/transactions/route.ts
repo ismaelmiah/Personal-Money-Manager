@@ -2,13 +2,11 @@ import { NextResponse } from 'next/server';
 import { getRows, appendRow, updateRow } from '../../lib/sheets';
 import { Account, Transaction } from '../../types';
 
-type NewTransactionPayload = Omit<Transaction, 'Id' | 'CreatedAt'>;
-
 export async function GET() {
   try {
     const transactions = await getRows<Transaction>('Transactions');
     return NextResponse.json(transactions);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: 'Error fetching transactions' }, { status: 500 });
   }
 }
@@ -27,8 +25,14 @@ export async function PUT(request: Request) {
       return NextResponse.json({ message: "Transaction not found" }, { status: 404 });
     }
     
+    // Convert Transaction to plain object for updateRow
+    const transactionData = {
+      ...body,
+      CreatedAt: body.CreatedAt // Ensure date is properly serialized
+    };
+    
     // updateRow uses 1-based indexing and accounts for the header row.
-    await updateRow('Transactions', rowIndex + 2, body);
+    await updateRow('Transactions', rowIndex + 2, transactionData);
     
     // IMPORTANT: Here you should also update account balances.
     // This requires fetching the original transaction to calculate the difference.
@@ -36,9 +40,8 @@ export async function PUT(request: Request) {
     // but a real app would need to handle this.
     
     return NextResponse.json(body, { status: 200 });
-  } catch (error) {
-    console.error('Error updating transaction:', error);
-    return NextResponse.json({ message: 'Error updating transaction' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ message: "Error updating transaction" }, { status: 500 });
   }
 }
 
@@ -53,7 +56,14 @@ export async function POST(request: Request) {
       Id: `T${Date.now()}`,
       CreatedAt: new Date().toISOString(),
     };
-    await appendRow('Transactions', newTransaction);
+    
+    // Convert Transaction to plain object for appendRow
+    const transactionData = {
+      ...newTransaction,
+      CreatedAt: newTransaction.CreatedAt // Ensure date is properly serialized
+    };
+    
+    await appendRow('Transactions', transactionData);
 
     // --- 2. Update Account Balances ---
     const accounts = await getRows<Account>('Accounts');
@@ -65,8 +75,12 @@ export async function POST(request: Request) {
         if (accountIndex !== -1) {
           const accountToUpdate = accounts[accountIndex];
           accountToUpdate.Balance -= newTransaction.Amount;
-          // The actual row number in the sheet is index + 2 (1 for header, 1 for 0-based index)
-          await updateRow('Accounts', accountIndex + 2, accountToUpdate);
+          // Convert Account to plain object for updateRow
+          const accountData = {
+            ...accountToUpdate,
+            Balance: accountToUpdate.Balance
+          };
+          await updateRow('Accounts', accountIndex + 2, accountData);
         }
       }
     }
@@ -78,14 +92,18 @@ export async function POST(request: Request) {
         if (accountIndex !== -1) {
             const accountToUpdate = accounts[accountIndex];
             accountToUpdate.Balance += newTransaction.Amount;
-            await updateRow('Accounts', accountIndex + 2, accountToUpdate);
+            // Convert Account to plain object for updateRow
+            const accountData = {
+              ...accountToUpdate,
+              Balance: accountToUpdate.Balance
+            };
+            await updateRow('Accounts', accountIndex + 2, accountData);
         }
       }
     }
 
     return NextResponse.json(newTransaction, { status: 201 });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ message: 'Error creating transaction', status: 500 });
+  } catch {
+    return NextResponse.json({ message: "Error creating transaction" }, { status: 500 });
   }
 }

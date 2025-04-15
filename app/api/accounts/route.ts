@@ -27,7 +27,13 @@ export async function POST(request: Request) {
       CreatedAt: new Date().toISOString(),
     };
     
-    await appendRow('Accounts', newAccount);
+    // Convert Account to plain object for appendRow
+    const accountData = {
+      ...newAccount,
+      CreatedAt: newAccount.CreatedAt // Ensure date is properly serialized
+    };
+    
+    await appendRow('Accounts', accountData);
     
     return NextResponse.json(newAccount, { status: 201 });
   } catch (error) {

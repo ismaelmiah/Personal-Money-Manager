@@ -24,7 +24,13 @@ export async function POST(request: Request) {
       Id: `L${Date.now()}`, // Generate ID on the server
     };
     
-    await appendRow('Ledger', newLedger);
+    // Convert Ledger to plain object for appendRow
+    const ledgerData = {
+      ...newLedger,
+      CreatedAt: newLedger.CreatedAt // Ensure date is properly serialized
+    };
+    
+    await appendRow('Ledger', ledgerData);
     
     // Return the complete object so the client can update its cache
     return NextResponse.json(newLedger, { status: 201 });

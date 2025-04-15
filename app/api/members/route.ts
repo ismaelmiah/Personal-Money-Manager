@@ -31,7 +31,13 @@ export async function POST(request: Request) {
       'Total Returned': 0,
     };
     
-    await appendRow('Member', newMember);
+    // Convert Member to plain object for appendRow
+    const memberData = {
+      ...newMember,
+      CreatedAt: newMember.CreatedAt // Ensure date is properly serialized
+    };
+    
+    await appendRow('Member', memberData);
     
     return NextResponse.json(newMember, { status: 201 });
   } catch (error) {
@@ -48,7 +54,22 @@ export async function PUT(request: Request) {
     if (rowIndex === -1) {
       return NextResponse.json({ message: "Member not found" }, { status: 404 });
     }
-    await updateRow('Member', rowIndex + 2, body);
+    // Convert Member to plain object with string keys
+    const memberData = {
+      ...body,
+      Id: body.Id,
+      Name: body.Name,
+      Phone: body.Phone,
+      Email: body.Email,
+      Relationship: body.Relationship,
+      'Number of Loans': body['Number of Loans'],
+      'Current Loan': body['Current Loan'],
+      'Total Returned': body['Total Returned'],
+      CreatedAt: body.CreatedAt
+    };
+    await updateRow('Member', rowIndex + 2, memberData);
     return NextResponse.json(body, { status: 200 });
-  } catch (error) { /* ... error handling ... */ }
+  } catch {
+    return NextResponse.json({ message: "Error updating member" }, { status: 500 });
+  }
 }
