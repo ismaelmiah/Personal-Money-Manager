@@ -44,7 +44,12 @@ export default function AccountsPage() {
       </div>
       
       <div className="overflow-x-auto">
-        <DataTable data={accounts || []} columns={columns} />
+        <DataTable 
+          data={accounts || []} 
+          columns={columns} 
+          title="Accounts"
+          setIsModalOpen={setIsModalOpen}
+        />
       </div>
 
       <Modal 

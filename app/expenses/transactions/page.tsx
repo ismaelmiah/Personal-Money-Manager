@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Transaction, Account, Category } from '../../types';
 import Modal from '@/app/components/Modal';
@@ -9,10 +9,10 @@ import DataTable, { Column } from '@/app/components/DataTable';
 import EditTransactionForm from '@/app/components/expenses/EditTransactionForm';
 
 // Helper function to find item name from ID
-const findNameById = (items: {Id: string, Name: string}[] | undefined, id: string | undefined) => {
-    if (!items || !id) return '';
-    return items.find(item => item.Id === id)?.Name || '';
-};
+// const findNameById = (items: {Id: string, Name: string}[] | undefined, id: string | undefined) => {
+//     if (!items || !id) return '';
+//     return items.find(item => item.Id === id)?.Name || '';
+// };
 
 export default function TransactionsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -91,7 +91,12 @@ export default function TransactionsPage() {
       </div>
       
       <div className="overflow-x-auto">
-        <DataTable data={transactions} columns={columns} />
+        <DataTable 
+          data={transactions} 
+          columns={columns} 
+          title="Transactions"
+          setIsModalOpen={setIsModalOpen}
+        />
         {/* <table className="min-w-full bg-white border rounded-lg shadow">
           <thead className="bg-gray-50">
             <tr>

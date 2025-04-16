@@ -44,7 +44,12 @@ export default function CategoriesPage() {
       </div>
 
       <div className="overflow-x-auto">
-        <DataTable data={categories || []} columns={columns} />
+        <DataTable 
+          data={categories || []} 
+          columns={columns} 
+          title="Categories"
+          setIsModalOpen={setIsModalOpen}
+        />
       </div>
 
       <Modal
