@@ -1,6 +1,5 @@
 import { getRows } from '../../lib/sheets';
 import { Ledger, Member } from '../../types';
-import Link from 'next/link';
 
 import { parse } from 'date-fns';
 

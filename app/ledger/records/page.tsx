@@ -51,10 +51,10 @@ export default function LedgerPage() {
     },
     { header: 'Notes', accessorKey: 'Notes' },
     {
-      header: 'Actions', cell: (info) => (
+      header: 'Actions', cell: (info: Ledger) => (
         <div className='flex gap-2'>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsModalOpen(info != undefined)}
             className='text-green-600 hover:underline hover:cursor-pointer'
           >
             Edit
