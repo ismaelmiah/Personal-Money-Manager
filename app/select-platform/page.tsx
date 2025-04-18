@@ -2,7 +2,7 @@
 
 import { usePlatformStore } from '@/app/store/platformStore';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import LoadingOverlay from '@/app/components/layout/LoadingOverlay';
 
 export default function SelectPlatformPage() {

@@ -11,8 +11,8 @@ const StatCard = ({ title, value }: { title: string; value: string }) => (
   );
   
 // This is also a Server Component
-export default async function MemberDetailPage({ params }: { params: { memberId: string } }) {
-  const memberId = params.memberId;
+export default async function MemberDetailPage({ params }:  { params: Promise<{ id: string }> }) {
+  const memberId = (await params).id;
 
   // Fetch all data in parallel
   const [allMembers, allLedgers] = await Promise.all([
