@@ -38,7 +38,7 @@ export default function LedgerPage() {
     {
       header: 'Type', accessorKey: 'Type', cell: (info) => (
         <span className={info.Type === 'Loan' ? 'rounded-full bg-red-600 text-white px-2 py-[2px]' : 'rounded-full bg-green-700 text-white px-2 py-[2px]'}>
-          {info.Type}
+          {info.Type} / {info.Currency}
         </span>
       )
     },

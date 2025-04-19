@@ -66,7 +66,7 @@ export default async function LedgerDashboardPage() {
                   <p className={`font-bold ${record.Type === 'Loan' ? 'text-red-600' : 'text-green-600'}`}>
                     {record.Type === 'Loan' ? '-' : '+'} {record.Amount.toLocaleString()} {record.Currency}
                   </p>
-                  <p className="text-xs text-gray-500">{new Date(record.CreatedAt).toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-500">{parse(record.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString()}</p>
                 </div>
               </li>
             ))}
