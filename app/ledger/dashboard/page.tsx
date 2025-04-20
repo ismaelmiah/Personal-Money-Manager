@@ -12,6 +12,17 @@ const StatCard = ({ title, value, subtext }: { title: string; value: string; sub
   </div>
 );
 
+// Helper function to format numbers with appropriate scale
+const formatNumber = (num: number): string => {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(0) + 'K';
+  } else {
+    return num.toLocaleString();
+  }
+};
+
 // This is a React Server Component (RSC) by default
 export default async function LedgerDashboardPage() {
   // Fetch data on the server
@@ -19,15 +30,23 @@ export default async function LedgerDashboardPage() {
   const members = await getRows<Member>('Member');
 
   // --- Perform analytics on the server ---
-  const totalLoaned = ledgers
-    .filter(l => l.Type === 'Loan')
-    .reduce((sum, l) => sum + l['Equivalent to BDT'], 0);
+  const totalReturnedBDT = ledgers
+    .filter(l => l.Type === 'Return' && l.Currency === 'BDT')
+    .reduce((sum, l) => sum + Number(l.Amount), 0);
 
-  const totalReturned = ledgers
-    .filter(l => l.Type === 'Return')
-    .reduce((sum, l) => sum + l['Equivalent to BDT'], 0);
+  const totalReturnedGBP = ledgers
+    .filter(l => l.Type === 'Return' && l.Currency === 'GBP')
+    .reduce((sum, l) => sum + Number(l.Amount), 0);
 
-  const netLoanBalance = totalLoaned - totalReturned;
+  const bdtledgers = ledgers.filter(l => l.Type === 'Loan' && l.Currency === 'BDT');
+  
+  const totalLoanedBDT = bdtledgers.reduce((sum, l) => {
+    const amount = Number(l.Amount);
+    return sum + amount;
+  }, 0);
+
+  const gbpledgers = ledgers.filter(l => l.Currency === 'GBP' && l.Type === 'Loan');
+  const totalLoanedGBP = gbpledgers.reduce((sum, l) => sum + Number(l.Amount), 0);
 
   const activeLoansCount = members.filter(m => m['Current Loan'] > 0).length;
 
@@ -45,10 +64,12 @@ export default async function LedgerDashboardPage() {
       <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard title="Net Loan Balance" value={`${netLoanBalance.toLocaleString()} BDT`} />
-        <StatCard title="Total Loaned" value={`${totalLoaned.toLocaleString()} BDT`} />
-        <StatCard title="Members with Active Loans" value={activeLoansCount.toString()} />
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        <StatCard title="Net Loan BDT" value={`${formatNumber(totalLoanedBDT - totalReturnedBDT)} BDT`} />
+        <StatCard title="Total Loaned BDT" value={`${formatNumber(totalLoanedBDT)} BDT`} />
+        <StatCard title="Net Loan GBP" value={`${formatNumber(totalLoanedGBP - totalReturnedGBP)} GBP`} />
+        <StatCard title="Total Loaned GBP" value={`${formatNumber(totalLoanedGBP)} GBP`} />
+        <StatCard title="Members with Loans" value={activeLoansCount.toString()} />
       </div>
 
       {/* Latest Records List */}
@@ -64,7 +85,7 @@ export default async function LedgerDashboardPage() {
                 </div>
                 <div className="text-right">
                   <p className={`font-bold ${record.Type === 'Loan' ? 'text-red-600' : 'text-green-600'}`}>
-                    {record.Type === 'Loan' ? '-' : '+'} {record.Amount.toLocaleString()} {record.Currency}
+                    {record.Type === 'Loan' ? '-' : '+'} {record.Amount} {record.Currency}
                   </p>
                   <p className="text-xs text-gray-500">{parse(record.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString()}</p>
                 </div>

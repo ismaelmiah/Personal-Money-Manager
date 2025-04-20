@@ -9,7 +9,6 @@ export interface Ledger {
   Type: LedgerType;
   Amount: number;
   Currency: string;
-  'Equivalent to BDT': number; // Note: property name with spaces needs quotes
   CreatedAt: string;
   Notes?: string;
 }
