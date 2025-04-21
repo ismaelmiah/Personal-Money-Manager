@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getRows } from '../../lib/sheets';
 import { Ledger, Member } from '../../types';
 
@@ -39,7 +40,7 @@ export default async function LedgerDashboardPage() {
     .reduce((sum, l) => sum + Number(l.Amount), 0);
 
   const bdtledgers = ledgers.filter(l => l.Type === 'Loan' && l.Currency === 'BDT');
-  
+
   const totalLoanedBDT = bdtledgers.reduce((sum, l) => {
     const amount = Number(l.Amount);
     return sum + amount;
@@ -75,20 +76,25 @@ export default async function LedgerDashboardPage() {
       {/* Latest Records List */}
       <div className="mt-12">
         <h2 className="text-xl font-bold mb-4">Latest Records</h2>
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="bg-white rounded-lg shadow">
           <ul>
             {latestLedgers.map(record => (
-              <li key={record.Id} className="flex justify-between items-center py-3 border-b last:border-b-0">
-                <div>
-                  <p className="font-semibold">{record.MemberName}</p>
-                  <p className="text-sm text-gray-600">{record.Notes || 'No notes'}</p>
-                </div>
-                <div className="text-right">
-                  <p className={`font-bold ${record.Type === 'Loan' ? 'text-red-600' : 'text-green-600'}`}>
-                    {record.Type === 'Loan' ? '-' : '+'} {record.Amount} {record.Currency}
-                  </p>
-                  <p className="text-xs text-gray-500">{parse(record.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString()}</p>
-                </div>
+              <li key={record.Id} className="hover:bg-gray-100 border-b last:border-b-0">
+                <Link href={`/members/${record.MemberId}`} className='flex justify-between items-center p-3 '>
+                  <div>
+                    <p className="font-semibold">
+                      {record.MemberName}
+                    </p>
+                    <p className="text-sm text-gray-600">{record.Notes || 'No notes'}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`font-bold ${record.Type === 'Loan' ? 'text-red-600' : 'text-green-600'}`}>
+                      {record.Type === 'Loan' ? '-' : '+'} {record.Amount} {record.Currency}
+                    </p>
+                    <p className="text-xs text-gray-500">{parse(record.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString()}</p>
+                  </div>
+                </Link>
+
               </li>
             ))}
           </ul>
