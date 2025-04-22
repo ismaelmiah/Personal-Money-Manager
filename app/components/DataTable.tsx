@@ -17,14 +17,15 @@ export type Column<T extends DataItem> = {
 type DataTableProps<T extends DataItem> = {
   data: T[];
   columns: Column<T>[];
-  title: string;
+  title?: string;
+  numberOfRows?: number;
   setIsModalOpen: (isOpen: boolean) => void;
 };
 
-export default function DataTable<T extends DataItem>({ data, columns, title, setIsModalOpen }: DataTableProps<T>) {
+export default function DataTable<T extends DataItem>({ data, columns, title, numberOfRows = 10, setIsModalOpen }: DataTableProps<T>) {
   const [filter, setFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = numberOfRows;
 
   // --- Logic for Sorting, Filtering, Pagination ---
 
@@ -59,7 +60,7 @@ export default function DataTable<T extends DataItem>({ data, columns, title, se
     <div className="w-full">
       <div className="flex justify-between items-start mb-2">
         <h1 className="text-3xl font-bold">{title}</h1>
-        <div className="flex items-center gap-4">
+        {title && <div className="flex items-center gap-4">
           <input
             type="text"
             placeholder="Search table..."
@@ -77,7 +78,7 @@ export default function DataTable<T extends DataItem>({ data, columns, title, se
             Add New
           </button>
 
-        </div>
+        </div>}
       </div>
 
       {/* Table */}
