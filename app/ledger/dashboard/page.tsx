@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getRows } from '../../lib/sheets';
 import { Ledger, Member } from '../../types';
-
+import { formatNumber } from '../../utils';
 import { parse } from 'date-fns';
 
 // Analytics Card Component
@@ -12,17 +12,6 @@ const StatCard = ({ title, value, subtext }: { title: string; value: string; sub
     {subtext && <p className="text-sm text-gray-500">{subtext}</p>}
   </div>
 );
-
-// Helper function to format numbers with appropriate scale
-const formatNumber = (num: number): string => {
-  if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + 'M';
-  } else if (num >= 1000) {
-    return (num / 1000).toFixed(0) + 'K';
-  } else {
-    return num.toLocaleString();
-  }
-};
 
 // This is a React Server Component (RSC) by default
 export default async function LedgerDashboardPage() {
