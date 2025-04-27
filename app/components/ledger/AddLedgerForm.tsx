@@ -25,6 +25,7 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
   const [formData, setFormData] = useState<Partial<LedgerFormData>>({
     Type: 'Loan', // Default type
     Currency: 'BDT', // Default currency
+    CreatedAt: new Date().toISOString().slice(0, 16),
   });
   const [memberSearch, setMemberSearch] = useState(''); // State for the member search input
   const [selectedMemberName, setSelectedMemberName] = useState(''); // State to hold the name for display
@@ -72,7 +73,7 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
       alert("Please select a member and enter an amount.");
       return;
     }
-    const createdAt = format(new Date(), 'dd/MM/yyyy HH:mm:ss');
+    const createdAt = format(new Date(formData.CreatedAt || new Date()), 'dd/MM/yyyy HH:mm:ss');
     addLedgerMutation.mutate({
       ...formData as LedgerFormData, // We are sure it's valid here
       MemberName: selectedMember.Name,
@@ -136,6 +137,13 @@ export default function AddLedgerForm({ onSuccess }: { onSuccess: () => void }) 
             )}
           </ul>
         )}
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+        <input type="datetime-local" name="CreatedAt" id="CreatedAt" value={formData.CreatedAt} onChange={handleChange} required
+          className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+          title="Select the date and time for this record"
+          placeholder="Select date and time" />
       </div>
 
       {/* 2. Button-style Type Selector */}

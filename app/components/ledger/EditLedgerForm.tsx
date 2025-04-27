@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Ledger } from '../../types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Ledger, Member } from '../../types';
 
 // type LedgerFormData = Omit<Ledger, 'Id' | 'MemberName'>;
 // Reusable styling for our new buttons
@@ -12,43 +12,80 @@ const typeButtonClasses = (isActive: boolean) =>
     : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
   }`;
 interface EditLedgerFormProps {
-    ledger: Ledger;
-    onSuccess: () => void;
+  ledger: Ledger;
+  onSuccess: () => void;
 }
 
 export default function EditLedgerForm({ ledger, onSuccess }: EditLedgerFormProps) {
   const queryClient = useQueryClient();
-  const [formData, setFormData] = useState<Ledger>(ledger);
+  const [formData, setFormData] = useState<Ledger>({
+    ...ledger,
+    CreatedAt: ledger.CreatedAt ? new Date(
+      ledger.CreatedAt.replace(
+        /(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/,
+        '$3-$2-$1T$4:$5:$6'
+      )
+    ).toISOString().slice(0, 16)
+  : ''
+  });
+
+  const { data: members, isLoading: isLoadingMembers } = useQuery<Member[]>({
+    queryKey: ['members'],
+    queryFn: () => fetch('/api/members').then((res) => res.json()),
+  });
 
   const updateLedgerMutation = useMutation<Ledger, Error, Ledger>({
-      mutationFn: async (updatedLedger) => {
-          const response = await fetch('/api/ledger', {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(updatedLedger),
-          });
-          if (!response.ok) throw new Error('Failed to update ledger');
-          return response.json();
-      },
-      onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['ledgers'] });
-          onSuccess();
-      },
+    mutationFn: async (updatedLedger) => {
+      const response = await fetch('/api/ledger', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedLedger),
+      });
+      if (!response.ok) throw new Error('Failed to update ledger');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ledgers'] });
+      onSuccess();
+    },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      updateLedgerMutation.mutate(formData);
+    e.preventDefault();
+    updateLedgerMutation.mutate(formData);
   };
 
+  if (isLoadingMembers) return <div>Loading members...</div>;
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Type of Record</label>
+        <label htmlFor="CreatedAt" className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+        <input type="datetime-local" name="CreatedAt" id="CreatedAt" value={formData.CreatedAt} onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+      </div>
+      <div>
+        <label htmlFor="MemberId" className="block text-sm font-medium text-gray-700 mb-2">Member</label>
+        <select
+          name="MemberId"
+          id="MemberId"
+          value={formData.MemberId}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+        >
+          <option value="">Select a member</option>
+          {members?.map(member => (
+            <option key={member.Id} value={member.Id}>
+              {member.Name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label htmlFor="Type" className="block text-sm font-medium text-gray-700 mb-2">Type of Record</label>
         <div className="grid grid-cols-2 gap-4">
           <button type="button" className={typeButtonClasses(formData.Type === 'Loan')}>
             Loan (I Gave)
