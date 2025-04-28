@@ -35,7 +35,7 @@ export default function MembersPage() {
     { header: 'Relationship', accessorKey: 'Relationship' },
     { header: 'Current Loan', accessorKey: 'Current Loan' },
     { header: 'Total Returned', accessorKey: 'Total Returned' },
-    { header: 'Date Joined', accessorKey: 'CreatedAt', cell: (info: { CreatedAt: string }) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString() },
+    { header: 'Date Joined', accessorKey: 'CreatedAt', cell: (info: { CreatedAt: string }) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleString() },
     {
       header: 'Actions',
       cell: (info: Member) => (

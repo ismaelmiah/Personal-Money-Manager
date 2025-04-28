@@ -38,7 +38,7 @@ export default function MemberDetailsClient({ member, memberLedgers }: { member:
     .reduce((sum, l) => sum + Number(l.Amount), 0);
 
   const columns: Column<Ledger>[] = [
-    { header: 'Date', accessorKey: 'CreatedAt', cell: (info) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString() },
+    { header: 'Date', accessorKey: 'CreatedAt', cell: (info) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleString() },
     { header: 'Type', accessorKey: 'Type' },
     {
       header: 'Amount', accessorKey: 'Amount', cell: (info) => (

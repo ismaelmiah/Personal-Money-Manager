@@ -8,9 +8,11 @@ import Modal from '../../components/Modal';
 import AddLedgerForm from '../../components/ledger/AddLedgerForm';
 import DataTable, { Column } from '../../components/DataTable';
 import Link from 'next/link';
+import EditLedgerForm from '@/app/components/ledger/EditLedgerForm';
 
 export default function LedgerPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingLedger, setEditingLedger] = useState<Ledger | null>(null);
 
   const { data: ledgers, isLoading, isError } = useQuery<Ledger[]>({
     queryKey: ['ledgers'],
@@ -27,7 +29,7 @@ export default function LedgerPage() {
   if (isError) return <div>Error loading ledger data.</div>;
 
   const columns: Column<Ledger>[] = [
-    { header: 'Date', accessorKey: 'CreatedAt', cell: (info) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString() },
+    { header: 'Date', accessorKey: 'CreatedAt', cell: (info) => parse(info.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleString() },
     {
       header: 'Member', accessorKey: 'MemberName', cell: (info) => (
         <Link href={`/members/${info.MemberId}`} className='text-sky-600 font-semibold hover:underline'>
@@ -49,12 +51,12 @@ export default function LedgerPage() {
         </span>
       )
     },
-    { header: 'Notes', accessorKey: 'Notes' },
+    { header: 'Notes', accessorKey: 'Notes', cell: (info) => info.Notes || '' },
     {
       header: 'Actions', cell: (info: Ledger) => (
         <div className='flex gap-2'>
           <button
-            onClick={() => setIsModalOpen(info != undefined)}
+            onClick={() => setEditingLedger(info)}
             className='text-green-600 hover:underline hover:cursor-pointer'
           >
             Edit
@@ -76,6 +78,11 @@ export default function LedgerPage() {
         title="Add Ledger Record"
       >
         <AddLedgerForm onSuccess={() => setIsModalOpen(false)} />
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal isOpen={!!editingLedger} onClose={() => setEditingLedger(null)} title="Edit Ledger">
+        {editingLedger && <EditLedgerForm ledger={editingLedger} onSuccess={() => setEditingLedger(null)} />}
       </Modal>
     </>
   );

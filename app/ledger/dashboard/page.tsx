@@ -55,10 +55,10 @@ export default async function LedgerDashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
-        <StatCard title="Net Loan BDT" value={`${formatNumber(totalLoanedBDT - totalReturnedBDT)} BDT`} />
-        <StatCard title="Total Loaned BDT" value={`${formatNumber(totalLoanedBDT)} BDT`} />
-        <StatCard title="Net Loan GBP" value={`${formatNumber(totalLoanedGBP - totalReturnedGBP)} GBP`} />
-        <StatCard title="Total Loaned GBP" value={`${formatNumber(totalLoanedGBP)} GBP`} />
+        <StatCard title="Net Loan BDT" subtext={`${(totalLoanedBDT - totalReturnedBDT).toLocaleString()}`} value={`${formatNumber(totalLoanedBDT - totalReturnedBDT)} BDT`} />
+        <StatCard title="Total Loaned BDT" subtext={`${totalLoanedBDT.toLocaleString()}`} value={`${formatNumber(totalLoanedBDT)} BDT`} />
+        <StatCard title="Net Loan GBP" subtext={`${(totalLoanedGBP - totalReturnedGBP).toLocaleString()}`} value={`${formatNumber(totalLoanedGBP - totalReturnedGBP)} GBP`} />
+        <StatCard title="Total Loaned GBP" subtext={`${totalLoanedGBP.toLocaleString()}`} value={`${formatNumber(totalLoanedGBP)} GBP`} />
         <StatCard title="Members with Loans" value={activeLoansCount.toString()} />
       </div>
 
@@ -80,7 +80,7 @@ export default async function LedgerDashboardPage() {
                     <p className={`font-bold ${record.Type === 'Loan' ? 'text-red-600' : 'text-green-600'}`}>
                       {record.Type === 'Loan' ? '-' : '+'} {record.Amount} {record.Currency}
                     </p>
-                    <p className="text-xs text-gray-500">{parse(record.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleDateString()}</p>
+                    <p className="text-xs text-gray-500">{parse(record.CreatedAt, 'dd/MM/yyyy HH:mm:ss', new Date()).toLocaleString()}</p>
                   </div>
                 </Link>
 
