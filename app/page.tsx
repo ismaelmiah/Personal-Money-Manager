@@ -1,29 +1,29 @@
-"use client"
+'use client';
 
-import { FullScreenLoading } from "@/components/full-screen-loading";
-import { useAppData } from "@/providers/data-provider";
-import { useState, useEffect } from "react";
-import PlatformSelectionPage from "./platform-selection/page";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { usePlatformStore } from './store/platformStore';
 
-export default function Home() {
-  
-  const [initialLoading, setInitialLoading] = useState(true)
-  const { refreshData, isLoading } = useAppData()
+// This component runs on the client and handles the initial redirect logic.
+export default function HomePage() {
+  const router = useRouter();
+  const { platform } = usePlatformStore();
 
   useEffect(() => {
-    const loadData = async () => {
-      await refreshData()
-      setInitialLoading(false)
+    // Zustand's persist middleware might take a moment to rehydrate from localStorage.
+    // By checking `platform`, we ensure we have the stored value before redirecting.
+    if (platform) {
+      router.replace(`/${platform}/dashboard`);
+    } else {
+      // This case handles if the storage is empty or cleared.
+      router.replace('/select-platform');
     }
+  }, [platform, router]);
 
-    loadData()
-  }, [refreshData])
-
-  if (initialLoading || isLoading) {
-    return <FullScreenLoading message="Loading App Data" seconds={5} />
-  }
-  
+  // Render a loading state while the redirect is happening.
   return (
-    <PlatformSelectionPage />
+      <div className="flex h-screen items-center justify-center">
+          <div>Loading...</div>
+      </div>
   );
 }
